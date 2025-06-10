@@ -1,11 +1,44 @@
 ﻿
 
--- Tạo cơ sở dữ liệu
-CREATE DATABASE MovieTicketBookingSystem;
+-- =====================================================
+-- MOVIE TICKET BOOKING SYSTEM DATABASE SETUP
+-- =====================================================
+-- This script will drop and recreate the database if it exists
+-- Author: PRM392 Team
+-- Date: June 2025
+-- =====================================================
+
+-- Switch to master database first to avoid connection issues
+USE master;
 GO
 
--- Sử dụng cơ sở dữ liệu vừa tạo
+-- Check if database exists and drop it if it does
+IF EXISTS (SELECT name FROM sys.databases WHERE name = 'MovieTicketBookingSystem')
+BEGIN
+    PRINT 'Database MovieTicketBookingSystem exists. Dropping it...'
+    
+    -- Close all connections to the database
+    ALTER DATABASE MovieTicketBookingSystem SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+    
+    -- Drop the database
+    DROP DATABASE MovieTicketBookingSystem;
+    PRINT 'Database dropped successfully.'
+END
+ELSE
+BEGIN
+    PRINT 'Database MovieTicketBookingSystem does not exist.'
+END
+GO
+
+-- Create new database
+PRINT 'Creating new database MovieTicketBookingSystem...'
+CREATE DATABASE MovieTicketBookingSystem;
+PRINT 'Database created successfully.'
+GO
+
+-- Use the newly created database
 USE MovieTicketBookingSystem;
+PRINT 'Using MovieTicketBookingSystem database.'
 GO
 
 -- Bảng Role (Phân quyền)
@@ -202,9 +235,7 @@ CREATE TABLE Payment (
     PaymentStatus NVARCHAR(50) NOT NULL, -- Ví dụ: 'Pending', 'Completed', 'Failed', 'Refunded'
     PaymentMethod NVARCHAR(50) NOT NULL, -- Ví dụ: 'CreditCard', 'Cash', 'Momo', 'ZaloPay', 'VNPAY'
     TransactionID NVARCHAR(255), -- Mã giao dịch từ cổng thanh toán
-  
-    FOREIGN KEY (BookingID) REFERENCES Booking(BookingID) ON DELETE CASCADE ON UPDATE NO ACTION,
-  
+    FOREIGN KEY (BookingID) REFERENCES Booking(BookingID) ON DELETE CASCADE ON UPDATE NO ACTION
 );
 GO
 
@@ -303,5 +334,215 @@ CREATE INDEX IX_Tokens_UserID ON Tokens (UserID);
 CREATE INDEX IX_Tokens_ExpiresAt ON Tokens (ExpiresAt);
 CREATE INDEX IX_Tokens_IsRevoked ON Tokens (IsRevoked);
 CREATE INDEX IX_Tokens_TokenType ON Tokens (TokenType);
+
+GO
+
+-- =====================================================
+-- SAMPLE DATA INSERTION
+-- =====================================================
+PRINT 'Inserting sample data...'
+
+-- Sample Cities
+INSERT INTO City (Name) VALUES 
+(N'Hồ Chí Minh'),
+(N'Hà Nội'),
+(N'Đà Nẵng'),
+(N'Cần Thơ'),
+(N'Hải Phòng');
+
+-- Sample Genres
+INSERT INTO Genre (Name) VALUES 
+(N'Action'),
+(N'Comedy'),
+(N'Drama'),
+(N'Horror'),
+(N'Romance'),
+(N'Sci-Fi'),
+(N'Thriller'),
+(N'Animation'),
+(N'Adventure'),
+(N'Fantasy');
+
+-- Sample People (Directors and Actors)
+INSERT INTO Person (Name, DateOfBirth, Biography, Nationality, PhotoURL) VALUES 
+(N'Christopher Nolan', '1970-07-30', N'British-American film director, producer, and screenwriter', N'British', 'https://example.com/nolan.jpg'),
+(N'Quentin Tarantino', '1963-03-27', N'American film director, screenwriter, and producer', N'American', 'https://example.com/tarantino.jpg'),
+(N'Leonardo DiCaprio', '1974-11-11', N'American actor and film producer', N'American', 'https://example.com/dicaprio.jpg'),
+(N'Scarlett Johansson', '1984-11-22', N'American actress and singer', N'American', 'https://example.com/johansson.jpg'),
+(N'Robert Downey Jr.', '1965-04-04', N'American actor and producer', N'American', 'https://example.com/rdj.jpg'),
+(N'Ngô Thanh Vân', '1979-02-26', N'Vietnamese actress, singer, and model', N'Vietnamese', 'https://example.com/ngothanhvan.jpg'),
+(N'Trấn Thành', '1987-02-05', N'Vietnamese comedian, actor, and TV host', N'Vietnamese', 'https://example.com/tranthanh.jpg');
+
+-- Sample Movies
+INSERT INTO Movie (Title, Description, Duration, Language, ReleaseDate, TrailerURL, PosterURL, Rating) VALUES 
+(N'Inception', N'A thief who steals corporate secrets through dream-sharing technology', 148, N'English', '2010-07-16', 'https://youtube.com/inception-trailer', 'https://example.com/inception-poster.jpg', 8.8),
+(N'Pulp Fiction', N'The lives of two mob hitmen, a boxer, and a gangster intertwine', 154, N'English', '1994-10-14', 'https://youtube.com/pulpfiction-trailer', 'https://example.com/pulpfiction-poster.jpg', 8.9),
+(N'The Avengers', N'Superheroes team up to save the world', 143, N'English', '2012-05-04', 'https://youtube.com/avengers-trailer', 'https://example.com/avengers-poster.jpg', 8.0),
+(N'Bố Già', N'Vietnamese family comedy drama', 128, N'Vietnamese', '2021-03-12', 'https://youtube.com/bogia-trailer', 'https://example.com/bogia-poster.jpg', 7.5),
+(N'Hai Phượng', N'Vietnamese action thriller', 98, N'Vietnamese', '2019-02-22', 'https://youtube.com/haiphuong-trailer', 'https://example.com/haiphuong-poster.jpg', 6.8);
+
+-- Sample Movie Directors
+INSERT INTO MovieDirector (MovieID, PersonID) VALUES 
+(1, 1), -- Inception - Christopher Nolan
+(2, 2), -- Pulp Fiction - Quentin Tarantino
+(3, 1), -- The Avengers - Christopher Nolan (example)
+(4, 7), -- Bố Già - Trấn Thành
+(5, 6); -- Hai Phượng - Ngô Thanh Vân
+
+-- Sample Movie Actors
+INSERT INTO MovieActor (MovieID, PersonID, RoleName) VALUES 
+(1, 3, N'Dom Cobb'), -- Inception - Leonardo DiCaprio
+(2, 3, N'Vincent Vega'), -- Pulp Fiction - Leonardo DiCaprio (example)
+(3, 5, N'Tony Stark / Iron Man'), -- The Avengers - Robert Downey Jr.
+(3, 4, N'Black Widow'), -- The Avengers - Scarlett Johansson
+(4, 7, N'Ba Sang'), -- Bố Già - Trấn Thành
+(5, 6, N'Hai Phượng'); -- Hai Phượng - Ngô Thanh Vân
+
+-- Sample Movie Genres
+INSERT INTO MovieGenre (MovieID, GenreID) VALUES 
+(1, 6), -- Inception - Sci-Fi
+(1, 7), -- Inception - Thriller
+(2, 1), -- Pulp Fiction - Action
+(2, 3), -- Pulp Fiction - Drama
+(3, 1), -- The Avengers - Action
+(3, 9), -- The Avengers - Adventure
+(4, 2), -- Bố Già - Comedy
+(4, 3), -- Bố Già - Drama
+(5, 1), -- Hai Phượng - Action
+(5, 7); -- Hai Phượng - Thriller
+
+-- Sample Cinemas
+INSERT INTO Cinema (Name, Address, CityID, ContactInfo) VALUES 
+(N'CGV Vincom Center', N'72 Lê Thánh Tôn, Quận 1, TP.HCM', 1, N'028-3822-5678'),
+(N'Galaxy Cinema Nguyễn Du', N'116 Nguyễn Du, Quận 1, TP.HCM', 1, N'028-3827-1717'),
+(N'Lotte Cinema Landmark', N'720A Điện Biên Phủ, Quận 3, TP.HCM', 1, N'028-3930-0060'),
+(N'CGV Vincom Bà Triệu', N'191 Bà Triệu, Hai Bà Trưng, Hà Nội', 2, N'024-3974-3333'),
+(N'Galaxy Cinema Linh Đàm', N'Shopping Mall, Hoàng Mai, Hà Nội', 2, N'024-3632-4896');
+
+-- Sample Cinema Halls
+INSERT INTO CinemaHall (CinemaID, Name, TotalSeats) VALUES 
+(1, N'Phòng 1', 120),
+(1, N'Phòng 2', 100),
+(1, N'Phòng VIP', 80),
+(2, N'Rạp A', 150),
+(2, N'Rạp B', 130),
+(3, N'Hall 1', 200),
+(3, N'Hall 2', 180),
+(4, N'Phòng Gold', 90),
+(5, N'Premium Hall', 110);
+
+-- Sample Seats for Hall 1 (Cinema 1)
+DECLARE @HallID INT = 1;
+DECLARE @Row NVARCHAR(10);
+DECLARE @Col INT;
+
+-- Create seats for rows A-J, columns 1-12
+DECLARE @RowNames TABLE (RowName NVARCHAR(10));
+INSERT INTO @RowNames VALUES ('A'), ('B'), ('C'), ('D'), ('E'), ('F'), ('G'), ('H'), ('I'), ('J');
+
+DECLARE row_cursor CURSOR FOR SELECT RowName FROM @RowNames;
+OPEN row_cursor;
+FETCH NEXT FROM row_cursor INTO @Row;
+
+WHILE @@FETCH_STATUS = 0
+BEGIN
+    SET @Col = 1;
+    WHILE @Col <= 12
+    BEGIN
+        INSERT INTO Seat (HallID, RowNumber, ColumnNumber, SeatType) 
+        VALUES (@HallID, @Row, @Col, 
+            CASE 
+                WHEN @Row IN ('A', 'B') THEN 'VIP'
+                WHEN @Row IN ('I', 'J') THEN 'Regular'
+                ELSE 'Premium'
+            END
+        );
+        SET @Col = @Col + 1;
+    END
+    FETCH NEXT FROM row_cursor INTO @Row;
+END
+
+CLOSE row_cursor;
+DEALLOCATE row_cursor;
+
+-- Sample Users (additional to the admin/customer roles already inserted)
+INSERT INTO [User] (Name, Email, Phone, PasswordHash, LoyaltyPoints, RoleID) VALUES 
+(N'Nguyễn Văn An', 'admin@moviebooking.com', '0901234567', 'hashed_password_admin', 0.00, 1), -- Admin
+(N'Trần Thị Bích', 'bich.tran@gmail.com', '0912345678', 'hashed_password_bich', 150.50, 2), -- Customer
+(N'Lê Minh Tuấn', 'tuan.le@yahoo.com', '0923456789', 'hashed_password_tuan', 75.25, 2), -- Customer
+(N'Phạm Thu Hà', 'ha.pham@outlook.com', '0934567890', 'hashed_password_ha', 200.00, 2), -- Customer
+(N'Hoàng Văn Dũng', 'dung.hoang@gmail.com', '0945678901', 'hashed_password_dung', 0.00, 3), -- Front Desk Officer
+(N'Võ Thị Lan', 'lan.vo@company.com', '0956789012', 'hashed_password_lan', 320.75, 2); -- Customer
+
+-- Sample Shows (Movie screenings)
+INSERT INTO Show (MovieID, HallID, StartTime, EndTime, TicketPrice) VALUES 
+-- Today's shows
+(1, 1, DATEADD(HOUR, 2, GETDATE()), DATEADD(HOUR, 4, GETDATE()), 120000.00), -- Inception
+(2, 2, DATEADD(HOUR, 3, GETDATE()), DATEADD(HOUR, 6, GETDATE()), 110000.00), -- Pulp Fiction
+(3, 3, DATEADD(HOUR, 1, GETDATE()), DATEADD(HOUR, 3, GETDATE()), 150000.00), -- The Avengers
+(4, 4, DATEADD(HOUR, 4, GETDATE()), DATEADD(HOUR, 6, GETDATE()), 100000.00), -- Bố Già
+(5, 5, DATEADD(HOUR, 5, GETDATE()), DATEADD(HOUR, 7, GETDATE()), 95000.00),  -- Hai Phượng
+
+-- Tomorrow's shows
+(1, 1, DATEADD(DAY, 1, DATEADD(HOUR, 10, GETDATE())), DATEADD(DAY, 1, DATEADD(HOUR, 12, GETDATE())), 120000.00),
+(2, 2, DATEADD(DAY, 1, DATEADD(HOUR, 14, GETDATE())), DATEADD(DAY, 1, DATEADD(HOUR, 17, GETDATE())), 110000.00),
+(3, 3, DATEADD(DAY, 1, DATEADD(HOUR, 16, GETDATE())), DATEADD(DAY, 1, DATEADD(HOUR, 18, GETDATE())), 150000.00),
+(4, 4, DATEADD(DAY, 1, DATEADD(HOUR, 19, GETDATE())), DATEADD(DAY, 1, DATEADD(HOUR, 21, GETDATE())), 100000.00),
+(5, 5, DATEADD(DAY, 1, DATEADD(HOUR, 21, GETDATE())), DATEADD(DAY, 1, DATEADD(HOUR, 23, GETDATE())), 95000.00);
+
+-- Sample Bookings
+INSERT INTO Booking (UserID, ShowID, NumberOfSeats, TotalPrice, Status) VALUES 
+(2, 1, 2, 240000.00, 'Confirmed'), -- Bích books Inception
+(3, 2, 1, 110000.00, 'Confirmed'), -- Tuấn books Pulp Fiction
+(4, 3, 3, 450000.00, 'Pending'),   -- Hà books The Avengers
+(6, 4, 2, 200000.00, 'Confirmed'); -- Lan books Bố Già
+
+-- Sample Booked Seats
+INSERT INTO BookedSeat (BookingID, SeatID, ShowID, ReservedByUserID) VALUES 
+(1, 1, 1, 2), -- Booking 1, Seat A1
+(1, 2, 1, 2), -- Booking 1, Seat A2
+(2, 13, 2, 3), -- Booking 2, Seat B1
+(3, 25, 3, 4), -- Booking 3, Seat C1
+(3, 26, 3, 4), -- Booking 3, Seat C2
+(3, 27, 3, 4), -- Booking 3, Seat C3
+(4, 37, 4, 6), -- Booking 4, Seat D1
+(4, 38, 4, 6); -- Booking 4, Seat D2
+
+-- Sample Payments
+INSERT INTO Payment (BookingID, Amount, PaymentStatus, PaymentMethod, TransactionID) VALUES 
+(1, 240000.00, 'Completed', 'VNPAY', 'VNP_20250610_001'),
+(2, 110000.00, 'Completed', 'Momo', 'MOMO_20250610_002'),
+(4, 200000.00, 'Completed', 'ZaloPay', 'ZALO_20250610_003');
+
+-- Sample Votes/Ratings
+INSERT INTO Vote (UserID, MovieID, RatingValue) VALUES 
+(2, 1, 5), -- Bích rates Inception 5 stars
+(2, 2, 4), -- Bích rates Pulp Fiction 4 stars
+(3, 1, 5), -- Tuấn rates Inception 5 stars
+(3, 3, 4), -- Tuấn rates The Avengers 4 stars
+(4, 2, 3), -- Hà rates Pulp Fiction 3 stars
+(6, 4, 5), -- Lan rates Bố Già 5 stars
+(6, 5, 4); -- Lan rates Hai Phượng 4 stars
+
+-- Sample Comments
+INSERT INTO Comment (UserID, MovieID, CommentText, IsApproved) VALUES 
+(2, 1, N'Phim rất hay! Cốt truyện phức tạp nhưng thú vị.', 1),
+(3, 1, N'Leonardo DiCaprio diễn xuất tuyệt vời. Highly recommended!', 1),
+(4, 2, N'Phim kinh điển của Tarantino. Must watch!', 1),
+(6, 4, N'Phim Việt Nam hay nhất năm. Trấn Thành diễn rất tự nhiên.', 1),
+(2, 3, N'Action scenes are amazing! Marvel never disappoints.', 1);
+
+-- Sample Movie Favorites
+INSERT INTO MovieFavorite (UserID, MovieID) VALUES 
+(2, 1), -- Bích favorites Inception
+(2, 4), -- Bích favorites Bố Già
+(3, 1), -- Tuấn favorites Inception
+(3, 3), -- Tuấn favorites The Avengers
+(4, 2), -- Hà favorites Pulp Fiction
+(6, 4), -- Lan favorites Bố Già
+(6, 5); -- Lan favorites Hai Phượng
+
+PRINT 'Sample data insertion completed successfully!'
+PRINT 'Database setup complete with sample data for testing.'
 
 GO
