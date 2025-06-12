@@ -18,9 +18,8 @@ public class DatabaseConfig {
     
     // Database schema info
     public static final String DATABASE_NAME = "MovieTicketBookingSystem";
-    
-    // Table names - matching your database schema
-    public static final String TABLE_USER = "User";
+      // Table names - matching your database schema
+    public static final String TABLE_USER = "[User]";
     public static final String TABLE_ROLE = "Role";
     public static final String TABLE_MOVIE = "Movie";
     public static final String TABLE_CINEMA = "Cinema";

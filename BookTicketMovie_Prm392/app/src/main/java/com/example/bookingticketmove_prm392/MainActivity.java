@@ -1,7 +1,10 @@
 package com.example.bookingticketmove_prm392;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Button;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,15 +23,18 @@ import com.example.bookingticketmove_prm392.utils.ConfigHelper;
 public class MainActivity extends AppCompatActivity implements DatabaseConnection.DatabaseConnectionListener {
     private static final String TAG = "MainActivity";
     private TextView statusTextView;
+    private Button loginButton;
+    private Button registerButton;
+    private Button testDbButton;
+    private ScrollView statusScrollView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
-        
-        // Initialize the status text view
-        statusTextView = findViewById(R.id.status_text);
+          // Initialize views
+        initViews();
         
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -36,16 +42,51 @@ public class MainActivity extends AppCompatActivity implements DatabaseConnectio
             return insets;
         });
 
-        // Show initial status
-        showInitialStatus();
+        // Check if user is already logged in
+        checkUserLoginStatus();
+
+        // Set up click listeners
+        setupClickListeners();
+    }
+
+    private void initViews() {
+        statusTextView = findViewById(R.id.status_text);
+        loginButton = findViewById(R.id.login_button);
+        registerButton = findViewById(R.id.register_button);
+        testDbButton = findViewById(R.id.test_db_button);
+        statusScrollView = findViewById(R.id.status_scroll_view);
+    }
+
+    private void setupClickListeners() {
+        loginButton.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(intent);
+        });
+
+        registerButton.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
+            startActivity(intent);
+        });
+
+        testDbButton.setOnClickListener(v -> {
+            // Show status area and start database test
+            statusScrollView.setVisibility(android.view.View.VISIBLE);
+            showInitialStatus();
+            statusTextView.postDelayed(this::testDatabaseConnection, 1000);        });
+    }
+
+    private void checkUserLoginStatus() {
+        // Check if user is already logged in
+        boolean isLoggedIn = getSharedPreferences("MovieBookingApp", MODE_PRIVATE)
+                .getBoolean("is_logged_in", false);
         
-        // Debug: Log the current configuration
-        Log.d(TAG, "=== DEBUG: Current Database Configuration ===");
-        Log.d(TAG, "DB_URL: " + DatabaseConfig.DB_URL);
-        Log.d(TAG, "DB_USERNAME: " + DatabaseConfig.DB_USERNAME);
-        
-        // Test database connection after a short delay
-        statusTextView.postDelayed(this::testDatabaseConnection, 1000);
+        if (isLoggedIn) {
+            // User is already logged in, navigate to home
+            Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish();
+        }
     }
 
     private void showInitialStatus() {

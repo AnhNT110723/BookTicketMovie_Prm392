@@ -12,13 +12,12 @@ public class User {
     private BigDecimal loyaltyPoints;
     private Date registrationDate;
     private boolean isActive;
-    private int roleID;
-
-    // Default constructor
+    private int roleID;    // Default constructor
     public User() {
         this.loyaltyPoints = BigDecimal.ZERO;
         this.isActive = true;
         this.roleID = 2; // Default to Customer role
+        this.registrationDate = new Date(); // Set registration date to current time
     }
 
     // Constructor with essential fields

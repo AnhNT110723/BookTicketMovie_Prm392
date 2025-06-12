@@ -143,9 +143,7 @@ public class UserDAO extends BaseDAO {
         } finally {
             closeResources(rs, statement);
         }
-    }
-
-    /**
+    }    /**
      * Map ResultSet to User object
      */
     private User mapResultSetToUser(ResultSet rs) throws SQLException {
@@ -160,6 +158,28 @@ public class UserDAO extends BaseDAO {
         user.setActive(rs.getBoolean("IsActive"));
         user.setRoleID(rs.getInt("RoleID"));
         return user;
+    }
+
+    /**
+     * Login user with email and password
+     */
+    public User loginUser(String email, String passwordHash) throws SQLException {
+        String sql = "SELECT UserID, Name, Email, Phone, PasswordHash, LoyaltyPoints, " +
+                    "RegistrationDate, IsActive, RoleID FROM " + DatabaseConfig.TABLE_USER + 
+                    " WHERE Email = ? AND PasswordHash = ? AND IsActive = 1";
+        
+        ResultSet rs = null;
+        PreparedStatement statement = null;
+        
+        try {
+            rs = executeQuery(sql, email, passwordHash);
+            if (rs.next()) {
+                return mapResultSetToUser(rs);
+            }
+            return null;
+        } finally {
+            closeResources(rs, statement);
+        }
     }    /**
      * Modern approach for getting user by email
      */
@@ -235,6 +255,52 @@ public class UserDAO extends BaseDAO {
                 }
                 
                 final Boolean finalResult = result;
+                final Exception finalException = exception;
+                  mainHandler.post(() -> {
+                    if (listener != null) {
+                        if (finalException != null) {
+                            listener.onError(finalException);
+                        } else {
+                            listener.onSuccess(finalResult);
+                        }
+                    }
+                });
+            });
+        }
+    }
+
+    /**
+     * Modern approach for user login
+     */
+    public static class LoginUserTask {
+        private String email;
+        private String passwordHash;
+        private UserDAO userDAO;
+        private DatabaseTaskListener<User> listener;
+
+        public LoginUserTask(String email, String passwordHash, DatabaseTaskListener<User> listener) {
+            this.email = email;
+            this.passwordHash = passwordHash;
+            this.listener = listener;
+            this.userDAO = new UserDAO();
+        }
+
+        public void execute() {
+            ExecutorService executor = Executors.newSingleThreadExecutor();
+            Handler mainHandler = new Handler(Looper.getMainLooper());
+            
+            executor.execute(() -> {
+                User result = null;
+                Exception exception = null;
+                
+                try {
+                    result = userDAO.loginUser(email, passwordHash);
+                } catch (Exception e) {
+                    Log.e(TAG, "Error logging in user", e);
+                    exception = e;
+                }
+                
+                final User finalResult = result;
                 final Exception finalException = exception;
                 
                 mainHandler.post(() -> {

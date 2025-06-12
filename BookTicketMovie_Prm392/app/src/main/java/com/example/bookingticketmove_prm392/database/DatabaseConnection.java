@@ -61,10 +61,9 @@ public class DatabaseConnection {
                     connection = DriverManager.getConnection(DatabaseConfig.DB_URL_FALLBACK, props);
                     Log.d(TAG, "Fallback connection successful!");
                 }
-                
-                if (connection != null && !connection.isClosed()) {
+                  if (connection != null && !connection.isClosed()) {
                     Log.d(TAG, "Database connection established successfully");
-                    Log.d(TAG, "Connection valid: " + connection.isValid(5));
+                    Log.d(TAG, "Connection established and ready to use");
                 } else {
                     Log.e(TAG, "Connection created but is null or closed");
                     return null;

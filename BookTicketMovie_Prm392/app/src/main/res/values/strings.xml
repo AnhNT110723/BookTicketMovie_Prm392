@@ -1,3 +1,44 @@
 <resources>
     <string name="app_name">BookingTicketMove_Prm392</string>
+    
+    <!-- Authentication Strings -->
+    <string name="login">Login</string>
+    <string name="register">Register</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="full_name">Full Name</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="forgot_password">Forgot Password?</string>
+    <string name="dont_have_account">Don\'t have an account?</string>
+    <string name="already_have_account">Already have an account?</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="sign_in">Sign In</string>
+    
+    <!-- Error Messages -->
+    <string name="error_empty_email">Email cannot be empty</string>
+    <string name="error_invalid_email">Please enter a valid email</string>
+    <string name="error_empty_password">Password cannot be empty</string>
+    <string name="error_password_too_short">Password must be at least 6 characters</string>
+    <string name="error_passwords_dont_match">Passwords don\'t match</string>
+    <string name="error_empty_name">Name cannot be empty</string>
+    <string name="error_empty_phone">Phone number cannot be empty</string>
+    <string name="error_login_failed">Login failed. Please check your credentials</string>
+    <string name="error_registration_failed">Registration failed. Please try again</string>
+    <string name="error_email_already_exists">Email already exists</string>
+    
+    <!-- Success Messages -->
+    <string name="registration_successful">Registration successful! Please login</string>
+    <string name="login_successful">Welcome back!</string>
+    
+    <!-- Loading Messages -->
+    <string name="logging_in">Logging in...</string>
+    <string name="registering">Creating account...</string>
+    
+    <!-- App Title -->
+    <string name="movie_ticket_booking">🎬 Movie Ticket Booking</string>
+    <string name="welcome_back">Welcome Back!</string>
+    <string name="create_account">Create Your Account</string>
+    <string name="login_subtitle">Sign in to continue booking your favorite movies</string>
+    <string name="register_subtitle">Join us to start booking amazing movie experiences</string>
 </resources>
