@@ -2,6 +2,7 @@ package com.example.bookingticketmove_prm392;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -16,12 +17,19 @@ import androidx.cardview.widget.CardView;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.bookingticketmove_prm392.adapters.MovieAdapter;
+import com.example.bookingticketmove_prm392.database.dao.MovieDAO;
 import com.example.bookingticketmove_prm392.database.dao.UserDAO;
+import com.example.bookingticketmove_prm392.models.Movie;
 import com.example.bookingticketmove_prm392.models.User;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 public class HomeActivity extends AppCompatActivity {
     private static final String TAG = "HomeActivity";
@@ -36,6 +44,16 @@ public class HomeActivity extends AppCompatActivity {
     private CardView cinemasCard;
     private CardView profileCard;
     private FloatingActionButton fabQuickBooking;
+    
+    // Movie RecyclerViews
+    private RecyclerView trendingMoviesRecycler;
+    private RecyclerView featuredMoviesRecycler;
+    private TextView seeAllTrending;
+    private TextView seeAllFeatured;
+    
+    // Adapters
+    private MovieAdapter trendingMoviesAdapter;
+    private MovieAdapter featuredMoviesAdapter;
     
     // User data
     private User currentUser;
@@ -66,8 +84,14 @@ public class HomeActivity extends AppCompatActivity {
         // Load user data
         loadUserData();
         
+        // Load movies
+        loadMovies();
+        
         // Set up click listeners
         setupClickListeners();
+        
+        // Initialize RecyclerViews
+        initRecyclerViews();
     }
     
     private void initViews() {
@@ -80,6 +104,12 @@ public class HomeActivity extends AppCompatActivity {
         cinemasCard = findViewById(R.id.cinemas_card);
         profileCard = findViewById(R.id.profile_card);
         fabQuickBooking = findViewById(R.id.fab_quick_booking);
+        
+        // Initialize RecyclerViews
+        trendingMoviesRecycler = findViewById(R.id.trending_movies_recycler);
+        featuredMoviesRecycler = findViewById(R.id.featured_movies_recycler);
+        seeAllTrending = findViewById(R.id.see_all_trending);
+        seeAllFeatured = findViewById(R.id.see_all_featured);
     }
     
     private void setupToolbar() {
@@ -192,34 +222,71 @@ public class HomeActivity extends AppCompatActivity {
             // Intent intent = new Intent(this, MoviesActivity.class);
             // startActivity(intent);
         });
-        
+
         myBookingsCard.setOnClickListener(v -> {
             Toast.makeText(this, "My Bookings - Coming Soon!", Toast.LENGTH_SHORT).show();
             // TODO: Navigate to BookingsActivity
             // Intent intent = new Intent(this, BookingsActivity.class);
             // startActivity(intent);
         });
-        
+
         cinemasCard.setOnClickListener(v -> {
             Toast.makeText(this, "Cinemas - Coming Soon!", Toast.LENGTH_SHORT).show();
             // TODO: Navigate to CinemasActivity
             // Intent intent = new Intent(this, CinemasActivity.class);
             // startActivity(intent);
         });
-        
+
         profileCard.setOnClickListener(v -> {
             Toast.makeText(this, "Profile - Coming Soon!", Toast.LENGTH_SHORT).show();
             // TODO: Navigate to ProfileActivity
             // Intent intent = new Intent(this, ProfileActivity.class);
             // startActivity(intent);
         });
-        
+
         fabQuickBooking.setOnClickListener(v -> {
             Toast.makeText(this, "Quick Booking - Coming Soon!", Toast.LENGTH_SHORT).show();
             // TODO: Navigate to QuickBookingActivity
             // Intent intent = new Intent(this, QuickBookingActivity.class);
             // startActivity(intent);
         });
+        
+        seeAllTrending.setOnClickListener(v -> {
+            Toast.makeText(this, "See All Trending Movies - Coming Soon!", Toast.LENGTH_SHORT).show();
+            // TODO: Navigate to MoviesActivity with trending filter
+        });
+        
+        seeAllFeatured.setOnClickListener(v -> {
+            Toast.makeText(this, "See All Featured Movies - Coming Soon!", Toast.LENGTH_SHORT).show();
+            // TODO: Navigate to MoviesActivity with featured filter
+        });
+    }    private void initRecyclerViews() {
+        // Set up Trending Movies RecyclerView
+        trendingMoviesAdapter = new MovieAdapter(this, new ArrayList<>(), true); // true for horizontal
+        trendingMoviesAdapter.setOnMovieClickListener(this::onMovieClick);
+        trendingMoviesRecycler.setAdapter(trendingMoviesAdapter);
+        trendingMoviesRecycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        
+        // Set up Featured Movies RecyclerView
+        featuredMoviesAdapter = new MovieAdapter(this, new ArrayList<>(), false); // false for grid
+        featuredMoviesAdapter.setOnMovieClickListener(this::onMovieClick);
+        featuredMoviesRecycler.setAdapter(featuredMoviesAdapter);
+        featuredMoviesRecycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+    }
+    
+    private void loadMovies() {
+        // Load trending movies
+        new LoadTrendingMoviesTask().execute();
+        
+        // Load featured movies
+        new LoadFeaturedMoviesTask().execute();
+    }
+      private void onMovieClick(Movie movie) {
+        // TODO: Navigate to MovieDetailActivity
+        Toast.makeText(this, "Selected: " + movie.getTitle(), Toast.LENGTH_SHORT).show();
+        // Intent intent = new Intent(this, MovieDetailActivity.class);
+        // intent.putExtra("movie_id", movie.getMovieId());
+        // startActivity(intent);
     }
     
     @Override
@@ -277,5 +344,133 @@ public class HomeActivity extends AppCompatActivity {
         // Override back button to prevent going back to login
         // Show exit confirmation or minimize app
         moveTaskToBack(true);
+    }
+    
+    // AsyncTask to load trending movies
+    private class LoadTrendingMoviesTask extends AsyncTask<Void, Void, List<Movie>> {
+        @Override
+        protected List<Movie> doInBackground(Void... voids) {
+            try {
+                MovieDAO movieDAO = new MovieDAO();
+                return movieDAO.getTrendingMovies();
+            } catch (Exception e) {
+                Log.e(TAG, "Error loading trending movies", e);
+                return createSampleTrendingMovies();
+            }
+        }
+        
+        @Override
+        protected void onPostExecute(List<Movie> movies) {
+            super.onPostExecute(movies);
+            if (trendingMoviesAdapter != null) {
+                trendingMoviesAdapter.updateMovies(movies);
+            }
+        }
+    }
+    
+    // AsyncTask to load featured movies
+    private class LoadFeaturedMoviesTask extends AsyncTask<Void, Void, List<Movie>> {
+        @Override
+        protected List<Movie> doInBackground(Void... voids) {
+            try {
+                MovieDAO movieDAO = new MovieDAO();
+                return movieDAO.getFeaturedMovies();
+            } catch (Exception e) {
+                Log.e(TAG, "Error loading featured movies", e);
+                return createSampleFeaturedMovies();
+            }
+        }
+        
+        @Override
+        protected void onPostExecute(List<Movie> movies) {
+            super.onPostExecute(movies);
+            if (featuredMoviesAdapter != null) {
+                featuredMoviesAdapter.updateMovies(movies);
+            }
+        }
+    }
+      // Create sample trending movies for testing
+    private List<Movie> createSampleTrendingMovies() {
+        List<Movie> movies = new ArrayList<>();
+        
+        Movie movie1 = new Movie("Avatar: The Way of Water", 
+            "Set more than a decade after the events of the first film...", 
+            "Action, Adventure, Sci-Fi", 192, "James Cameron", new java.util.Date());
+        movie1.setMovieId(1);
+        movie1.setRating(7.6);
+        movie1.setTrending(true);
+        movie1.setPosterUrl("");
+        movies.add(movie1);
+            
+        Movie movie2 = new Movie("Top Gun: Maverick", 
+            "After thirty years, Maverick is still pushing the envelope...", 
+            "Action, Drama", 130, "Joseph Kosinski", new java.util.Date());
+        movie2.setMovieId(2);
+        movie2.setRating(8.3);
+        movie2.setTrending(true);
+        movie2.setPosterUrl("");
+        movies.add(movie2);
+            
+        Movie movie3 = new Movie("Black Panther: Wakanda Forever", 
+            "Queen Ramonda, Shuri, M'Baku, Okoye and the Dora Milaje...", 
+            "Action, Adventure, Drama", 161, "Ryan Coogler", new java.util.Date());
+        movie3.setMovieId(3);
+        movie3.setRating(6.7);
+        movie3.setTrending(true);
+        movie3.setPosterUrl("");
+        movies.add(movie3);
+            
+        Movie movie4 = new Movie("Spider-Man: No Way Home", 
+            "With Spider-Man's identity now revealed, Peter asks Doctor Strange for help...", 
+            "Action, Adventure, Sci-Fi", 148, "Jon Watts", new java.util.Date());
+        movie4.setMovieId(4);
+        movie4.setRating(8.4);
+        movie4.setTrending(true);
+        movie4.setPosterUrl("");
+        movies.add(movie4);
+            
+        return movies;
+    }
+      // Create sample featured movies for testing
+    private List<Movie> createSampleFeaturedMovies() {
+        List<Movie> movies = new ArrayList<>();
+        
+        Movie movie1 = new Movie("The Batman", 
+            "When a sadistic serial killer begins murdering key political figures in Gotham...", 
+            "Action, Crime, Drama", 176, "Matt Reeves", new java.util.Date());
+        movie1.setMovieId(5);
+        movie1.setRating(7.8);
+        movie1.setTrending(false);
+        movie1.setPosterUrl("");
+        movies.add(movie1);
+            
+        Movie movie2 = new Movie("Doctor Strange in the Multiverse of Madness", 
+            "Doctor Strange teams up with a mysterious teenage girl...", 
+            "Action, Adventure, Fantasy", 126, "Sam Raimi", new java.util.Date());
+        movie2.setMovieId(6);
+        movie2.setRating(6.9);
+        movie2.setTrending(false);
+        movie2.setPosterUrl("");
+        movies.add(movie2);
+            
+        Movie movie3 = new Movie("Minions: The Rise of Gru", 
+            "A fanboy of a supervillain supergroup known as the Vicious 6...", 
+            "Animation, Adventure, Comedy", 87, "Kyle Balda", new java.util.Date());
+        movie3.setMovieId(7);
+        movie3.setRating(6.5);
+        movie3.setTrending(false);
+        movie3.setPosterUrl("");
+        movies.add(movie3);
+            
+        Movie movie4 = new Movie("Thor: Love and Thunder", 
+            "Thor enlists the help of Valkyrie, Korg and ex-girlfriend Jane Foster...", 
+            "Action, Adventure, Comedy", 119, "Taika Waititi", new java.util.Date());
+        movie4.setMovieId(8);
+        movie4.setRating(6.2);
+        movie4.setTrending(false);
+        movie4.setPosterUrl("");
+        movies.add(movie4);
+            
+        return movies;
     }
 }
