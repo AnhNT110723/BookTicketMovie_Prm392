@@ -41,6 +41,11 @@
             android:name=".AdminActivity"
             android:exported="false"
             android:theme="@style/Theme.BookingTicketMove_Prm392" />
+            
+        <activity
+            android:name=".ProfileActivity"
+            android:exported="false"
+            android:theme="@style/Theme.BookingTicketMove_Prm392" />
     </application>
 
 </manifest>
