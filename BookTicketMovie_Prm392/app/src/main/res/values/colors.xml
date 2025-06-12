@@ -29,4 +29,9 @@
     <color name="input_background">#FAFAFA</color>
     <color name="input_border">#E0E0E0</color>
     <color name="input_border_focused">#3F51B5</color>
+    
+    <!-- Admin Theme Colors -->
+    <color name="admin_primary">#2E7D32</color>
+    <color name="admin_primary_light">#A5D6A7</color>
+    <color name="info">#2196F3</color>
 </resources>

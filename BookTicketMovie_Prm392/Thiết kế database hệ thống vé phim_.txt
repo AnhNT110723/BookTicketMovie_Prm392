@@ -1,0 +1,1458 @@
+﻿Báo cáo Đề xuất Thiết kế Cơ sở Dữ liệu Hệ thống Đặt Vé Xem Phim
+1. Tóm tắt Điều hành
+Thiết kế cơ sở dữ liệu là nền tảng cho sự thành công của bất kỳ hệ thống đặt vé xem phim trực tuyến nào, đảm bảo khả năng vận hành trơn tru và trải nghiệm người dùng tối ưu. Báo cáo này trình bày một đề xuất kiến trúc cơ sở dữ liệu quan hệ toàn diện, được thiết kế để hỗ trợ các chức năng cốt lõi của hệ thống, đồng thời giải quyết các yêu cầu quan trọng về hiệu năng, khả năng mở rộng và bảo mật.
+Cấu trúc cơ sở dữ liệu được đề xuất tập trung vào các thực thể chính như Người dùng, Phim, Rạp chiếu, Phòng chiếu, Suất chiếu, Ghế, Đặt vé, và Thanh toán, cùng với các mối quan hệ được xác định rõ ràng để duy trì tính toàn vẹn dữ liệu. Để đối phó với thách thức kiểm soát đồng thời, đặc biệt là trong các giao dịch đặt ghế, chiến lược khóa lạc quan (Optimistic Locking) được ưu tiên, kết hợp với cơ chế thử lại mạnh mẽ và quản lý giao dịch nguyên tử. Phương pháp này cho phép hệ thống duy trì mức độ đồng thời cao trong khi vẫn đảm bảo không có tình trạng đặt vé trùng lặp.
+Các chiến lược tối ưu hóa hiệu năng và khả năng mở rộng như đánh chỉ mục chiến lược, phân vùng dữ liệu, caching thông minh và sao chép dữ liệu cũng được tích hợp vào thiết kế. Những biện pháp này là cần thiết để hệ thống có thể xử lý lưu lượng truy cập lớn trong giờ cao điểm và mở rộng linh hoạt theo sự tăng trưởng của người dùng và dữ liệu. Về lựa chọn công nghệ, PostgreSQL hoặc MySQL được khuyến nghị làm hệ quản trị cơ sở dữ liệu quan hệ (RDBMS) chính, với khả năng tích hợp cơ sở dữ liệu NoSQL cho các trường hợp sử dụng cụ thể như lưu trữ dữ liệu phi cấu trúc hoặc caching. Thiết kế này cung cấp một nền tảng vững chắc, có thể mở rộng và đáng tin cậy cho hệ thống đặt vé xem phim trực tuyến.
+2. Giới thiệu và Phạm vi Dự án
+Hệ thống đặt vé xem phim trực tuyến được thiết kế nhằm cung cấp một giải pháp hiện đại và tiện lợi cho người dùng, thay thế phương thức mua vé truyền thống tại quầy. Mục tiêu chính là tạo ra một nền tảng dễ sử dụng, cho phép khách hàng thực hiện toàn bộ quy trình đặt vé từ xa một cách nhanh chóng và hiệu quả.
+Mục tiêu của hệ thống đặt vé xem phim trực tuyến:
+Hệ thống được xây dựng với các mục tiêu cụ thể sau:
+* Cung cấp trải nghiệm đặt vé tiện lợi và nhanh chóng: Người dùng có thể dễ dàng mua vé trực tuyến, chủ động lựa chọn chỗ ngồi ưng ý mà không cần phải đến rạp hay xếp hàng chờ đợi.1 Khi việc đặt vé hoàn tất, khách hàng có thể sử dụng trực tiếp vé QR Code để tiến thẳng vào rạp chiếu, tối ưu hóa trải nghiệm và giảm thiểu thời gian chờ đợi.1
+* Đảm bảo cập nhật thông tin theo thời gian thực: Hệ thống cần liên tục cập nhật lịch chiếu phim và tình trạng ghế trống để người dùng luôn có thông tin chính xác nhất.3 Khả năng hiển thị sơ đồ ghế và phân biệt ghế đã đặt, ghế trống là yếu tố then chốt để người dùng đưa ra quyết định.4
+* Tích hợp các cổng thanh toán an toàn và đa dạng: Để đáp ứng nhu cầu của nhiều đối tượng người dùng, hệ thống sẽ hỗ trợ các hình thức thanh toán trực tuyến phổ biến như thẻ ATM, Visa, và các ví điện tử hàng đầu như Momo, ZaloPay, ViettelPay, VinID, và VNPAY.1 Việc xử lý thông tin thanh toán phải được đảm bảo an toàn và bảo mật.3
+* Nâng cao trải nghiệm người dùng thông qua quản lý tài khoản thành viên: Hệ thống sẽ cho phép người dùng quản lý tài khoản thành viên một cách dễ dàng, bao gồm lịch sử tích điểm qua các giao dịch và khả năng sử dụng voucher giảm giá.1 Điều này khuyến khích sự gắn kết của khách hàng và tạo ra các chương trình khách hàng thân thiết hiệu quả.
+Các chức năng cốt lõi và yêu cầu phi chức năng chính:
+Để đạt được các mục tiêu trên, hệ thống được thiết kế với các chức năng và yêu cầu phi chức năng cụ thể:
+* Chức năng cốt lõi:
+   * Quản lý người dùng: Cho phép đăng ký tài khoản mới, đăng nhập, và quản lý hồ sơ cá nhân.5
+   * Tìm kiếm và xem thông tin phim: Người dùng có thể tìm kiếm phim theo nhiều tiêu chí (tên, thể loại, diễn viên, đạo diễn, ngôn ngữ, thành phố) và xem thông tin chi tiết bao gồm tóm tắt nội dung, thời lượng, và trailer.4
+   * Tra cứu lịch chiếu: Cung cấp khả năng xem lịch chiếu theo ngày, phim hoặc rạp.3
+   * Lựa chọn ghế và tạo đơn đặt vé: Cho phép người dùng chọn ghế trên sơ đồ phòng chiếu và tạo đơn đặt vé.2
+   * Xử lý thanh toán: Tích hợp các cổng thanh toán để hoàn tất giao dịch.2
+   * Hủy vé và hoàn tiền: Hỗ trợ quy trình hủy vé trong một khung thời gian nhất định và xử lý hoàn tiền.3
+   * Chức năng quản trị hệ thống: Bao gồm quản lý phim, rạp, suất chiếu, và tài khoản người dùng.4
+* Yêu cầu phi chức năng:
+   * Hiệu năng: Hệ thống phải có thời gian phản hồi nhanh chóng khi duyệt phim, xem lịch chiếu và đặt vé, ngay cả dưới tải trọng cao.3 Điều này đảm bảo trải nghiệm người dùng mượt mà và không bị gián đoạn.
+   * Khả năng mở rộng: Khả năng xử lý một lượng lớn người dùng đồng thời, đặc biệt trong các giờ cao điểm hoặc khi có phim bom tấn mới ra mắt, và dễ dàng mở rộng khi lượng dữ liệu tăng lên.3
+   * Độ tin cậy: Hệ thống phải có tính sẵn sàng cao, đảm bảo người dùng có thể đặt vé mọi lúc, mọi nơi với thời gian ngừng hoạt động tối thiểu.3 Điều này đòi hỏi các giải pháp kiến trúc có khả năng chịu lỗi và phục hồi nhanh chóng.
+   * Bảo mật: Bảo vệ thông tin người dùng và thanh toán là ưu tiên hàng đầu, bao gồm việc ngăn chặn đặt vé trùng lặp.3 Điều này đòi hỏi các cơ chế xác thực và ủy quyền mạnh mẽ, sử dụng HTTPS cho mọi giao tiếp, áp dụng rate limiting, và tuân thủ các tiêu chuẩn bảo mật như GDPR và PCI-DSS.4
+3. Phân tích Yêu cầu Hệ thống
+Để thiết kế một cơ sở dữ liệu hiệu quả, việc phân tích chi tiết các yêu cầu chức năng và phi chức năng của hệ thống là vô cùng quan trọng. Điều này giúp xác định các thực thể dữ liệu cần thiết, mối quan hệ giữa chúng, và các ràng buộc để đảm bảo tính toàn vẹn và hiệu suất.
+Yêu cầu Chức năng Chi tiết:
+* Quản lý người dùng:
+   * Đăng ký và đăng nhập: Người dùng cần có khả năng tạo tài khoản mới bằng cách cung cấp các thông tin cơ bản như email, mật khẩu và tên. Sau khi đăng ký thành công, họ có thể đăng nhập để truy cập các tính năng cá nhân hóa và xem lịch sử giao dịch.5 Giao diện đăng nhập cần thân thiện và dễ sử dụng.5
+   * Hồ sơ người dùng: Hệ thống phải cho phép người dùng quản lý thông tin cá nhân của họ, xem lịch sử đặt vé đã thực hiện, và theo dõi điểm tích lũy từ các giao dịch trước đây.1
+   * Tích lũy điểm/voucher: Để khuyến khích khách hàng quay lại, hệ thống cần hỗ trợ các chương trình khách hàng thân thiết, cho phép người dùng tích lũy điểm thưởng và sử dụng voucher giảm giá hoặc ưu đãi đặc biệt khi thanh toán.1
+   * Phân quyền người dùng: Hệ thống cần hỗ trợ các vai trò người dùng khác nhau (ví dụ: Admin, Customer, FrontDeskOfficer) để quản lý quyền truy cập và thao tác trên hệ thống.
+* Quản lý phim:
+   * Tìm kiếm phim: Người dùng phải có khả năng tìm kiếm các bộ phim theo nhiều tiêu chí khác nhau như tên phim, thể loại, diễn viên, đạo diễn, ngôn ngữ, và thành phố.4 Hệ thống cũng nên cho phép lọc phim theo các danh mục như phim đang chiếu hoặc phim sắp chiếu.5
+   * Xem thông tin chi tiết phim: Khi chọn một bộ phim, người dùng có thể xem thông tin chi tiết bao gồm tóm tắt nội dung, dàn diễn viên, đạo diễn, thời lượng, thể loại và trailer.5 Thông tin này giúp người dùng có cái nhìn tổng quan và quyết định xem có nên xem bộ phim đó hay không.5
+   * Cập nhật tin tức phim mới nhất: Hệ thống cần liên tục cập nhật thông tin về các bộ phim sắp chiếu, phim đang chiếu và các bộ phim có suất chiếu đặc biệt để người dùng tiện theo dõi.1
+   * Đánh giá và bình luận phim: Người dùng có thể xem các đánh giá và nhận xét từ những người đã xem phim để có cái nhìn khách quan hơn về bộ phim. Ngoài ra, sau khi xem phim, người dùng cũng có thể tự đánh giá (vote) và để lại nhận xét (comment) để chia sẻ cảm nhận của mình với cộng đồng.2
+   * Quản lý phim yêu thích: Người dùng có thể đánh dấu các bộ phim yêu thích của mình để dễ dàng theo dõi và truy cập lại sau này.
+* Quản lý rạp và phòng chiếu:
+   * Tra cứu vị trí rạp: Hệ thống cần hỗ trợ chức năng tìm kiếm rạp chiếu phim gần vị trí hiện tại của người dùng nhất.1
+   * Xem thông tin rạp: Hiển thị tên rạp, địa chỉ, và danh sách các phòng chiếu có sẵn trong rạp đó.3
+   * Sơ đồ ghế: Cung cấp giao diện trực quan hiển thị bố cục ghế trong từng phòng chiếu, phân biệt rõ ràng giữa ghế trống, ghế đã đặt, và các loại ghế khác nhau (ví dụ: ghế thường, ghế VIP, ghế đôi).4
+* Quản lý suất chiếu:
+   * Xem lịch chiếu: Người dùng có thể xem lịch chiếu phim theo ngày cụ thể, theo một bộ phim cụ thể tại các rạp khác nhau, hoặc theo một rạp chiếu cụ thể.3
+   * Cập nhật lịch chiếu và ưu đãi: Hệ thống cần cập nhật nhanh chóng các lịch chiếu mới và thông tin về các chương trình khuyến mãi hấp dẫn.1
+* Quy trình đặt vé:
+   * Lựa chọn linh hoạt: Cho phép người dùng chọn phim, ngày chiếu, rạp, và ghế ngồi một cách chủ động, bao gồm cả việc lựa chọn chỗ đẹp nhất mà không cần ra rạp.1
+   * Vé QR Code: Khách hàng có thể sử dụng trực tiếp vé QR Code để tiến thẳng vào rạp chiếu mà không phải xếp hàng.1
+   * Đặt trước đồ ăn thức uống: Hệ thống có thể hỗ trợ tính năng đặt trước đồ ăn thức uống với các ưu đãi đi kèm.1
+* Quy trình thanh toán:
+   * Tích hợp cổng thanh toán đa dạng: Hỗ trợ thanh toán trực tuyến qua các phương thức phổ biến như thẻ ATM, Visa, và các ví điện tử như Momo, ZaloPay, ViettelPay, VinID, VNPAY.1
+   * Áp dụng mã giảm giá/voucher: Cho phép người dùng nhập và áp dụng mã giảm giá hoặc voucher trong quá trình thanh toán để nhận ưu đãi.1
+   * Thanh toán tại Kiosk: Hệ thống có thể tích hợp với các kiosk tự động để thanh toán không dùng tiền mặt và nhận vé xem phim đã đặt trước.9
+* Thông báo và cập nhật: Hệ thống cần gửi thông báo kịp thời cho người dùng về các phim mới, xác nhận đặt vé, hoặc thông tin hủy vé.4
+* Chức năng quản trị: Bao gồm quản lý phim, rạp, suất chiếu, và tài khoản người dùng.4 Ngoài ra, quản trị viên có thể quản lý các khóa API (ApiToken) để kiểm soát quyền truy cập của các ứng dụng/tích hợp bên ngoài.
+Yêu cầu Phi chức năng:
+Các yêu cầu phi chức năng là yếu tố quyết định chất lượng và khả năng vận hành của hệ thống trong môi trường thực tế.
+* Hiệu năng: Hệ thống phải có thời gian phản hồi nhanh chóng khi duyệt phim, xem lịch chiếu và đặt vé, ngay cả dưới tải trọng cao.3 Điều này đảm bảo trải nghiệm người dùng mượt mà và không bị gián đoạn.
+* Khả năng mở rộng: Khả năng xử lý một lượng lớn người dùng đồng thời, đặc biệt trong các giờ cao điểm hoặc khi có phim bom tấn mới ra mắt, và dễ dàng mở rộng khi lượng dữ liệu tăng lên.3
+* Độ tin cậy: Hệ thống phải có tính sẵn sàng cao, đảm bảo người dùng có thể đặt vé mọi lúc, mọi nơi với thời gian ngừng hoạt động tối thiểu.3 Điều này đòi hỏi các giải pháp kiến trúc có khả năng chịu lỗi và phục hồi nhanh chóng.
+* Bảo mật: Bảo vệ thông tin người dùng và thanh toán là ưu tiên hàng đầu, bao gồm việc ngăn chặn đặt vé trùng lặp.3 Điều này đòi hỏi các cơ chế xác thực và ủy quyền mạnh mẽ, sử dụng HTTPS cho mọi giao tiếp, áp dụng rate limiting, và tuân thủ các tiêu chuẩn bảo mật như GDPR và PCI-DSS.4
+4. Thiết kế Cơ sở Dữ liệu Quan hệ
+Thiết kế cơ sở dữ liệu quan hệ là xương sống của hệ thống đặt vé xem phim, cung cấp cấu trúc logic để lưu trữ, quản lý và truy xuất dữ liệu một cách hiệu quả. Việc lựa chọn mô hình quan hệ là phù hợp nhất cho hệ thống này do tính chất có cấu trúc cao của dữ liệu (phim, rạp, suất chiếu, ghế) và yêu cầu chặt chẽ về tính toàn vẹn giao dịch (đặt vé, thanh toán).
+Mô hình Thực thể-Quan hệ (ERD) Tổng quan:
+Sơ đồ ERD là một công cụ thiết yếu để trực quan hóa cấu trúc cơ sở dữ liệu, xác định các thực thể, thuộc tính và mối quan hệ giữa chúng. Nó đảm bảo tính toàn vẹn dữ liệu và quản lý hiệu quả.10 Các thực thể cốt lõi trong hệ thống đặt vé xem phim bao gồm Người dùng (User), Phim (Movie), Rạp chiếu (Cinema), Phòng chiếu (CinemaHall), Suất chiếu (Show), Ghế (Seat), Đặt vé (Booking), và Thanh toán (Payment).3
+Việc thiết kế ERD từ sớm là một bước chiến lược. Nó giúp phát hiện và giải quyết các vấn đề tiềm ẩn về mối quan hệ dữ liệu và tính nhất quán trước khi đi vào giai đoạn triển khai. Điều này giảm thiểu đáng kể rủi ro và chi phí sửa đổi sau này, vì một mô hình dữ liệu vững chắc, được xác định rõ ràng ngay từ đầu, đảm bảo rằng tất cả các yêu cầu chức năng của hệ thống đều được hỗ trợ bởi một cấu trúc dữ liệu phù hợp.
+Chi tiết các Thực thể, Thuộc tính và Khóa:
+Dưới đây là danh sách các thực thể chính, thuộc tính và các khóa (khóa chính - PK, khóa ngoại - FK) được đề xuất, dựa trên phân tích yêu cầu và các tài liệu nghiên cứu.4
+* Vai trò (Role):
+   * RoleID (PK, INT): Mã định danh duy nhất cho vai trò.
+   * RoleName (NVARCHAR(50), UNIQUE): Tên vai trò (ví dụ: 'Admin', 'Customer', 'FrontDeskOfficer').
+   * Description (NVARCHAR(255), NULLABLE): Mô tả chi tiết về vai trò.
+   * Thực thể Role được thêm vào để quản lý phân quyền người dùng, cho phép mỗi người dùng có một vai trò cụ thể, từ đó xác định quyền truy cập và thao tác của họ trong hệ thống.
+* Người dùng (User):
+   * UserID (PK, INT): Mã định danh duy nhất cho người dùng.
+   * Name (NVARCHAR(255)): Tên đầy đủ của người dùng.
+   * Email (NVARCHAR(255), UNIQUE): Địa chỉ email, dùng làm tên đăng nhập và phải là duy nhất.
+   * Phone (NVARCHAR(20)): Số điện thoại liên hệ.
+   * PasswordHash (NVARCHAR(255)): Mã băm của mật khẩu để đảm bảo bảo mật.
+   * LoyaltyPoints (DECIMAL(10, 2), DEFAULT 0.00): Điểm tích lũy của thành viên.
+   * RegistrationDate (DATETIME, DEFAULT GETDATE()): Thời điểm người dùng đăng ký tài khoản.
+   * IsActive (BIT, DEFAULT 1): Trạng thái tài khoản (kích hoạt/khóa), phục vụ chức năng quản trị.4
+   * RoleID (FK, INT): Khóa ngoại liên kết với bảng Role, cho biết vai trò của người dùng.
+   * Việc bao gồm các thuộc tính như LoyaltyPoints và IsActive trực tiếp trong bảng User phản ánh các yêu cầu kinh doanh cụ thể. LoyaltyPoints hỗ trợ chương trình khách hàng thân thiết, cho phép người dùng tích lũy điểm và sử dụng voucher giảm giá khi thanh toán.1 IsActive cho phép quản trị viên hệ thống có khả năng khóa hoặc mở khóa tài khoản người dùng khi cần thiết.4 Điều này giúp truy vấn nhanh chóng thông tin liên quan đến thành viên và quản lý tài khoản mà không cần phải kết nối (join) với nhiều bảng phụ, tối ưu hóa hiệu suất cho các tác vụ quản lý người dùng thường xuyên.
+* Thành phố (City):
+   * CityID (PK, INT): Mã định danh duy nhất cho thành phố.
+   * Name (NVARCHAR(255), UNIQUE): Tên thành phố, phải là duy nhất.
+   * Thực thể City là một thành phần cơ bản để tổ chức các rạp chiếu phim theo địa lý.4 Việc đảm bảo tên thành phố là duy nhất giúp duy trì tính nhất quán dữ liệu và đơn giản hóa việc tìm kiếm rạp theo thành phố, một chức năng quan trọng đối với người dùng.4
+* Rạp chiếu (Cinema):
+   * CinemaID (PK, INT): Mã định danh duy nhất cho rạp chiếu.
+   * Name (NVARCHAR(255)): Tên của rạp chiếu phim.
+   * Address (NVARCHAR(500)): Địa chỉ cụ thể của rạp.
+   * CityID (FK, INT): Khóa ngoại liên kết với bảng City, cho biết rạp thuộc thành phố nào.4
+   * ContactInfo (NVARCHAR(255)): Thông tin liên hệ của rạp.
+   * Mối quan hệ một-nhiều (1:N) giữa City và Cinema là nền tảng cho chức năng tìm kiếm rạp theo địa điểm.1 Việc có Address và ContactInfo trực tiếp trong bảng Cinema giúp người dùng dễ dàng tra cứu thông tin cần thiết về rạp mà họ quan tâm.
+* Phòng chiếu (CinemaHall):
+   * HallID (PK, INT): Mã định danh duy nhất cho phòng chiếu.
+   * CinemaID (FK, INT): Khóa ngoại liên kết với bảng Cinema, cho biết phòng chiếu thuộc rạp nào.4
+   * Name (NVARCHAR(255)): Tên phòng chiếu (ví dụ: Hall 1, VIP Hall).
+   * TotalSeats (INT): Tổng số ghế trong phòng chiếu.4
+   * Thuộc tính TotalSeats là một thông tin quan trọng để xác định sức chứa của phòng chiếu. Nó hỗ trợ việc kiểm tra tính khả dụng của ghế trong quá trình đặt vé, giúp hệ thống nhanh chóng xác định số lượng ghế còn trống và quản lý hiệu quả các suất chiếu.
+* Phim (Movie):
+   * MovieID (PK, INT): Mã định danh duy nhất cho phim.
+   * Title (NVARCHAR(500)): Tên phim.
+   * Description (NVARCHAR(MAX)): Tóm tắt nội dung phim.
+   * Duration (INT, in minutes): Thời lượng phim.
+   * Language (NVARCHAR(50)): Ngôn ngữ phim.
+   * ReleaseDate (DATE): Ngày phát hành.
+   * TrailerURL (NVARCHAR(500)): Đường dẫn URL đến trailer phim.5
+   * PosterURL (NVARCHAR(500)): Đường dẫn URL đến ảnh poster phim.
+   * Rating (DECIMAL(2, 1)): Đánh giá tổng thể của phim (ví dụ: IMDb rating). Giá trị này thường là giá trị tổng hợp (trung bình) từ các đánh giá chi tiết của người dùng trong bảng Vote.
+   * Các thuộc tính như TrailerURL, PosterURL, và Rating được thêm vào để nâng cao trải nghiệm người dùng. Mặc dù không phải lúc nào cũng được liệt kê rõ ràng trong các yêu cầu chức năng cốt lõi, chúng là những yếu tố quan trọng giúp người dùng có cái nhìn tổng quan về bộ phim và đưa ra quyết định xem phim.5
+* Người (Person):
+   * PersonID (PK, INT): Mã định danh duy nhất cho một cá nhân (đạo diễn, diễn viên).
+   * Name (NVARCHAR(255)): Tên đầy đủ của người.
+   * DateOfBirth (DATE, NULLABLE): Ngày sinh của người.
+   * Biography (NVARCHAR(MAX), NULLABLE): Tiểu sử hoặc thông tin mô tả về người.
+   * Nationality (NVARCHAR(100), NULLABLE): Quốc tịch của người.
+   * PhotoURL (NVARCHAR(500), NULLABLE): Đường dẫn URL đến ảnh của người.
+   * Thực thể Person được tạo ra để chuẩn hóa thông tin về đạo diễn và diễn viên, tránh trùng lặp dữ liệu và cho phép quản lý thông tin chi tiết về từng cá nhân.
+* Phim - Đạo diễn (MovieDirector):
+   * MovieDirectorID (PK, INT): Mã định danh duy nhất cho mối liên kết.
+   * MovieID (FK, INT): Khóa ngoại liên kết với bảng Movie.
+   * PersonID (FK, INT): Khóa ngoại liên kết với bảng Person (đại diện cho đạo diễn).
+   * UNIQUE (MovieID, PersonID): Đảm bảo một đạo diễn chỉ được gán một lần cho một phim.
+   * Bảng trung gian này giải quyết mối quan hệ nhiều-nhiều giữa Movie và Person (khi Person đóng vai trò đạo diễn), cho phép một phim có nhiều đạo diễn và một đạo diễn làm nhiều phim.
+* Phim - Diễn viên (MovieActor):
+   * MovieActorID (PK, INT): Mã định danh duy nhất cho mối liên kết.
+   * MovieID (FK, INT): Khóa ngoại liên kết với bảng Movie.
+   * PersonID (FK, INT): Khóa ngoại liên kết với bảng Person (đại diện cho diễn viên).
+   * RoleName (NVARCHAR(255), NULLABLE): Tên vai diễn của diễn viên trong phim (ví dụ: "John Wick", "Neo").
+   * UNIQUE (MovieID, PersonID): Đảm bảo một diễn viên chỉ được gán một lần cho một phim.
+   * Bảng trung gian này giải quyết mối quan hệ nhiều-nhiều giữa Movie và Person (khi Person đóng vai trò diễn viên), cho phép một phim có nhiều diễn viên và một diễn viên đóng nhiều phim.
+* Thể loại (Genre):
+   * GenreID (PK, INT): Mã định danh duy nhất cho thể loại.
+   * Name (NVARCHAR(100), UNIQUE): Tên thể loại (ví dụ: 'Hành động', 'Hài', 'Kinh dị').
+   * Thực thể Genre được tạo ra để chuẩn hóa thông tin thể loại, cho phép một bộ phim có thể thuộc nhiều thể loại khác nhau.
+* Phim - Thể loại (MovieGenre):
+   * MovieGenreID (PK, INT): Mã định danh duy nhất cho mối liên kết.
+   * MovieID (FK, INT): Khóa ngoại liên kết với bảng Movie.
+   * GenreID (FK, INT): Khóa ngoại liên kết với bảng Genre.
+   * UNIQUE (MovieID, GenreID): Đảm bảo một thể loại chỉ được gán một lần cho một phim.
+   * Bảng trung gian này giải quyết mối quan hệ nhiều-nhiều giữa Movie và Genre, cho phép một phim có nhiều thể loại và một thể loại áp dụng cho nhiều phim.
+* Suất chiếu (Show):
+   * ShowID (PK, INT): Mã định danh duy nhất cho suất chiếu.
+   * MovieID (FK, INT): Khóa ngoại liên kết với bảng Movie.4
+   * HallID (FK, INT): Khóa ngoại liên kết với bảng CinemaHall.4
+   * StartTime (DATETIME): Thời gian bắt đầu suất chiếu.4
+   * EndTime (DATETIME): Thời gian kết thúc suất chiếu.4
+   * TicketPrice (DECIMAL(10, 2)): Giá vé cơ bản cho suất chiếu này.
+   * Thực thể Show là trung tâm, kết nối phim, rạp, và thời gian, hình thành xương sống của quy trình đặt vé.4 Việc lưu trữ cả StartTime và EndTime giúp đơn giản hóa các truy vấn liên quan đến lịch trình và tránh các tính toán phức tạp trong thời gian thực, đảm bảo hiệu suất khi hiển thị lịch chiếu.3
+* Ghế (Seat):
+   * SeatID (PK, INT): Mã định danh duy nhất cho một ghế vật lý.
+   * HallID (FK, INT): Khóa ngoại liên kết với bảng CinemaHall, cho biết ghế thuộc phòng chiếu nào.4
+   * RowNumber (NVARCHAR(10)): Hàng ghế (ví dụ: A, B, C).
+   * ColumnNumber (INT): Số ghế trong hàng (ví dụ: 1, 2, 3).
+   * SeatType (NVARCHAR(50)): Loại ghế, có thể ảnh hưởng đến giá vé.3
+   * Việc tách Seat thành một thực thể riêng biệt (đại diện cho ghế vật lý trong phòng chiếu) thay vì gán trực tiếp vào suất chiếu giúp quản lý sơ đồ ghế một cách linh hoạt hơn.4 Nó cũng hỗ trợ việc định nghĩa các loại ghế khác nhau với mức giá khác nhau, đáp ứng nhu cầu đa dạng của người dùng.3
+* Mã giảm giá (Coupon):
+   * CouponID (PK, INT): Mã định danh duy nhất cho mã giảm giá.
+   * Code (NVARCHAR(50), UNIQUE): Mã giảm giá duy nhất mà người dùng nhập.
+   * DiscountValue (DECIMAL(10, 2)): Giá trị giảm giá.
+   * DiscountType (NVARCHAR(50)): Loại giảm giá (phần trăm hay số tiền cố định).
+   * ExpirationDate (DATE): Ngày hết hạn của mã giảm giá.4
+   * UsageLimit (INT, NULLABLE): Giới hạn số lần sử dụng của mã giảm giá (ví dụ: 1 cho một lần dùng duy nhất, NULL cho không giới hạn).
+   * CurrentUsageCount (INT, DEFAULT 0): Số lần mã giảm giá đã được sử dụng.
+   * Các thuộc tính như DiscountType, UsageLimit, và CurrentUsageCount giúp quản lý các chương trình khuyến mãi một cách linh hoạt và kiểm soát chặt chẽ hơn, tránh lạm dụng mã giảm giá.4 Điều này cho phép hệ thống triển khai các chiến dịch marketing đa dạng và hiệu quả.
+* Đặt vé (Booking):
+   * BookingID (PK, INT): Mã định danh duy nhất cho một đơn đặt vé.
+   * UserID (FK, INT): Khóa ngoại liên kết với bảng User.4
+   * ShowID (FK, INT): Khóa ngoại liên kết với bảng Show.4
+   * BookingTime (DATETIME, DEFAULT GETDATE()): Thời gian đơn đặt vé được tạo.
+   * NumberOfSeats (INT): Tổng số ghế trong đơn đặt vé này.4
+   * TotalPrice (DECIMAL(10, 2)): Tổng giá trị của đơn đặt vé.
+   * Status (NVARCHAR(50)): Trạng thái của đơn đặt vé (ví dụ: 'Pending', 'Confirmed', 'Cancelled', 'Refunded').4
+   * QRCodeData (NVARCHAR(MAX)): Dữ liệu cho mã QR code để vào rạp.1
+   * Trường Status là cực kỳ quan trọng để quản lý vòng đời của một đơn đặt vé, từ khi tạo đến khi xác nhận, hủy bỏ hoặc hoàn tiền.3 Thuộc tính QRCodeData hỗ trợ trực tiếp tính năng vào rạp bằng QR code, mang lại sự tiện lợi cho khách hàng khi không cần xếp hàng.1
+* Ghế Đặt (BookedSeat): (Bảng trung gian cho mối quan hệ N:M giữa Booking và Seat cho một Show cụ thể)
+   * BookedSeatID (PK, INT): Mã định danh duy nhất cho một bản ghi ghế đã đặt.
+   * BookingID (FK, INT): Khóa ngoại liên kết với bảng Booking.4
+   * SeatID (FK, INT): Khóa ngoại liên kết với bảng Seat.4
+   * ShowID (FK, INT): Khóa ngoại liên kết với bảng Show. (Mặc dù có thể truy vấn qua Booking.ShowID, việc có trực tiếp ShowID ở đây giúp tối ưu hóa truy vấn kiểm tra tính khả dụng của ghế cho một suất chiếu cụ thể).
+   * IsReserved (BIT, DEFAULT 1): Trạng thái của ghế cho suất chiếu này (đã đặt/chưa đặt).4
+   * ReservedByUserID (INT, NULLABLE): ID của người dùng đã đặt ghế, quan trọng cho kiểm soát đồng thời lạc quan.4
+   * ReservationTimestamp (DATETIME, DEFAULT GETDATE()): Thời điểm ghế này được đặt cho suất chiếu này.
+   * Bảng BookedSeat là cốt lõi để giải quyết vấn đề kiểm soát đồng thời và ngăn chặn việc đặt trùng ghế.12 Các trường IsReserved và ReservedByUserID được sử dụng trong chiến lược khóa lạc quan để phát hiện và xử lý các xung đột, đảm bảo rằng một ghế không thể được đặt bởi hai người dùng cùng một lúc.4 Việc có ShowID trực tiếp ở đây giúp tăng hiệu suất truy vấn khi cần kiểm tra tình trạng ghế trống cho một suất chiếu cụ thể, giảm thiểu các phép join phức tạp.
+* Thanh toán (Payment):
+   * PaymentID (PK, INT): Mã định danh duy nhất cho giao dịch thanh toán.
+   * BookingID (FK, INT, UNIQUE): Khóa ngoại liên kết với bảng Booking, đảm bảo mối quan hệ 1:1.4
+   * Amount (DECIMAL(10, 2)): Số tiền thanh toán.4
+   * PaymentTime (DATETIME, DEFAULT GETDATE()): Thời gian giao dịch thanh toán.4
+   * PaymentStatus (NVARCHAR(50)): Trạng thái của giao dịch (ví dụ: 'Pending', 'Completed', 'Failed', 'Refunded').4
+   * PaymentMethod (NVARCHAR(50)): Phương thức thanh toán (ví dụ: 'CreditCard', 'Cash', 'Momo', 'ZaloPay', 'VNPAY').4
+   * TransactionID (NVARCHAR(255)): Mã giao dịch từ cổng thanh toán.10
+   * CouponID (FK, INT, NULLABLE): Khóa ngoại liên kết với bảng Coupon nếu có mã giảm giá được áp dụng.4
+   * TransactionID từ cổng thanh toán là cực kỳ quan trọng cho việc đối soát và kiểm toán tài chính, đảm bảo sự minh bạch và chính xác trong các giao dịch.10 Mối quan hệ 1:1 với Booking đảm bảo mỗi đơn đặt vé chỉ có một giao dịch thanh toán chính, duy trì tính toàn vẹn dữ liệu tài chính.
+* Đánh giá (Vote):
+   * VoteID (PK, INT): Mã định danh duy nhất cho một lượt đánh giá.
+   * UserID (FK, INT): Khóa ngoại liên kết với bảng User, cho biết người dùng nào đã đánh giá.
+   * MovieID (FK, INT): Khóa ngoại liên kết với bảng Movie, cho biết phim nào được đánh giá.
+   * RatingValue (INT): Giá trị đánh giá (ví dụ: từ 1 đến 5 sao), với ràng buộc CHECK (RatingValue >= 1 AND RatingValue <= 5).
+   * VoteTime (DATETIME, DEFAULT GETDATE()): Thời điểm người dùng thực hiện đánh giá.
+   * UNIQUE (UserID, MovieID): Đảm bảo mỗi người dùng chỉ có thể đánh giá một lần cho mỗi bộ phim.
+   * Thực thể Vote cho phép thu thập phản hồi định lượng từ người dùng về chất lượng phim, góp phần vào điểm Rating tổng thể của phim.
+* Bình luận (Comment):
+   * CommentID (PK, INT): Mã định danh duy nhất cho một bình luận.
+   * UserID (FK, INT): Khóa ngoại liên kết với bảng User, cho biết người dùng nào đã bình luận.
+   * MovieID (FK, INT): Khóa ngoại liên kết với bảng Movie, cho biết phim nào được bình luận.
+   * CommentText (NVARCHAR(MAX)): Nội dung của bình luận.
+   * CommentTime (DATETIME, DEFAULT GETDATE()): Thời điểm bình luận được tạo.
+   * ParentCommentID (FK, INT, NULLABLE): Khóa ngoại tự tham chiếu đến CommentID của một bình luận khác, cho phép tạo cấu trúc bình luận phân cấp (bình luận phản hồi).
+   * IsApproved (BIT, DEFAULT 0): Trạng thái kiểm duyệt của bình luận (0: chưa duyệt, 1: đã duyệt), hỗ trợ quản lý nội dung.
+   * Thực thể Comment cung cấp không gian cho người dùng chia sẻ ý kiến, thảo luận về phim, và tương tác với cộng đồng, nâng cao tính tương tác của hệ thống.
+* Phim yêu thích (MovieFavorite):
+   * MovieFavoriteID (PK, INT): Mã định danh duy nhất cho một bản ghi phim yêu thích.
+   * UserID (FK, INT): Khóa ngoại liên kết với bảng User, cho biết người dùng nào đã đánh dấu phim yêu thích.
+   * MovieID (FK, INT): Khóa ngoại liên kết với bảng Movie, cho biết phim nào được đánh dấu là yêu thích.
+   * FavoriteTime (DATETIME, DEFAULT GETDATE()): Thời điểm phim được đánh dấu là yêu thích.
+   * UNIQUE (UserID, MovieID): Đảm bảo mỗi người dùng chỉ có thể đánh dấu một phim là yêu thích một lần.
+   * Bảng MovieFavorite cho phép người dùng cá nhân hóa trải nghiệm bằng cách lưu trữ danh sách các bộ phim mà họ quan tâm.
+* Token (Quản lý token xác thực người dùng):
+   * TokenID (PK, BIGINT): Mã định danh duy nhất cho mỗi token.
+   * UserID (FK, INT): Liên kết token với người dùng cụ thể sở hữu nó.
+   * TokenValue (NVARCHAR(255), UNIQUE): Chuỗi token thực tế (đã được hash hoặc mã hóa).
+   * TokenType (NVARCHAR(50)): Phân loại token (ví dụ: 'access', 'refresh', 'password_reset').
+   * IssuedAt (DATETIME): Dấu thời gian khi token được tạo.
+   * ExpiresAt (DATETIME): Dấu thời gian khi token trở nên không hợp lệ.
+   * IsRevoked (BIT, DEFAULT 0): Cờ để vô hiệu hóa ngay lập tức một token.
+   * LastUsedAt (DATETIME, NULLABLE): Dấu thời gian sử dụng thành công cuối cùng của token (đối với hết hạn theo thời gian không hoạt động, xoay vòng token).
+   * Metadata (NVARCHAR(MAX), NULLABLE): Lưu trữ ngữ cảnh bổ sung như thông tin thiết bị, địa chỉ IP.
+   * Version (INT, DEFAULT 1): Số phiên bản để triển khai khóa lạc quan.
+   * Bảng này tập trung quản lý tất cả các loại token xác thực người dùng, cho phép đăng xuất toàn cầu, quản lý phiên và kiểm soát chi tiết quyền truy cập của người dùng.
+Bảng Tóm tắt Thực thể và Khóa
+Bảng dưới đây cung cấp một cái nhìn tổng quan nhanh chóng và rõ ràng về cấu trúc cơ sở dữ liệu cốt lõi, làm nổi bật các khóa chính và khóa ngoại để dễ dàng nắm bắt mối quan hệ giữa các thực thể. Đây là một tài liệu tham khảo nhanh vô giá cho các nhà phát triển và thành viên mới trong nhóm, giúp họ nhanh chóng hiểu được cấu trúc dữ liệu chính của hệ thống.
+Thực thể (Table)
+	Khóa chính (PK)
+	Thuộc tính quan trọng
+	Khóa ngoại (FK) & Bảng tham chiếu
+	Role
+	RoleID
+	RoleName, Description
+	-
+	User
+	UserID
+	Name, Email, Phone, PasswordHash, LoyaltyPoints, IsActive
+	RoleID (Role)
+	City
+	CityID
+	Name
+	-
+	Cinema
+	CinemaID
+	Name, Address, ContactInfo
+	CityID (City)
+	CinemaHall
+	HallID
+	Name, TotalSeats
+	CinemaID (Cinema)
+	Movie
+	MovieID
+	Title, Description, Duration, Language, ReleaseDate, TrailerURL, PosterURL, Rating
+	-
+	Person
+	PersonID
+	Name, DateOfBirth, Biography, Nationality, PhotoURL
+	-
+	MovieDirector
+	MovieDirectorID
+	-
+	MovieID (Movie), PersonID (Person)
+	MovieActor
+	MovieActorID
+	RoleName
+	MovieID (Movie), PersonID (Person)
+	Genre
+	GenreID
+	Name
+	-
+	MovieGenre
+	MovieGenreID
+	-
+	MovieID (Movie), GenreID (Genre)
+	Show
+	ShowID
+	StartTime, EndTime, TicketPrice
+	MovieID (Movie), HallID (CinemaHall)
+	Seat
+	SeatID
+	RowNumber, ColumnNumber, SeatType
+	HallID (CinemaHall)
+	Booking
+	BookingID
+	BookingTime, NumberOfSeats, TotalPrice, Status, QRCodeData
+	UserID (User), ShowID (Show)
+	BookedSeat
+	BookedSeatID
+	IsReserved, ReservedByUserID, ReservationTimestamp
+	BookingID (Booking), SeatID (Seat), ShowID (Show)
+	Payment
+	PaymentID
+	Amount, PaymentTime, PaymentStatus, PaymentMethod, TransactionID
+	BookingID (Booking), CouponID (Coupon)
+	Coupon
+	CouponID
+	Code, DiscountValue, DiscountType, ExpirationDate, UsageLimit, CurrentUsageCount
+	-
+	Vote
+	VoteID
+	RatingValue, VoteTime
+	UserID (User), MovieID (Movie)
+	Comment
+	CommentID
+	CommentText, CommentTime, IsApproved
+	UserID (User), MovieID (Movie), ParentCommentID (Comment)
+	MovieFavorite
+	MovieFavoriteID
+	FavoriteTime
+	UserID (User), MovieID (Movie)
+	Tokens
+	TokenID
+	TokenValue, TokenType, IssuedAt, ExpiresAt, IsRevoked, LastUsedAt, Metadata, Version
+	UserID (User)
+	ApiToken
+	ApiTokenID
+	TokenValue, Description, IssuedAt, ExpiresAt, IsActive, LastUsedAt, AllowedIPs, AllowedOrigins, Permissions, UsageCount, RateLimit
+	IssuedByUserID (User)
+	Bảng Ma trận Quan hệ
+Bảng ma trận này trực quan hóa và làm rõ các mối quan hệ và số lượng (cardinality) giữa các thực thể chính, điều này thường dễ hiểu hơn so với mô tả bằng văn bản.10 Nó giúp nhanh chóng nắm bắt luồng dữ liệu và các thao tác join tiềm năng, hỗ trợ trong việc thiết kế các truy vấn và tối ưu hóa cơ sở dữ liệu.
+
+
+	Role
+	User
+	City
+	Cinema
+	CinemaHall
+	Movie
+	Person
+	MovieDirector
+	MovieActor
+	Genre
+	MovieGenre
+	Show
+	Seat
+	Booking
+	BookedSeat
+	Payment
+	Coupon
+	Vote
+	Comment
+	MovieFavorite
+	Tokens
+	ApiToken
+	Role
+	
+
+	1:N
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	User
+	1:N
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	1:N
+	
+
+	
+
+	
+
+	1:N
+	1:N
+	1:N
+	1:N
+	1:N
+	City
+	
+
+	
+
+	
+
+	1:N
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	Cinema
+	
+
+	
+
+	1:N
+	
+
+	1:N
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	CinemaHall
+	
+
+	
+
+	
+
+	1:N
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	1:N
+	1:N
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	Movie
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	N:M
+	1:N
+	1:N
+	N:M
+	1:N
+	1:N
+	
+
+	
+
+	
+
+	
+
+	
+
+	1:N
+	1:N
+	1:N
+	
+
+	
+
+	Person
+	
+
+	
+
+	
+
+	
+
+	
+
+	N:M
+	
+
+	1:N
+	1:N
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	MovieDirector
+	
+
+	
+
+	
+
+	
+
+	
+
+	1:N
+	1:N
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	MovieActor
+	
+
+	
+
+	
+
+	
+
+	
+
+	1:N
+	1:N
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	Genre
+	
+
+	
+
+	
+
+	
+
+	
+
+	N:M
+	
+
+	
+
+	
+
+	
+
+	1:N
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	MovieGenre
+	
+
+	
+
+	
+
+	
+
+	
+
+	1:N
+	
+
+	
+
+	
+
+	1:N
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	Show
+	
+
+	
+
+	
+
+	
+
+	1:N
+	1:N
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	1:N
+	
+
+	1:N
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	Seat
+	
+
+	
+
+	
+
+	
+
+	1:N
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	1:N
+	
+
+	N:M
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	Booking
+	
+
+	1:N
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	1:N
+	N:M
+	
+
+	1:N
+	1:1
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	BookedSeat
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	1:N
+	1:N
+	1:N
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	Payment
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	1:1
+	
+
+	
+
+	1:N
+	
+
+	
+
+	
+
+	
+
+	
+
+	Coupon
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	1:N
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	Vote
+	
+
+	1:N
+	
+
+	
+
+	
+
+	1:N
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	Comment
+	
+
+	1:N
+	
+
+	
+
+	
+
+	1:N
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	1:N
+	
+
+	
+
+	MovieFavorite
+	
+
+	1:N
+	
+
+	
+
+	
+
+	1:N
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	Tokens
+	
+
+	1:N
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	ApiToken
+	
+
+	1:N
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	Chú thích:
+* 1:N: Một-Nhiều
+* N:M: Nhiều-Nhiều (được giải quyết thông qua bảng trung gian)
+Mối quan hệ giữa các thực thể:
+* Mối quan hệ Một-Nhiều (One-to-Many - 1:N):
+   * Role 1:N User: Một vai trò có thể được gán cho nhiều người dùng.
+   * City 1:N Cinema: Một thành phố có thể có nhiều rạp chiếu phim.4
+   * Cinema 1:N CinemaHall: Một rạp chiếu phim có thể có nhiều phòng chiếu.4
+   * CinemaHall 1:N Show: Một phòng chiếu có thể tổ chức nhiều suất chiếu.4
+   * Movie 1:N Show: Một bộ phim có thể có nhiều suất chiếu.4
+   * CinemaHall 1:N Seat: Một phòng chiếu có nhiều ghế vật lý.4
+   * User 1:N Booking: Một người dùng có thể thực hiện nhiều đơn đặt vé.4
+   * Show 1:N BookedSeat: Một suất chiếu có thể có nhiều ghế đã được đặt.
+   * Booking 1:N BookedSeat: Một đơn đặt vé có thể bao gồm nhiều ghế đã đặt.4
+   * Coupon 1:N Payment: Một mã giảm giá có thể được sử dụng trong nhiều giao dịch thanh toán.4
+   * User 1:N Vote: Một người dùng có thể thực hiện nhiều lượt đánh giá.
+   * Movie 1:N Vote: Một bộ phim có thể nhận được nhiều lượt đánh giá.
+   * User 1:N Comment: Một người dùng có thể viết nhiều bình luận.
+   * Movie 1:N Comment: Một bộ phim có thể nhận được nhiều bình luận.
+   * Comment 1:N Comment (tự tham chiếu): Một bình luận có thể có nhiều bình luận phản hồi.
+   * User 1:N MovieFavorite: Một người dùng có thể đánh dấu nhiều phim là yêu thích.
+   * Movie 1:N MovieFavorite: Một bộ phim có thể được đánh dấu yêu thích bởi nhiều người dùng.
+   * User 1:N Tokens: Một người dùng có thể có nhiều token xác thực (access/refresh token).
+   * User 1:N ApiToken: Một người dùng (thường là quản trị viên) có thể tạo ra nhiều khóa API.
+* Mối quan hệ Một-Một (One-to-One - 1:1):
+   * Booking 1:1 Payment: Một đơn đặt vé được liên kết với một và chỉ một giao dịch thanh toán, và ngược lại.4
+* Mối quan hệ Nhiều-Nhiều (Many-to-Many - N:M) thông qua Bảng Trung gian:
+   * Booking N:M Seat: Một đơn đặt vé có thể bao gồm nhiều ghế, và một ghế có thể được đặt trong nhiều đơn đặt vé (qua các suất chiếu khác nhau). Mối quan hệ này được giải quyết thông qua bảng trung gian BookedSeat.12 Việc sử dụng bảng trung gian BookedSeat để giải quyết mối quan hệ N:M giữa Booking và Seat là một mẫu thiết kế cơ sở dữ liệu chuẩn. Tuy nhiên, việc bổ sung các thuộc tính như IsReserved và ReservedByUserID vào bảng này là một sự tinh chỉnh quan trọng để hỗ trợ chiến lược kiểm soát đồng thời lạc quan, đảm bảo tính toàn vẹn của việc đặt ghế.4
+   * Movie N:M Person (Đạo diễn): Một phim có thể có nhiều đạo diễn, và một đạo diễn có thể làm nhiều phim. Mối quan hệ này được giải quyết thông qua bảng trung gian MovieDirector.
+   * Movie N:M Person (Diễn viên): Một phim có thể có nhiều diễn viên, và một diễn viên có thể đóng nhiều phim. Mối quan hệ này được giải quyết thông qua bảng trung gian MovieActor.
+   * Movie N:M Genre: Một phim có thể thuộc nhiều thể loại, và một thể loại áp dụng cho nhiều phim. Mối quan hệ này được giải quyết thông qua bảng trung gian MovieGenre.
+5. Xử lý Đồng thời và Đảm bảo Tính toàn vẹn Dữ liệu
+Trong một hệ thống đặt vé trực tuyến, việc quản lý các truy cập đồng thời vào cùng một tài nguyên là một thách thức lớn. Nếu không có cơ chế kiểm soát đồng thời phù hợp, hệ thống có thể gặp phải "race condition" – tình huống mà nhiều người dùng cố gắng đặt cùng một ghế hoặc cùng một suất chiếu cùng một lúc, dẫn đến việc đặt vé trùng lặp và dữ liệu không nhất quán.3 Để đảm bảo độ tin cậy và chính xác của các giao dịch, việc tuân thủ các thuộc tính ACID (Atomicity, Consistency, Isolation, Durability) là tối quan trọng.14
+Thách thức về Điều khiển Đồng thời:
+Thách thức chính là duy trì tính toàn vẹn dữ liệu khi có nhiều người dùng cùng lúc tương tác với hệ thống. Ví dụ, hai người dùng cùng lúc cố gắng đặt ghế A1 cho suất chiếu X. Nếu không có cơ chế kiểm soát, cả hai có thể nghĩ rằng ghế đó còn trống và hoàn tất giao dịch, dẫn đến việc ghế A1 bị đặt trùng. Điều này không chỉ gây ra sự cố cho người dùng mà còn ảnh hưởng đến doanh thu và uy tín của hệ thống.
+Các Chiến lược Khóa:
+Có hai chiến lược chính để kiểm soát đồng thời:
+* Khóa lạc quan (Optimistic Locking):
+   * Nguyên lý: Chiến lược này giả định rằng các xung đột là hiếm khi xảy ra. Hệ thống cho phép các giao dịch thực hiện đồng thời mà không khóa dữ liệu ngay lập tức. Việc kiểm tra xung đột chỉ được thực hiện tại thời điểm cam kết thay đổi.13
+   * Triển khai: Trong hệ thống đặt vé, điều này có thể được triển khai bằng cách sử dụng một cột version hoặc các cờ trạng thái như IsReserved và ReservedByUserID trong bảng BookedSeat.4 Khi một giao dịch đọc dữ liệu (ví dụ: kiểm tra ghế trống), nó cũng ghi lại trạng thái hoặc số phiên bản hiện tại của ghế. Khi cố gắng ghi lại (đặt ghế), hệ thống kiểm tra xem trạng thái/phiên bản có khớp với bản gốc đã đọc hay không. Nếu không khớp, có nghĩa là dữ liệu đã bị thay đổi bởi một giao dịch khác trong thời gian đó, và giao dịch hiện tại sẽ bị hủy và thông báo cho người dùng thử lại.13 Snippet 4 cung cấp một mô tả rất chi tiết về cách triển khai khóa lạc quan trong một hệ thống đặt vé, bao gồm việc xử lý DbUpdateConcurrencyException và cơ chế thử lại.
+   * Ưu điểm: Cho phép mức độ đồng thời cao hơn, cải thiện hiệu suất tổng thể của hệ thống trong các tình huống ít tranh chấp.16 Điều này phù hợp với các hệ thống có nhiều thao tác đọc (duyệt phim, xem lịch chiếu) và ít xung đột ghi trên cùng một tài nguyên cụ thể.
+   * Nhược điểm: Yêu cầu cơ chế thử lại (retry mechanism) trong ứng dụng, có thể gây khó chịu cho người dùng nếu các lần thử lại liên tục thất bại trong trường hợp tranh chấp cao.4
+* Khóa bi quan (Pessimistic Locking):
+   * Nguyên lý: Chiến lược này giả định rằng các xung đột là phổ biến. Hệ thống khóa dữ liệu ngay lập tức khi một giao dịch truy cập, ngăn chặn các giao dịch khác sửa đổi hoặc thậm chí đọc dữ liệu đó cho đến khi khóa được giải phóng.13
+   * Triển khai: Trong SQL, điều này thường được thực hiện bằng câu lệnh SELECT FOR UPDATE, khóa các hàng được chọn cho đến khi giao dịch kết thúc.13
+   * Ưu điểm: Đảm bảo tính nhất quán dữ liệu cao, ít cần cơ chế thử lại hơn, phù hợp cho các tình huống tranh chấp rất cao nơi xung đột là thường xuyên.16
+   * Nhược điểm: Giảm mức độ đồng thời tổng thể vì các giao dịch phải chờ đợi khóa được giải phóng, có thể dẫn đến tình trạng tắc nghẽn (bottleneck) và tiềm ẩn nguy cơ deadlock (kẹt cứng) khi các giao dịch chờ đợi lẫn nhau.14
+Bảng So sánh Chiến lược Điều khiển Đồng thời
+Đặc điểm/Khía cạnh
+	Khóa lạc quan (Optimistic Locking)
+	Khóa bi quan (Pessimistic Locking)
+	Giả định xung đột
+	Xung đột là hiếm gặp
+	Xung đột là phổ biến
+	Thời điểm khóa
+	Không khóa dữ liệu ngay lập tức, kiểm tra xung đột khi cam kết
+	Khóa dữ liệu ngay lập tức khi truy cập
+	Khả năng đồng thời
+	Cao hơn
+	Thấp hơn
+	Rủi ro Deadlock
+	Thấp hơn
+	Cao hơn
+	Nhu cầu thử lại
+	Cần cơ chế thử lại trong ứng dụng
+	Ít cần cơ chế thử lại
+	Phù hợp cho
+	Hệ thống đọc nhiều, ít tranh chấp ghi
+	Hệ thống ghi nhiều, tranh chấp cao
+	Đề xuất chiến lược phù hợp nhất cho hệ thống đặt vé:
+Đối với một hệ thống đặt vé xem phim, khóa lạc quan (Optimistic Locking) với cơ chế thử lại mạnh mẽ và quản lý giao dịch chặt chẽ là chiến lược được đề xuất. Việc lựa chọn chiến lược này có tác động trực tiếp đến thông lượng hệ thống và trải nghiệm người dùng.
+Hệ thống đặt vé xem phim thường có tỷ lệ đọc/ghi cao đối với thông tin ghế trống. Mặc dù số lượng người dùng duyệt phim và xem lịch chiếu là rất lớn, nhưng số lượng người dùng thực sự cố gắng đặt cùng một ghế tại cùng một thời điểm lại tương đối hiếm. Khóa lạc quan cho phép mức độ đồng thời cao hơn trong giai đoạn duyệt và chọn ghế, chỉ áp dụng kiểm tra xung đột tại thời điểm quan trọng nhất của việc đặt vé. Cơ chế thử lại sẽ xử lý các xung đột hiếm gặp một cách linh hoạt, đảm bảo trải nghiệm người dùng mượt mà hơn so với việc khóa toàn bộ tài nguyên. Nếu áp dụng khóa bi quan, hệ thống có thể gặp phải các điểm nghẽn hiệu suất nghiêm trọng, đặc biệt khi có nhiều người dùng cùng lúc cố gắng chọn ghế, ngay cả khi họ không chọn cùng một ghế.
+Quản lý Giao dịch (Transactions):
+Tất cả các hoạt động liên quan đến đặt vé (đặt chỗ, tạo bản ghi đặt vé, xử lý thanh toán) phải được thực hiện trong một giao dịch nguyên tử (atomic transaction). Điều này có nghĩa là tất cả các bước phải thành công hoặc tất cả đều thất bại, đảm bảo rằng không có giao dịch nào bị bỏ dở giữa chừng.4 Ví dụ, nếu việc đặt ghế thành công nhưng thanh toán thất bại, toàn bộ giao dịch phải được hoàn tác để ghế đó trở lại trạng thái trống.
+Các thuộc tính ACID là nền tảng cho tính toàn vẹn dữ liệu trong các hệ thống giao dịch như đặt vé:
+* Tính nguyên tử (Atomicity): Đảm bảo tất cả các thao tác trong một giao dịch được coi là một đơn vị duy nhất, không thể chia cắt.14 Nếu bất kỳ phần nào của giao dịch thất bại, toàn bộ giao dịch sẽ bị hủy bỏ (rollback) để duy trì trạng thái ban đầu của cơ sở dữ liệu.
+* Tính nhất quán (Consistency): Đảm bảo rằng một giao dịch đưa cơ sở dữ liệu từ một trạng thái hợp lệ này sang một trạng thái hợp lệ khác.14 Điều này có nghĩa là sau khi một giao dịch hoàn tất, tất cả các ràng buộc và quy tắc nghiệp vụ của cơ sở dữ liệu vẫn được duy trì.
+* Tính cô lập (Isolation): Đảm bảo các giao dịch đồng thời không can thiệp lẫn nhau, tạo cảm giác như chúng được thực hiện tuần tự.13 Điều này ngăn chặn các vấn đề như đọc bẩn (dirty reads), đọc không lặp lại (non-repeatable reads) hoặc đọc ma (phantom reads), vốn có thể xảy ra khi nhiều giao dịch cùng truy cập và sửa đổi dữ liệu.
+* Tính bền vững (Durability): Đảm bảo rằng một khi giao dịch đã được cam kết, các thay đổi của nó là vĩnh viễn và sẽ tồn tại ngay cả trong trường hợp hệ thống gặp lỗi (ví dụ: mất điện).14
+Việc triển khai giao dịch với các mức độ cô lập phù hợp (ví dụ: Read Committed hoặc Repeatable Read, có thể là Serializable cho các đường dẫn đặt vé quan trọng) không chỉ là một chi tiết kỹ thuật mà còn là một yêu cầu kinh doanh cơ bản. Nó đảm bảo độ chính xác tài chính và niềm tin của khách hàng. Nếu không có các giao dịch được quản lý chặt chẽ, việc đặt vé trùng lặp hoặc mất thanh toán có thể gây thiệt hại nghiêm trọng cho doanh nghiệp. Snippet 4 rõ ràng đề cập đến việc sử dụng TransactionScope trong phương thức CreateBooking để đảm bảo tính nguyên tử, củng cố tầm quan trọng của việc quản lý giao dịch.
+6. Chiến lược Khả năng Mở rộng và Tối ưu Hiệu năng
+Để một hệ thống đặt vé xem phim hoạt động hiệu quả dưới tải trọng cao và có khả năng phát triển trong tương lai, việc áp dụng các chiến lược tối ưu hóa hiệu năng và khả năng mở rộng là điều cần thiết.
+* Đánh chỉ mục (Indexing): 17
+   * Tầm quan trọng: Đánh chỉ mục là rất quan trọng để tăng tốc độ truy xuất dữ liệu từ cơ sở dữ liệu, đặc biệt trong các ứng dụng có lưu lượng truy cập cao.17 Chỉ mục giúp cơ sở dữ liệu nhanh chóng tìm thấy các hàng dữ liệu mà không cần quét toàn bộ bảng.
+   * Các cột cần đánh chỉ mục:
+      * Khóa ngoại (Foreign Keys): Các cột như CityID, CinemaID, HallID, MovieID, UserID, ShowID, BookingID, SeatID, CouponID, PersonID, RoleID, GenreID cần được đánh chỉ mục để tối ưu hóa các thao tác join giữa các bảng. Điều này là cực kỳ quan trọng vì các truy vấn trong hệ thống đặt vé thường liên quan đến việc kết hợp dữ liệu từ nhiều thực thể (ví dụ: tìm phim đang chiếu tại một rạp cụ thể).17
+      * Các cột trong mệnh đề WHERE và ORDER BY: Các cột thường xuyên được sử dụng để tìm kiếm, lọc và sắp xếp kết quả cần được đánh chỉ mục. Ví dụ: Movie.Title, Movie.ReleaseDate (cho tìm kiếm phim), Show.StartTime (cho lịch chiếu), Cinema.CityID (cho tìm kiếm rạp theo thành phố), User.Email (cho đăng nhập), Person.Name (cho tìm kiếm đạo diễn/diễn viên), Genre.Name (cho tìm kiếm theo thể loại).4
+      * Chỉ mục tổng hợp (Composite Indexes): Cần xem xét tạo chỉ mục trên nhiều cột khi chúng thường xuyên được truy vấn cùng nhau. Ví dụ, một chỉ mục trên (MovieID, HallID, StartTime) trên bảng Show có thể cải thiện đáng kể hiệu suất khi tìm kiếm suất chiếu của một bộ phim cụ thể tại một phòng chiếu vào một thời điểm nhất định.17
+   * Bảo trì định kỳ: Cần thực hiện bảo trì chỉ mục thường xuyên (ví dụ: xây dựng lại hoặc chống phân mảnh) để đảm bảo hiệu quả của chúng theo thời gian.18
+   * Việc đánh chỉ mục chiến lược không chỉ đơn thuần là việc thêm chỉ mục mà là việc tối ưu hóa chúng dựa trên các mẫu truy vấn thực tế của hệ thống. Đánh chỉ mục quá mức có thể gây hại cho hiệu suất ghi dữ liệu, vì mỗi lần ghi (INSERT, UPDATE, DELETE) cũng cần cập nhật các chỉ mục liên quan.17
+* Phân vùng và Chia sẻ dữ liệu (Partitioning and Sharding):
+   * Phân vùng (Partitioning): Là kỹ thuật chia các bảng lớn thành các phần nhỏ hơn, dễ quản lý hơn dựa trên một tiêu chí nhất định (ví dụ: theo ngày cho lịch sử Booking hoặc Show).17 Điều này cải thiện hiệu suất truy vấn bằng cách giảm lượng dữ liệu cần quét và đơn giản hóa việc bảo trì cơ sở dữ liệu.
+   * Chia sẻ dữ liệu (Sharding - Horizontal Partitioning): Là kỹ thuật phân tán dữ liệu trên nhiều máy chủ cơ sở dữ liệu (các node) để xử lý tải và khối lượng dữ liệu tăng lên.8 Mỗi shard hoạt động độc lập, cho phép xử lý song song các truy vấn và tăng khả năng mở rộng ngang của hệ thống.
+   * Khi nào cần xem xét: Các chiến lược này trở nên cần thiết khi khả năng mở rộng dọc (tăng cường sức mạnh cho một máy chủ duy nhất bằng cách thêm CPU, RAM) đạt đến giới hạn vật lý, hoặc đối với các tập dữ liệu rất lớn và tải người dùng đồng thời cực kỳ cao.8
+   * Thách thức: Lựa chọn khóa shard phù hợp để phân phối dữ liệu đồng đều là rất quan trọng; phân phối không đồng đều có thể tạo ra các điểm nghẽn. Ngoài ra, việc tránh các phép join giữa các shard là một thách thức, vì chúng có thể tốn kém về hiệu suất mạng.8
+   * Sharding là một quyết định kiến trúc phức tạp cần được xem xét chủ động cho các kịch bản tăng trưởng vượt bậc, nhưng không nhất thiết phải triển khai ngay từ đầu. Tuy nhiên, thiết kế cơ sở dữ liệu ban đầu cần phải nhận biết shard (shard-aware), nghĩa là các khóa chính và mối quan hệ nên được thiết kế để tạo điều kiện thuận lợi cho việc sharding sau này (ví dụ: sử dụng UUID hoặc khóa tổng hợp bao gồm một mã định danh shard). Điều này giúp "future-proof" hệ thống.
+* Bộ nhớ đệm (Caching):
+   * Tầm quan trọng: Lưu trữ dữ liệu thường xuyên được truy cập trong các lớp bộ nhớ nhanh hơn (ví dụ: RAM) để giảm tải cho cơ sở dữ liệu và cải thiện thời gian phản hồi.17
+   * Dữ liệu nên được cache: Thông tin chi tiết phim (tiêu đề, mô tả, poster), lịch chiếu phổ biến, thông tin rạp, và hồ sơ người dùng thường xuyên được truy cập là những ứng cử viên hàng đầu cho việc caching.4
+   * Các chiến lược: Có thể áp dụng cache truy vấn (lưu trữ kết quả của các truy vấn thường xuyên), cache toàn bộ trang (đối với các trang ít thay đổi), và quan trọng nhất là triển khai chiến lược vô hiệu hóa cache (cache invalidation) để đảm bảo dữ liệu trong cache luôn được cập nhật và không bị lỗi thời.17
+   * Caching là yếu tố thiết yếu cho các hoạt động đọc nhiều, đặc trưng cho việc duyệt phim và tra cứu lịch chiếu. Nó giúp giảm đáng kể số lần truy vấn cơ sở dữ liệu và cải thiện trải nghiệm người dùng bằng cách cung cấp thông tin nhanh chóng.
+* Sao chép dữ liệu (Replication):
+   * Mục đích: Tạo bản sao của cơ sở dữ liệu trên nhiều node để tăng khả năng đọc, tính sẵn sàng và khả năng chịu lỗi.8 Khi một máy chủ gặp sự cố, các bản sao vẫn có thể tiếp tục phục vụ yêu cầu.
+   * Các mô hình:
+      * Master-slave replication: Các thao tác ghi được thực hiện trên máy chủ chính (master), trong khi các thao tác đọc có thể được phân phối trên các máy chủ phụ (slaves).18 Điều này giúp giảm tải cho master và tăng khả năng phục vụ các yêu cầu đọc.
+      * Multi-master replication: Nhiều node có thể chấp nhận các thao tác ghi, phân phối tải ghi và tăng tính sẵn sàng cao hơn.18
+   * Replication trực tiếp giải quyết các yêu cầu phi chức năng về tính sẵn sàng cao và độ tin cậy 3 bằng cách cung cấp tính dự phòng và phân phối tải đọc, đặc biệt quan trọng trong các hệ thống có lưu lượng truy cập cao.
+* Tối ưu hóa truy vấn (Query Optimization):
+   * Nguyên tắc cơ bản:
+      * Tránh sử dụng SELECT *; chỉ chọn các cột cần thiết để giảm lượng dữ liệu truyền tải và xử lý.17
+      * Sử dụng lệnh EXPLAIN (hoặc các công cụ tương tự của RDBMS) để phân tích kế hoạch thực thi truy vấn và xác định các điểm nghẽn hiệu suất.17
+      * Tối ưu hóa các thao tác join bằng cách đảm bảo các cột được sử dụng trong join đã được đánh chỉ mục.17 Một phép join trên các cột không có chỉ mục có thể gây ra hiệu suất kém nghiêm trọng, đặc biệt với các bảng lớn.
+      * Viết lại các truy vấn con (subqueries) thành các phép join hoặc Common Table Expressions (CTEs) khi có thể để cải thiện hiệu suất, vì truy vấn con đôi khi dẫn đến kế hoạch thực thi không hiệu quả.17
+   * Các truy vấn hiệu quả là yếu tố cơ bản bất kể lựa chọn cơ sở dữ liệu là gì. Các truy vấn được tối ưu hóa kém có thể làm mất đi lợi ích của việc thiết kế schema tốt và cơ sở hạ tầng mạnh mẽ, dẫn đến hiệu suất thấp ngay cả khi các biện pháp mở rộng quy mô khác đã được áp dụng.
+7. Đề xuất Công nghệ Cơ sở Dữ liệu
+Lựa chọn công nghệ cơ sở dữ liệu phù hợp là một quyết định chiến lược, ảnh hưởng đến hiệu suất, khả năng mở rộng, và chi phí vận hành của hệ thống.
+Lựa chọn hệ quản trị cơ sở dữ liệu quan hệ (RDBMS) phù hợp:
+* Đề xuất: PostgreSQL hoặc MySQL.
+* Biện minh:
+   * PostgreSQL: Nổi tiếng về tính mạnh mẽ, khả năng mở rộng, hỗ trợ mạnh mẽ cho các truy vấn phức tạp và tính toàn vẹn giao dịch (tuân thủ ACID) xuất sắc. Đây là một lựa chọn mạnh mẽ cho các hệ thống yêu cầu tính toàn vẹn dữ liệu cao và logic nghiệp vụ phức tạp. PostgreSQL thường được khuyến nghị cho các backend có khả năng mở rộng và đáng tin cậy.7
+   * MySQL: Là một RDBMS được sử dụng rộng rãi, trưởng thành và có hiệu suất cao, đặc biệt với công cụ lưu trữ InnoDB hỗ trợ giao dịch và tính toàn vẹn dữ liệu. MySQL phù hợp cho các ứng dụng quy mô web và có cộng đồng hỗ trợ lớn.
+   * Cả PostgreSQL và MySQL đều hỗ trợ mô hình quan hệ được đề xuất, bao gồm khóa ngoại, giao dịch và đánh chỉ mục, là những yếu tố cần thiết cho một hệ thống đặt vé. Chúng có sự hỗ trợ mạnh mẽ từ cộng đồng và tích hợp tốt với các dịch vụ đám mây, giúp việc triển khai và quản lý dễ dàng hơn. Lựa chọn RDBMS phải phù hợp với nhu cầu cốt lõi của hệ thống về tính toàn vẹn giao dịch và dữ liệu có cấu trúc, điều này là tối quan trọng đối với các hệ thống đặt vé. Mô hình quan hệ vốn dĩ phù hợp với các mối quan hệ phức tạp và yêu cầu ACID của việc đặt vé.
+Cân nhắc về cơ sở dữ liệu NoSQL cho các trường hợp cụ thể:
+Mặc dù một RDBMS là lựa chọn chính cho dữ liệu giao dịch cốt lõi, việc tích hợp cơ sở dữ liệu NoSQL có thể mang lại lợi ích đáng kể cho các trường hợp sử dụng cụ thể:
+* Các trường hợp sử dụng:
+   * Lưu trữ dữ liệu phi cấu trúc: Ví dụ như đánh giá/bình luận của người dùng (nếu không được tích hợp trực tiếp vào bảng Movie), thông tin chi tiết về các sự kiện đặc biệt, hoặc các dữ liệu không có schema cố định.
+   * Nhật ký ứng dụng (logs): Lưu trữ các bản ghi hoạt động của hệ thống, lỗi, hoặc các sự kiện để phục vụ mục đích giám sát và phân tích.
+   * Dữ liệu phân tích thời gian thực: Các dữ liệu không yêu cầu tính nhất quán giao dịch mạnh mẽ nhưng cần khả năng ghi và đọc nhanh với khối lượng lớn.
+* Ví dụ:
+   * MongoDB: Một cơ sở dữ liệu tài liệu (document database) có thể cung cấp schema linh hoạt, phù hợp cho việc lưu trữ các đánh giá người dùng hoặc thông tin phim bổ sung không theo cấu trúc cố định.
+   * Redis: Một cơ sở dữ liệu key-value trong bộ nhớ (in-memory key-value store) lý tưởng cho bộ nhớ đệm (caching), giúp tăng tốc độ truy xuất dữ liệu thường xuyên và giảm tải cho RDBMS chính.7
+* Một cách tiếp cận lai (hybrid approach), tận dụng thế mạnh của cả RDBMS và cơ sở dữ liệu NoSQL, có thể mang lại hiệu suất và khả năng mở rộng tối ưu cho các loại dữ liệu và mẫu truy cập khác nhau trong một hệ thống phức tạp. Mặc dù logic đặt vé cốt lõi đòi hỏi RDBMS, các khía cạnh khác như ghi nhật ký, đánh giá người dùng (nếu rộng rãi và phi cấu trúc) hoặc phân tích thời gian thực có thể hưởng lợi từ tính linh hoạt và khả năng mở rộng ngang của NoSQL cho các khối lượng công việc cụ thể.
+8. Kết luận và Các Bước Tiếp theo
+Thiết kế cơ sở dữ liệu quan hệ được trình bày trong báo cáo này cung cấp một cấu trúc vững chắc và có tổ chức cho hệ thống đặt vé xem phim trực tuyến. Nó được xây dựng để hỗ trợ đầy đủ các yêu cầu chức năng, từ quản lý người dùng và phim đến quy trình đặt vé và thanh toán, đồng thời giải quyết các yêu cầu phi chức năng quan trọng về hiệu năng, khả năng mở rộng, độ tin cậy và bảo mật.
+Các đề xuất chính bao gồm:
+* Mô hình dữ liệu quan hệ chi tiết: Với các thực thể được định nghĩa rõ ràng như User, Movie, Cinema, CinemaHall, Show, Seat, Booking, BookedSeat, Payment, Coupon, Vote, Comment, Person, MovieDirector, MovieActor, Role, Genre, MovieGenre, Tokens, và ApiToken, cùng với các mối quan hệ và khóa chính/khóa ngoại được thiết lập để đảm bảo tính toàn vẹn và nhất quán của dữ liệu.
+* Chuẩn hóa bảng Movie: Tách thông tin đạo diễn, diễn viên và thể loại ra thành các bảng riêng biệt (Person, MovieDirector, MovieActor, Genre, MovieGenre) để cải thiện tính toàn vẹn dữ liệu, giảm trùng lặp và tăng tính linh hoạt trong truy vấn.
+* Bổ sung phân quyền người dùng: Thêm bảng Role và liên kết với bảng User để quản lý quyền truy cập.
+* Bổ sung bảng phim yêu thích: Thêm bảng MovieFavorite để người dùng có thể lưu trữ các bộ phim yêu thích của mình.
+* Bổ sung bảng quản lý token xác thực người dùng (Tokens): Để quản lý vòng đời của access token, refresh token và token đặt lại mật khẩu.
+* Bổ sung bảng quản lý khóa API (ApiToken): Để quản lý các khóa API được cấp cho các ứng dụng/tích hợp bên ngoài, với các thuộc tính chi tiết về quyền hạn, giới hạn sử dụng và kiểm toán.
+* Sử dụng kiểu dữ liệu NVARCHAR: Đảm bảo hỗ trợ đầy đủ tiếng Việt và các ngôn ngữ Unicode khác cho các trường nội dung văn bản.
+* Chiến lược kiểm soát đồng thời hiệu quả: Khóa lạc quan (Optimistic Locking) với cơ chế thử lại mạnh mẽ được khuyến nghị để xử lý các truy cập đồng thời, đảm bảo không có tình trạng đặt vé trùng lặp mà vẫn duy trì hiệu suất cao và khả năng đáp ứng của hệ thống.
+* Quản lý giao dịch nguyên tử: Tất cả các hoạt động đặt vé và thanh toán được gói gọn trong các giao dịch tuân thủ ACID để đảm bảo tính toàn vẹn tài chính và độ tin cậy của dữ liệu.
+* Các chiến lược tối ưu hóa hiệu năng và khả năng mở rộng: Đánh chỉ mục chiến lược trên các cột quan trọng, xem xét phân vùng và chia sẻ dữ liệu cho sự tăng trưởng trong tương lai, triển khai bộ nhớ đệm (caching) cho các dữ liệu đọc thường xuyên, và sử dụng sao chép dữ liệu (replication) để tăng tính sẵn sàng và khả năng chịu lỗi.
+* Lựa chọn công nghệ RDBMS phù hợp: PostgreSQL hoặc MySQL là các hệ quản trị cơ sở dữ liệu quan hệ được đề xuất, được biết đến với tính ổn định, mạnh mẽ và khả năng mở rộng, với khả năng tích hợp cơ sở dữ liệu NoSQL cho các trường hợp sử dụng chuyên biệt.
+Các bước tiếp theo để triển khai và tinh chỉnh thiết kế:
+Để biến thiết kế này thành một hệ thống hoạt động thực tế, các bước sau đây là cần thiết:
+1. Tạo ERD chi tiết và Schema cơ sở dữ liệu: Phát triển sơ đồ ERD hoàn chỉnh với các kiểu dữ liệu, ràng buộc, và mối quan hệ cụ thể cho từng bảng. Sau đó, viết và thực thi các tập lệnh DDL (Data Definition Language) để tạo cấu trúc cơ sở dữ liệu trên môi trường phát triển.
+2. Phát triển Lớp truy cập dữ liệu (DAL) và Logic nghiệp vụ: Xây dựng lớp truy cập dữ liệu để tương tác với cơ sở dữ liệu. Tích hợp logic nghiệp vụ, đảm bảo triển khai đúng đắn các cơ chế quản lý giao dịch và kiểm soát đồng thời (đặc biệt là logic thử lại cho khóa lạc quan).
+3. Kiểm thử hiệu năng và tối ưu hóa: Tiến hành kiểm thử tải (load testing) để mô phỏng giờ cao điểm và xác định các điểm nghẽn hiệu suất trong cơ sở dữ liệu và ứng dụng. Dựa trên kết quả, thực hiện các tinh chỉnh và tối ưu hóa cần thiết cho chỉ mục, truy vấn và cấu hình cơ sở dữ liệu.7
+4. Kiểm tra bảo mật và tuân thủ: Thực hiện kiểm toán bảo mật toàn diện để xác định và khắc phục các lỗ hổng. Đảm bảo hệ thống tuân thủ các tiêu chuẩn bảo mật ngành như GDPR và PCI-DSS để bảo vệ thông tin nhạy cảm của người dùng.7
+5. Giám sát và bảo trì liên tục: Thiết lập các công cụ giám sát mạnh mẽ để theo dõi hiệu suất cơ sở dữ liệu, phát hiện sớm các vấn đề và thực hiện bảo trì định kỳ (ví dụ: tối ưu hóa chỉ mục, dọn dẹp dữ liệu cũ) để đảm bảo hoạt động ổn định và hiệu quả lâu dài của hệ thống.
+Việc tuân thủ các bước này sẽ đảm bảo một quá trình triển khai suôn sẻ và một hệ thống đặt vé xem phim mạnh mẽ, đáng tin cậy, sẵn sàng đáp ứng nhu cầu của người dùng và sự phát triển của thị trường.
+Works cited
+1. Tổng hợp các App đặt vé xem phim tiện lợi - Viettel Store, accessed May 30, 2025, https://m.viettelstore.vn/tin-tuc/app-dat-ve-xem-phim
+2. Đặt vé xem phim online giá rẻ trên VNPAY App, accessed May 30, 2025, https://vnpayapp.vn/dat-ve-xem-phim
+3. Design a movie ticket booking system like Bookmyshow ..., accessed May 30, 2025, https://www.geeksforgeeks.org/design-movie-ticket-booking-system-like-bookmyshow/
+4. Design a Movie Ticket Booking System - DEV Community, accessed May 30, 2025, https://dev.to/muhammad_salem/design-a-movie-ticket-booking-system-271k
+5. Giới thiệu dự án Web đặt vé xem phim trực tuyến (Chức Năng Người Dùng) - Techmaster, accessed May 30, 2025, https://techmaster.vn/posts/37940/gioi-thieu-du-an-web-dat-ve-xem-phim-truc-tuyen-chuc-nang-nguoi-dung
+6. atulguptag/Online-Movie-Ticket-Booking-System - GitHub, accessed May 30, 2025, https://github.com/atulguptag/Online-Movie-Ticket-Booking-System
+7. How to Build a Scalable Ticket/Event Management System – Full Guide, accessed May 30, 2025, https://depextechnologies.com/blog/how-to-build-a-scalable-ticket-event-management-system-full-guide/
+8. Introduction to Database Scalability - Aerospike, accessed May 30, 2025, https://aerospike.com/blog/database-scalability/
+9. Kiosk thanh toán cho rạp chiếu phim - Giải pháp tối ưu hóa nhân lực, accessed May 30, 2025, https://manhinhquangcao247.com/kiosk-thanh-toan-cho-rap-chieu-phim-giai-phap-toi-uu-hoa-nhan-luc.html
+10. How to Design ER Diagrams for Online Ticketing and Event Management | GeeksforGeeks, accessed May 30, 2025, https://www.geeksforgeeks.org/how-to-design-er-diagrams-for-online-ticketing-and-event-management/
+11. ER Diagram for Online Movie Ticket Booking | EdrawMax ..., accessed May 30, 2025, https://www.edrawmax.com/templates/1016562/
+12. SQL Commands for Movie Ticket Booking Database by Devika ..., accessed May 30, 2025, https://prezi.com/p/irsmu1trulrs/sql-commands-for-movie-ticket-booking-database/
+13. How to Solve Race Conditions in a Booking System | HackerNoon, accessed May 30, 2025, https://hackernoon.com/how-to-solve-race-conditions-in-a-booking-system
+14. Concurrency Control in DBMS - GeeksforGeeks, accessed May 30, 2025, https://www.geeksforgeeks.org/concurrency-control-in-dbms/
+15. Understanding Database Locking in an Airline Seat Booking System - Developer's Coffee, accessed May 30, 2025, https://www.developerscoffee.com/blog/understanding-database-locking-in-an-airline-seat-booking-system/
+16. Optimistic and Pessimistic Locking in TiDB - MyDBOPS, accessed May 30, 2025, https://www.mydbops.com/blog/optimistic-and-pessimistic-locking-in-tidb
+17. A Guide to Database Optimization for High Traffic | Last9, accessed May 30, 2025, https://last9.io/blog/a-guide-to-database-optimization/
+18. Strategies for improving database performance in high-traffic environments | New Relic, accessed May 30, 2025, https://newrelic.com/blog/how-to-relic/strategies-for-improving-database-performance-in-high-traffic-environments

@@ -472,7 +472,10 @@ INSERT INTO [User] (Name, Email, Phone, PasswordHash, LoyaltyPoints, RoleID) VAL
 (N'Lê Minh Tuấn', 'tuan.le@yahoo.com', '0923456789', 'hashed_password_tuan', 75.25, 2), -- Customer
 (N'Phạm Thu Hà', 'ha.pham@outlook.com', '0934567890', 'hashed_password_ha', 200.00, 2), -- Customer
 (N'Hoàng Văn Dũng', 'dung.hoang@gmail.com', '0945678901', 'hashed_password_dung', 0.00, 3), -- Front Desk Officer
-(N'Võ Thị Lan', 'lan.vo@company.com', '0956789012', 'hashed_password_lan', 320.75, 2); -- Customer
+(N'Võ Thị Lan', 'lan.vo@company.com', '0956789012', 'hashed_password_lan', 320.75, 2), -- Customer
+(N'TesterCustomer', 'customer@gmai.com', '12345678909', '48e863bdec3d48f7c18add0dc95d19bef8de9288053309702c701066a93de9b8', 320.75, 2), -- Customer
+(N'TesterAdmin', 'admin@gmai.com', '12345678909', '48e863bdec3d48f7c18add0dc95d19bef8de9288053309702c701066a93de9b8', 320.75, 1), -- Admin
+(N'TesterOfficer', 'fdofficer@gmai.com', '12345678909', '48e863bdec3d48f7c18add0dc95d19bef8de9288053309702c701066a93de9b8', 320.75, 3); -- Front Desh Officer
 
 -- Sample Shows (Movie screenings)
 INSERT INTO Show (MovieID, HallID, StartTime, EndTime, TicketPrice) VALUES 

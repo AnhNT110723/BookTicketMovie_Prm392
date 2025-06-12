@@ -155,7 +155,7 @@ public class LoginActivity extends AppCompatActivity {
         }
     }    private void onLoginSuccess(User user) {
         Toast.makeText(this, getString(R.string.login_successful), Toast.LENGTH_SHORT).show();
-        Log.d(TAG, "Login successful for user: " + user.getEmail());
+        Log.d(TAG, "Login successful for user: " + user.getEmail() + " with role: " + user.getRoleID());
         
         // Save user session data to SharedPreferences
         getSharedPreferences("MovieBookingApp", MODE_PRIVATE)
@@ -163,13 +163,21 @@ public class LoginActivity extends AppCompatActivity {
             .putString("user_email", user.getEmail())
             .putString("user_name", user.getName())
             .putInt("user_id", user.getUserID())
+            .putInt("user_role", user.getRoleID())
             .putFloat("loyalty_points", user.getLoyaltyPoints() != null ? 
                 user.getLoyaltyPoints().floatValue() : 0.0f)
             .putBoolean("is_logged_in", true)
             .apply();
         
-        // Navigate to home activity
-        Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+        // Navigate based on user role
+        Intent intent;
+        if (user.getRoleID() == 1) { // Admin role
+            intent = new Intent(LoginActivity.this, AdminActivity.class);
+            Toast.makeText(this, "Welcome Admin!", Toast.LENGTH_SHORT).show();
+        } else { // Customer or FrontDeskOfficer
+            intent = new Intent(LoginActivity.this, HomeActivity.class);
+        }
+        
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();
