@@ -285,10 +285,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:text="🔒 Change Password"
-                    android:textColor="@color/button_text_selector"
+                    android:textColor="@color/white"
                     android:textSize="16sp"
                     android:textStyle="bold"
-                    android:background="@drawable/button_secondary_selector"
+                    android:background="@drawable/button_outline_selector"
                     android:layout_marginBottom="12dp" />
 
                 <!-- Booking History Button -->
@@ -297,10 +297,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:text="🎫 Booking History"
-                    android:textColor="@color/button_text_selector"
+                    android:textColor="@color/white"
                     android:textSize="16sp"
                     android:textStyle="bold"
-                    android:background="@drawable/button_secondary_selector"
+                    android:background="@drawable/button_outline_selector"
                     android:layout_marginBottom="12dp" />
 
                 <!-- Favorite Movies Button -->
@@ -309,10 +309,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:text="❤️ Favorite Movies"
-                    android:textColor="@color/button_text_selector"
+                    android:textColor="@color/white"
                     android:textSize="16sp"
                     android:textStyle="bold"
-                    android:background="@drawable/button_secondary_selector" />
+                    android:background="@drawable/button_outline_selector" />
 
             </LinearLayout>
 
