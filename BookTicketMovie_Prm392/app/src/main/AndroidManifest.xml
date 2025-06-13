@@ -62,12 +62,19 @@
             android:exported="false"
             android:theme="@style/Theme.BookingTicketMove_Prm392"
             android:parentActivityName=".AdminActivity" />
-            
-        <activity
+              <activity
             android:name=".BrowseMoviesActivity"
             android:exported="false"
             android:theme="@style/Theme.BookingTicketMove_Prm392"
             android:parentActivityName=".HomeActivity" />
+            
+        <activity
+            android:name=".TrailerActivity"
+            android:exported="false"
+            android:theme="@style/Theme.BookingTicketMove_Prm392"
+            android:parentActivityName=".MovieDetailActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="unspecified" />
     </application>
 
 </manifest>

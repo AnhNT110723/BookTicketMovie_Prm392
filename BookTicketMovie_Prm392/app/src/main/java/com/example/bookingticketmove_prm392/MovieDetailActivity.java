@@ -116,11 +116,13 @@ public class MovieDetailActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        
-        watchTrailerButton.setOnClickListener(v -> {
+          watchTrailerButton.setOnClickListener(v -> {
             if (currentMovie != null && currentMovie.getTrailerUrl() != null && !currentMovie.getTrailerUrl().isEmpty()) {
-                // TODO: Implement trailer viewing functionality
-                Toast.makeText(this, "Trailer feature coming soon", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(this, TrailerActivity.class);
+                intent.putExtra(TrailerActivity.EXTRA_MOVIE_TITLE, currentMovie.getTitle());
+                intent.putExtra(TrailerActivity.EXTRA_TRAILER_URL, currentMovie.getTrailerUrl());
+                intent.putExtra(TrailerActivity.EXTRA_POSTER_URL, currentMovie.getPosterUrl());
+                startActivity(intent);
             } else {
                 Toast.makeText(this, "Trailer not available", Toast.LENGTH_SHORT).show();
             }
