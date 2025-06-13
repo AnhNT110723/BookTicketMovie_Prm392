@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.bookingticketmove_prm392.R;
 import com.example.bookingticketmove_prm392.models.Movie;
+import com.example.bookingticketmove_prm392.utils.ImageUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -99,15 +100,13 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
             if (movie.getReleaseDate() != null) {
                 SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy", Locale.getDefault());
                 releaseDateTextView.setText(dateFormat.format(movie.getReleaseDate()));
-            }
-
-            // Show/hide trending badge
+            }            // Show/hide trending badge
             if (trendingBadge != null) {
                 trendingBadge.setVisibility(movie.isTrending() ? View.VISIBLE : View.GONE);
             }
 
-            // Set poster placeholder (you can implement image loading library later)
-            posterImageView.setImageResource(R.drawable.ic_movie_placeholder);
+            // Load poster image using ImageUtils
+            ImageUtils.loadMoviePoster(context, posterImageView, movie.getPosterUrl());
 
             // Set click listener
             cardView.setOnClickListener(v -> {

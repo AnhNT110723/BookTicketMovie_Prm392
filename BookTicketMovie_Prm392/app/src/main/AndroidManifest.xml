@@ -48,8 +48,7 @@
               <activity
             android:name=".MovieDetailActivity"
             android:exported="false"
-            android:theme="@style/Theme.BookingTicketMove_Prm392" />
-              <activity
+            android:theme="@style/Theme.BookingTicketMove_Prm392" />              <activity
             android:name=".CinemaSelectionActivity"
             android:exported="false"
             android:theme="@style/Theme.BookingTicketMove_Prm392" />
@@ -58,6 +57,12 @@
             android:name=".ShowtimeSelectionActivity"
             android:exported="false"
             android:theme="@style/Theme.BookingTicketMove_Prm392" />
+            
+        <activity
+            android:name=".AddEditMovieActivity"
+            android:exported="false"
+            android:theme="@style/Theme.BookingTicketMove_Prm392"
+            android:parentActivityName=".AdminActivity" />
     </application>
 
 </manifest>

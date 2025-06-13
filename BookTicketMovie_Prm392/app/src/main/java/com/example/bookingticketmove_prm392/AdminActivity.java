@@ -89,9 +89,9 @@ public class AdminActivity extends AppCompatActivity {
         // Set up click listeners
         setupClickListeners();
     }
-    
-    private boolean isUserAdmin() {
+      private boolean isUserAdmin() {
         int userRole = sharedPreferences.getInt("userRole", 2); // Default to Customer
+        Log.d(TAG, "User role from preferences: " + userRole);
         return userRole == 1; // Admin role
     }
     
@@ -133,12 +133,9 @@ public class AdminActivity extends AppCompatActivity {
         new LoadAllMoviesTask().execute();
     }
     
-    private void setupClickListeners() {
-        fabAddMovie.setOnClickListener(v -> {
-            Toast.makeText(this, "Add Movie - Coming Soon!", Toast.LENGTH_SHORT).show();
-            // TODO: Navigate to AddMovieActivity
-            // Intent intent = new Intent(this, AddMovieActivity.class);
-            // startActivity(intent);
+    private void setupClickListeners() {        fabAddMovie.setOnClickListener(v -> {
+            Intent intent = new Intent(this, AddEditMovieActivity.class);
+            startActivityForResult(intent, AddEditMovieActivity.RESULT_MOVIE_SAVED);
         });
         
         totalMoviesCard.setOnClickListener(v -> {
@@ -177,13 +174,10 @@ public class AdminActivity extends AppCompatActivity {
                 break;
         }
     }
-    
-    private void editMovie(Movie movie) {
-        Toast.makeText(this, "Edit Movie: " + movie.getTitle() + " - Coming Soon!", Toast.LENGTH_SHORT).show();
-        // TODO: Navigate to EditMovieActivity
-        // Intent intent = new Intent(this, EditMovieActivity.class);
-        // intent.putExtra("movie_id", movie.getMovieId());
-        // startActivity(intent);
+      private void editMovie(Movie movie) {
+        Intent intent = new Intent(this, AddEditMovieActivity.class);
+        intent.putExtra(AddEditMovieActivity.EXTRA_MOVIE_ID, movie.getMovieId());
+        startActivityForResult(intent, AddEditMovieActivity.RESULT_MOVIE_UPDATED);
     }
     
     private void deleteMovie(Movie movie) {
@@ -246,7 +240,21 @@ public class AdminActivity extends AppCompatActivity {
         Intent intent = new Intent(this, LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
-        finish();
+        finish();    }
+    
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        
+        if (requestCode == AddEditMovieActivity.RESULT_MOVIE_SAVED && resultCode == RESULT_OK) {
+            // Movie was added successfully, refresh the list
+            loadMoviesAndStatistics();
+            Toast.makeText(this, "Movie added successfully", Toast.LENGTH_SHORT).show();
+        } else if (requestCode == AddEditMovieActivity.RESULT_MOVIE_UPDATED && resultCode == RESULT_OK) {
+            // Movie was updated successfully, refresh the list
+            loadMoviesAndStatistics();
+            Toast.makeText(this, "Movie updated successfully", Toast.LENGTH_SHORT).show();
+        }
     }
     
     @Override

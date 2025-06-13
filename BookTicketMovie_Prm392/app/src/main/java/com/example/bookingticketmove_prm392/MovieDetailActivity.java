@@ -18,6 +18,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.example.bookingticketmove_prm392.database.dao.MovieDAO;
 import com.example.bookingticketmove_prm392.models.Movie;
+import com.example.bookingticketmove_prm392.utils.ImageUtils;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 
@@ -164,13 +165,11 @@ public class MovieDetailActivity extends AppCompatActivity {
         
         // Set price
         priceTextView.setText(String.format(Locale.getDefault(), "$%.2f", movie.getPrice()));
-        
-        // Set genre chips
+          // Set genre chips
         setupGenreChips(movie.getGenre());
         
-        // TODO: Load poster image using an image loading library like Glide or Picasso
-        // For now, set a placeholder
-        posterImageView.setImageResource(R.drawable.ic_movie_placeholder);
+        // Load poster image using ImageUtils
+        ImageUtils.loadMoviePosterFitCenter(this, posterImageView, movie.getPosterUrl());
         
         // Enable/disable book button based on movie status
         bookTicketButton.setEnabled(movie.isActive());

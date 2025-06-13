@@ -168,25 +168,42 @@ public class LoginActivity extends AppCompatActivity {
                 user.getLoyaltyPoints().floatValue() : 0.0f)
             .putBoolean("isLoggedIn", true)
             .apply();
-        
-        // Navigate based on user role
+          // Navigate based on user role
         Intent intent;
         if (user.getRoleID() == 1) { // Admin role
-            intent = new Intent(LoginActivity.this, AdminActivity.class);
-            Toast.makeText(this, "Welcome Admin!", Toast.LENGTH_SHORT).show();
+            // Show dialog to choose between admin panel and home
+            showAdminNavigationDialog(user);
+            return; // Don't navigate immediately, let dialog handle it
         } else { // Customer or FrontDeskOfficer
             intent = new Intent(LoginActivity.this, HomeActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish();
         }
-        
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
-        finish();
-    }
-
-    private void onLoginFailed(String errorMessage) {
+    }    private void onLoginFailed(String errorMessage) {
         Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show();
         
         // Clear password field for security
         passwordInput.setText("");
+    }
+    
+    private void showAdminNavigationDialog(User user) {
+        new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("Welcome Admin!")
+                .setMessage("Where would you like to go?")
+                .setPositiveButton("Admin Panel", (dialog, which) -> {
+                    Intent intent = new Intent(LoginActivity.this, AdminActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    finish();
+                })
+                .setNegativeButton("Home Screen", (dialog, which) -> {
+                    Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    finish();
+                })
+                .setCancelable(false)
+                .show();
     }
 }

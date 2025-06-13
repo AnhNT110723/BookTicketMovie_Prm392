@@ -150,28 +150,32 @@ public class HomeActivity extends AppCompatActivity {
             Log.e(TAG, "No user email found in preferences");
             redirectToLogin();
         }
-    }
-      private void loadCachedUserData() {
+    }    private void loadCachedUserData() {
         String userName = sharedPreferences.getString("userName", "User");
         String userEmail = sharedPreferences.getString("userEmail", "");
         float loyaltyPoints = sharedPreferences.getFloat("loyaltyPoints", 0.0f);
+        int userRole = sharedPreferences.getInt("userRole", 2);
         
         // Create a basic user object with cached data
         currentUser = new User();
         currentUser.setName(userName);
         currentUser.setEmail(userEmail);
         currentUser.setLoyaltyPoints(BigDecimal.valueOf(loyaltyPoints));
+        currentUser.setRoleID(userRole);
         
         updateUI();
     }
-    
-    private void updateUI() {
+      private void updateUI() {
         if (currentUser != null) {
             // Update welcome message based on time of day
             updateWelcomeMessage();
             
-            // Update user name
-            userNameText.setText(currentUser.getName());
+            // Update user name with role indicator for admins
+            String displayName = currentUser.getName();
+            if (currentUser.getRoleID() == 1) {
+                displayName += " (Admin)";
+            }
+            userNameText.setText(displayName);
             
             // Update loyalty points
             BigDecimal points = currentUser.getLoyaltyPoints();
@@ -183,6 +187,9 @@ public class HomeActivity extends AppCompatActivity {
             
             // Cache user data
             cacheUserData();
+            
+            // Refresh menu to show/hide admin options
+            invalidateOptionsMenu();
         }
     }
     
@@ -199,12 +206,12 @@ public class HomeActivity extends AppCompatActivity {
         }
         
         welcomeText.setText(greeting);
-    }
-      private void cacheUserData() {
+    }    private void cacheUserData() {
         if (currentUser != null) {
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putString("userName", currentUser.getName());
             editor.putString("userEmail", currentUser.getEmail());
+            editor.putInt("userRole", currentUser.getRoleID());
             editor.putFloat("loyaltyPoints", currentUser.getLoyaltyPoints() != null ? 
                 currentUser.getLoyaltyPoints().floatValue() : 0.0f);
             editor.apply();
@@ -278,18 +285,27 @@ public class HomeActivity extends AppCompatActivity {
         intent.putExtra(MovieDetailActivity.EXTRA_MOVIE_ID, movie.getMovieId());
         startActivity(intent);
     }
-    
-    @Override
+      @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.home_menu, menu);
+        
+        // Show admin panel option only for admin users
+        MenuItem adminPanelItem = menu.findItem(R.id.action_admin_panel);
+        if (adminPanelItem != null) {
+            int userRole = sharedPreferences.getInt("userRole", 2); // Default to Customer
+            adminPanelItem.setVisible(userRole == 1); // Show only for Admin role
+        }
+        
         return true;
     }
-    
-    @Override
+      @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         
-        if (id == R.id.action_logout) {
+        if (id == R.id.action_admin_panel) {
+            navigateToAdminPanel();
+            return true;
+        } else if (id == R.id.action_logout) {
             logout();
             return true;
         } else if (id == R.id.action_refresh) {
@@ -300,8 +316,7 @@ public class HomeActivity extends AppCompatActivity {
         
         return super.onOptionsItemSelected(item);
     }
-    
-    private void logout() {
+      private void logout() {
         // Clear user data from shared preferences
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.clear();
@@ -311,6 +326,17 @@ public class HomeActivity extends AppCompatActivity {
         redirectToLogin();
         
         Toast.makeText(this, "Logged out successfully", Toast.LENGTH_SHORT).show();
+    }
+    
+    private void navigateToAdminPanel() {
+        // Check if user is admin
+        int userRole = sharedPreferences.getInt("userRole", 2);
+        if (userRole == 1) {
+            Intent intent = new Intent(this, AdminActivity.class);
+            startActivity(intent);
+        } else {
+            Toast.makeText(this, "Access denied. Admin privileges required.", Toast.LENGTH_SHORT).show();
+        }
     }
     
     private void redirectToLogin() {

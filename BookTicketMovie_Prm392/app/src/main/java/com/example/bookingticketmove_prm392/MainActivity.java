@@ -1,6 +1,7 @@
 package com.example.bookingticketmove_prm392;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
@@ -75,16 +76,50 @@ public class MainActivity extends AppCompatActivity implements DatabaseConnectio
             statusTextView.postDelayed(this::testDatabaseConnection, 1000);        });
     }    private void checkUserLoginStatus() {
         // Check if user is already logged in
-        boolean isLoggedIn = getSharedPreferences("UserSession", MODE_PRIVATE)
-                .getBoolean("isLoggedIn", false);
+        SharedPreferences prefs = getSharedPreferences("UserSession", MODE_PRIVATE);
+        boolean isLoggedIn = prefs.getBoolean("isLoggedIn", false);
         
         if (isLoggedIn) {
-            // User is already logged in, navigate to home
-            Intent intent = new Intent(MainActivity.this, HomeActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-            finish();
+            int userRole = prefs.getInt("userRole", 2); // Default to Customer
+            
+            if (userRole == 1) { // Admin user
+                // Show dialog to choose destination for admin
+                showAdminStartupDialog();
+            } else {
+                // Regular user, go to home
+                Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                finish();
+            }
         }
+    }
+    
+    private void showAdminStartupDialog() {
+        new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("Welcome Back, Admin!")
+                .setMessage("Where would you like to go?")
+                .setPositiveButton("Admin Panel", (dialog, which) -> {
+                    Intent intent = new Intent(MainActivity.this, AdminActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    finish();
+                })
+                .setNegativeButton("Home Screen", (dialog, which) -> {
+                    Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    finish();
+                })
+                .setNeutralButton("Logout", (dialog, which) -> {
+                    // Clear session and stay on main activity
+                    SharedPreferences.Editor editor = getSharedPreferences("UserSession", MODE_PRIVATE).edit();
+                    editor.clear();
+                    editor.apply();
+                    Toast.makeText(this, "Logged out successfully", Toast.LENGTH_SHORT).show();
+                })
+                .setCancelable(false)
+                .show();
     }
 
     private void showInitialStatus() {

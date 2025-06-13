@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.bookingticketmove_prm392.R;
 import com.example.bookingticketmove_prm392.models.Movie;
+import com.example.bookingticketmove_prm392.utils.ImageUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -39,9 +40,7 @@ public class AdminMovieAdapter extends RecyclerView.Adapter<AdminMovieAdapter.Ad
     public AdminMovieViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.item_admin_movie, parent, false);
         return new AdminMovieViewHolder(view);
-    }
-
-    @Override
+    }    @Override
     public void onBindViewHolder(@NonNull AdminMovieViewHolder holder, int position) {
         Movie movie = movieList.get(position);
         
@@ -52,6 +51,9 @@ public class AdminMovieAdapter extends RecyclerView.Adapter<AdminMovieAdapter.Ad
         holder.durationText.setText(movie.getDuration() + " min");
         holder.directorText.setText("Director: " + movie.getDirector());
         holder.ratingText.setText(String.format(Locale.getDefault(), "%.1f", movie.getRating()));
+        
+        // Load poster image using ImageUtils
+        ImageUtils.loadMoviePoster(context, holder.posterImage, movie.getPosterUrl());
         
         // Format release date
         if (movie.getReleaseDate() != null) {
