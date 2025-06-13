@@ -217,13 +217,11 @@ public class HomeActivity extends AppCompatActivity {
             editor.apply();
         }
     }
-    
-    private void setupClickListeners() {
+      private void setupClickListeners() {
         browseMoviesCard.setOnClickListener(v -> {
-            Toast.makeText(this, "Browse Movies - Coming Soon!", Toast.LENGTH_SHORT).show();
-            // TODO: Navigate to MoviesActivity
-            // Intent intent = new Intent(this, MoviesActivity.class);
-            // startActivity(intent);
+            Intent intent = new Intent(this, BrowseMoviesActivity.class);
+            intent.putExtra(BrowseMoviesActivity.EXTRA_CATEGORY, BrowseMoviesActivity.CATEGORY_ALL);
+            startActivity(intent);
         });
 
         myBookingsCard.setOnClickListener(v -> {
@@ -251,13 +249,15 @@ public class HomeActivity extends AppCompatActivity {
         });
         
         seeAllTrending.setOnClickListener(v -> {
-            Toast.makeText(this, "See All Trending Movies - Coming Soon!", Toast.LENGTH_SHORT).show();
-            // TODO: Navigate to MoviesActivity with trending filter
+            Intent intent = new Intent(this, BrowseMoviesActivity.class);
+            intent.putExtra(BrowseMoviesActivity.EXTRA_CATEGORY, BrowseMoviesActivity.CATEGORY_TRENDING);
+            startActivity(intent);
         });
         
         seeAllFeatured.setOnClickListener(v -> {
-            Toast.makeText(this, "See All Featured Movies - Coming Soon!", Toast.LENGTH_SHORT).show();
-            // TODO: Navigate to MoviesActivity with featured filter
+            Intent intent = new Intent(this, BrowseMoviesActivity.class);
+            intent.putExtra(BrowseMoviesActivity.EXTRA_CATEGORY, BrowseMoviesActivity.CATEGORY_FEATURED);
+            startActivity(intent);
         });
     }    private void initRecyclerViews() {
         // Set up Trending Movies RecyclerView

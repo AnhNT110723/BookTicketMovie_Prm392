@@ -48,6 +48,27 @@ public class MovieDAO extends BaseDAO {    // Get all active movies
         }
 
         return movies;
+    }    
+    
+    // Get all trending movies (for browse page)
+    public List<Movie> getAllTrendingMovies() throws SQLException {
+        List<Movie> movies = new ArrayList<>();
+        String query = "SELECT * FROM Movie WHERE IsActive = 1 AND IsTrending = 1 ORDER BY Rating DESC, ReleaseDate DESC";
+
+        ResultSet rs = null;
+        PreparedStatement statement = null;
+        
+        try {
+            rs = executeQuery(query);
+            while (rs.next()) {
+                Movie movie = mapResultSetToMovie(rs);
+                movies.add(movie);
+            }
+        } finally {
+            closeResources(rs, statement);
+        }
+
+        return movies;
     }    // Get featured movies (latest releases)
     public List<Movie> getFeaturedMovies() throws SQLException {
         List<Movie> movies = new ArrayList<>();
@@ -67,7 +88,28 @@ public class MovieDAO extends BaseDAO {    // Get all active movies
         }
 
         return movies;
-    }    // Get movie by ID
+    }    
+    
+    // Get all featured movies (for browse page)
+    public List<Movie> getAllFeaturedMovies() throws SQLException {
+        List<Movie> movies = new ArrayList<>();
+        String query = "SELECT * FROM Movie WHERE IsActive = 1 AND IsTrending = 0 ORDER BY ReleaseDate DESC";
+
+        ResultSet rs = null;
+        PreparedStatement statement = null;
+        
+        try {
+            rs = executeQuery(query);
+            while (rs.next()) {
+                Movie movie = mapResultSetToMovie(rs);
+                movies.add(movie);
+            }
+        } finally {
+            closeResources(rs, statement);
+        }
+
+        return movies;
+    }// Get movie by ID
     public Movie getMovieById(int movieId) throws SQLException {
         String query = "SELECT * FROM Movie WHERE MovieID = ?";
         
