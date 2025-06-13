@@ -39,16 +39,15 @@ public class DatabaseConnection {
                 // Load the JTDS driver
                 Class.forName(DatabaseConfig.DB_DRIVER);
                 Log.d(TAG, "JTDS Driver loaded successfully");
-                
-                // Set connection properties
+                  // Set connection properties
                 Properties props = new Properties();
-                props.setProperty("user", DatabaseConfig.DB_USERNAME);
-                props.setProperty("password", DatabaseConfig.DB_PASSWORD);
+                props.setProperty("user", DatabaseConfig.getDbUsername());
+                props.setProperty("password", DatabaseConfig.getDbPassword());
                 props.setProperty("loginTimeout", String.valueOf(DatabaseConfig.CONNECTION_TIMEOUT));
                 props.setProperty("socketTimeout", String.valueOf(DatabaseConfig.SOCKET_TIMEOUT));
                 props.setProperty("TDS", "8.0"); // Specify TDS version
                 props.setProperty("ssl", "off"); // Disable SSL for localhost
-                props.setProperty("trustServerCertificate", "true"); // Trust server certificate                Log.d(TAG, "Attempting to connect with properties...");
+                props.setProperty("trustServerCertificate", "true"); // Trust server certificateLog.d(TAG, "Attempting to connect with properties...");
                 Log.d(TAG, "=== CONNECTING TO: " + DatabaseConfig.DB_URL + " ===");
                 
                 // Try primary connection first

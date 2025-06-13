@@ -2,6 +2,18 @@ plugins {
     alias(libs.plugins.android.application)
 }
 
+// Load local properties
+val localProperties = java.util.Properties()
+val localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.inputStream().use { localProperties.load(it) }
+}
+
+// Function to get property with fallback
+fun getLocalProperty(key: String, fallback: String = ""): String {
+    return localProperties.getProperty(key) ?: System.getenv(key) ?: fallback
+}
+
 android {
     namespace = "com.example.bookingticketmove_prm392"
     compileSdk = 35
@@ -14,6 +26,14 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        
+        // Add database configuration to BuildConfig
+        buildConfigField("String", "DB_HOST", "\"${getLocalProperty("DB_HOST", "localhost")}\"")
+        buildConfigField("String", "DB_HOST_FALLBACK", "\"${getLocalProperty("DB_HOST_FALLBACK", "10.0.2.2")}\"")
+        buildConfigField("String", "DB_PORT", "\"${getLocalProperty("DB_PORT", "1433")}\"")
+        buildConfigField("String", "DB_NAME", "\"${getLocalProperty("DB_NAME", "MovieTicketBookingSystem")}\"")
+        buildConfigField("String", "DB_USERNAME", "\"${getLocalProperty("DB_USERNAME", "sa")}\"")
+        buildConfigField("String", "DB_PASSWORD", "\"${getLocalProperty("DB_PASSWORD", "")}\"")
     }
 
     buildTypes {
@@ -23,7 +43,19 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            
+            // Production database configuration (override for production)
+            buildConfigField("String", "DB_HOST", "\"${getLocalProperty("PROD_DB_HOST", getLocalProperty("DB_HOST", "localhost"))}\"")
+            buildConfigField("String", "DB_USERNAME", "\"${getLocalProperty("PROD_DB_USERNAME", getLocalProperty("DB_USERNAME", "sa"))}\"")
+            buildConfigField("String", "DB_PASSWORD", "\"${getLocalProperty("PROD_DB_PASSWORD", getLocalProperty("DB_PASSWORD", ""))}\"")
         }
+        debug {
+            // Debug build uses local.properties values (already set in defaultConfig)
+        }
+    }
+    
+    buildFeatures {
+        buildConfig = true
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
