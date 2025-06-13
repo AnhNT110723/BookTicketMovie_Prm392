@@ -1,24 +1,12 @@
 package com.example.bookingticketmove_prm392.database;
 
-import com.example.bookingticketmove_prm392.BuildConfig;
-
 public class DatabaseConfig {
     // Database configuration constants
-    public static final String DB_DRIVER = "net.sourceforge.jtds.jdbc.Driver";
-    
-    // Database connection details from BuildConfig (secure)
-    private static final String DB_HOST = BuildConfig.DB_HOST;
-    private static final String DB_HOST_FALLBACK = BuildConfig.DB_HOST_FALLBACK;
-    private static final String DB_PORT = BuildConfig.DB_PORT;
-    private static final String DB_NAME = BuildConfig.DB_NAME;
-    private static final String DB_USERNAME = BuildConfig.DB_USERNAME;
-    private static final String DB_PASSWORD = BuildConfig.DB_PASSWORD;
-    
-    // Construct URLs dynamically from secure config
-    public static final String DB_URL = String.format("jdbc:jtds:sqlserver://%s:%s/%s", 
-                                                      DB_HOST, DB_PORT, DB_NAME);
-    public static final String DB_URL_FALLBACK = String.format("jdbc:jtds:sqlserver://%s:%s/%s", 
-                                                               DB_HOST_FALLBACK, DB_PORT, DB_NAME);
+    public static final String DB_DRIVER = "net.sourceforge.jtds.jdbc.Driver";    // Primary: Actual IP address, Fallback: 10.0.2.2 for emulator
+    public static final String DB_URL = "jdbc:jtds:sqlserver://10.33.68.159:1433/MovieTicketBookingSystem";
+    public static final String DB_URL_FALLBACK = "jdbc:jtds:sqlserver://10.0.2.2:1433/MovieTicketBookingSystem";
+    public static final String DB_USERNAME = "sa";
+    public static final String DB_PASSWORD = "123";
     
     // Connection timeout settings
     public static final int CONNECTION_TIMEOUT = 30; // seconds
@@ -29,25 +17,8 @@ public class DatabaseConfig {
     public static final int MIN_POOL_SIZE = 2;
     
     // Database schema info
-    public static final String DATABASE_NAME = DB_NAME;
-    
-    // Getters for secure access (if needed elsewhere)
-    public static String getDbUsername() {
-        return DB_USERNAME;
-    }
-    
-    public static String getDbPassword() {
-        return DB_PASSWORD;
-    }
-    
-    public static String getDbHost() {
-        return DB_HOST;
-    }
-    
-    public static String getDbPort() {
-        return DB_PORT;
-    }    
-    // Table names - matching your database schema
+    public static final String DATABASE_NAME = "MovieTicketBookingSystem";
+      // Table names - matching your database schema
     public static final String TABLE_USER = "[User]";
     public static final String TABLE_ROLE = "Role";
     public static final String TABLE_MOVIE = "Movie";
