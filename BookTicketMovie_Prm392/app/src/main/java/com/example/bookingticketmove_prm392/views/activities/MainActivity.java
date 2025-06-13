@@ -1,4 +1,4 @@
-package com.example.bookingticketmove_prm392;
+package com.example.bookingticketmove_prm392.views.activities;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -10,6 +10,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+
+import com.example.bookingticketmove_prm392.R;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;

@@ -1,4 +1,4 @@
-package com.example.bookingticketmove_prm392;
+package com.example.bookingticketmove_prm392.views.activities;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -14,6 +14,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.bookingticketmove_prm392.R;
 import androidx.appcompat.widget.Toolbar;
 
 import com.example.bookingticketmove_prm392.database.dao.MovieDAO;
