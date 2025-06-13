@@ -60,10 +60,8 @@ public class ProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_profile);
-
-        // Initialize shared preferences
-        sharedPreferences = getSharedPreferences("MovieBookingApp", MODE_PRIVATE);
+        setContentView(R.layout.activity_profile);        // Initialize shared preferences
+        sharedPreferences = getSharedPreferences("UserSession", MODE_PRIVATE);
 
         // Initialize views
         initViews();
@@ -109,13 +107,11 @@ public class ProfileActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setTitle("👤 My Profile");
         }
-    }
-
-    private void loadUserData() {
+    }    private void loadUserData() {
         setLoadingState(true);
 
         // Get user email from shared preferences
-        String userEmail = sharedPreferences.getString("user_email", "");
+        String userEmail = sharedPreferences.getString("userEmail", "");
 
         if (!userEmail.isEmpty()) {
             // Load user data from database
@@ -147,13 +143,11 @@ public class ProfileActivity extends AppCompatActivity {
             showError("No user data found");
             finish();
         }
-    }
-
-    private void loadCachedUserData() {
-        String userName = sharedPreferences.getString("user_name", "User");
-        String userEmail = sharedPreferences.getString("user_email", "");
-        float loyaltyPoints = sharedPreferences.getFloat("loyalty_points", 0.0f);
-        int userRole = sharedPreferences.getInt("user_role", 2);
+    }    private void loadCachedUserData() {
+        String userName = sharedPreferences.getString("userName", "User");
+        String userEmail = sharedPreferences.getString("userEmail", "");
+        float loyaltyPoints = sharedPreferences.getFloat("loyaltyPoints", 0.0f);
+        int userRole = sharedPreferences.getInt("userRole", 2);
 
         // Create a basic user object with cached data
         currentUser = new User();

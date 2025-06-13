@@ -73,12 +73,10 @@ public class MainActivity extends AppCompatActivity implements DatabaseConnectio
             statusScrollView.setVisibility(android.view.View.VISIBLE);
             showInitialStatus();
             statusTextView.postDelayed(this::testDatabaseConnection, 1000);        });
-    }
-
-    private void checkUserLoginStatus() {
+    }    private void checkUserLoginStatus() {
         // Check if user is already logged in
-        boolean isLoggedIn = getSharedPreferences("MovieBookingApp", MODE_PRIVATE)
-                .getBoolean("is_logged_in", false);
+        boolean isLoggedIn = getSharedPreferences("UserSession", MODE_PRIVATE)
+                .getBoolean("isLoggedIn", false);
         
         if (isLoggedIn) {
             // User is already logged in, navigate to home

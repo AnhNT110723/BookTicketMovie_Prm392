@@ -64,9 +64,8 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_home);
-        
-        // Initialize shared preferences
-        sharedPreferences = getSharedPreferences("MovieBookingApp", MODE_PRIVATE);
+          // Initialize shared preferences
+        sharedPreferences = getSharedPreferences("UserSession", MODE_PRIVATE);
         
         // Initialize views
         initViews();
@@ -118,10 +117,9 @@ public class HomeActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         }
     }
-    
-    private void loadUserData() {
+      private void loadUserData() {
         // Get user email from shared preferences (saved during login)
-        String userEmail = sharedPreferences.getString("user_email", "");
+        String userEmail = sharedPreferences.getString("userEmail", "");
         
         if (!userEmail.isEmpty()) {
             // Load user data from database
@@ -153,11 +151,10 @@ public class HomeActivity extends AppCompatActivity {
             redirectToLogin();
         }
     }
-    
-    private void loadCachedUserData() {
-        String userName = sharedPreferences.getString("user_name", "User");
-        String userEmail = sharedPreferences.getString("user_email", "");
-        float loyaltyPoints = sharedPreferences.getFloat("loyalty_points", 0.0f);
+      private void loadCachedUserData() {
+        String userName = sharedPreferences.getString("userName", "User");
+        String userEmail = sharedPreferences.getString("userEmail", "");
+        float loyaltyPoints = sharedPreferences.getFloat("loyaltyPoints", 0.0f);
         
         // Create a basic user object with cached data
         currentUser = new User();
@@ -203,13 +200,12 @@ public class HomeActivity extends AppCompatActivity {
         
         welcomeText.setText(greeting);
     }
-    
-    private void cacheUserData() {
+      private void cacheUserData() {
         if (currentUser != null) {
             SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putString("user_name", currentUser.getName());
-            editor.putString("user_email", currentUser.getEmail());
-            editor.putFloat("loyalty_points", currentUser.getLoyaltyPoints() != null ? 
+            editor.putString("userName", currentUser.getName());
+            editor.putString("userEmail", currentUser.getEmail());
+            editor.putFloat("loyaltyPoints", currentUser.getLoyaltyPoints() != null ? 
                 currentUser.getLoyaltyPoints().floatValue() : 0.0f);
             editor.apply();
         }
@@ -276,13 +272,11 @@ public class HomeActivity extends AppCompatActivity {
         
         // Load featured movies
         new LoadFeaturedMoviesTask().execute();
-    }
-      private void onMovieClick(Movie movie) {
-        // TODO: Navigate to MovieDetailActivity
-        Toast.makeText(this, "Selected: " + movie.getTitle(), Toast.LENGTH_SHORT).show();
-        // Intent intent = new Intent(this, MovieDetailActivity.class);
-        // intent.putExtra("movie_id", movie.getMovieId());
-        // startActivity(intent);
+    }      private void onMovieClick(Movie movie) {
+        // Navigate to MovieDetailActivity
+        Intent intent = new Intent(this, MovieDetailActivity.class);
+        intent.putExtra(MovieDetailActivity.EXTRA_MOVIE_ID, movie.getMovieId());
+        startActivity(intent);
     }
     
     @Override

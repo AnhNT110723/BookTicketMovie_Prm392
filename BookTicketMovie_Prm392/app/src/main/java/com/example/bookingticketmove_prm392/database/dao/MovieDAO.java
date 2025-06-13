@@ -69,7 +69,7 @@ public class MovieDAO extends BaseDAO {    // Get all active movies
         return movies;
     }    // Get movie by ID
     public Movie getMovieById(int movieId) throws SQLException {
-        String query = "SELECT * FROM Movie WHERE MovieID = ? AND IsActive = 1";
+        String query = "SELECT * FROM Movie WHERE MovieID = ?";
         
         ResultSet rs = null;
         PreparedStatement statement = null;
@@ -79,10 +79,11 @@ public class MovieDAO extends BaseDAO {    // Get all active movies
             if (rs.next()) {
                 return mapResultSetToMovie(rs);
             }
-            return null;
         } finally {
             closeResources(rs, statement);
         }
+        
+        return null;
     }    // Search movies by title or genre
     public List<Movie> searchMovies(String searchQuery) throws SQLException {
         List<Movie> movies = new ArrayList<>();

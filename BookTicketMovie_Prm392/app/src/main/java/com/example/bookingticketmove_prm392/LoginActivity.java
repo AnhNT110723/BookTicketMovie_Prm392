@@ -158,15 +158,15 @@ public class LoginActivity extends AppCompatActivity {
         Log.d(TAG, "Login successful for user: " + user.getEmail() + " with role: " + user.getRoleID());
         
         // Save user session data to SharedPreferences
-        getSharedPreferences("MovieBookingApp", MODE_PRIVATE)
+        getSharedPreferences("UserSession", MODE_PRIVATE)
             .edit()
-            .putString("user_email", user.getEmail())
-            .putString("user_name", user.getName())
-            .putInt("user_id", user.getUserID())
-            .putInt("user_role", user.getRoleID())
-            .putFloat("loyalty_points", user.getLoyaltyPoints() != null ? 
+            .putString("userEmail", user.getEmail())
+            .putString("userName", user.getName())
+            .putInt("userId", user.getUserID())
+            .putInt("userRole", user.getRoleID())
+            .putFloat("loyaltyPoints", user.getLoyaltyPoints() != null ? 
                 user.getLoyaltyPoints().floatValue() : 0.0f)
-            .putBoolean("is_logged_in", true)
+            .putBoolean("isLoggedIn", true)
             .apply();
         
         // Navigate based on user role

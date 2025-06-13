@@ -55,9 +55,8 @@ public class AdminActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_admin);
-        
-        // Initialize shared preferences
-        sharedPreferences = getSharedPreferences("MovieBookingApp", MODE_PRIVATE);
+          // Initialize shared preferences
+        sharedPreferences = getSharedPreferences("UserSession", MODE_PRIVATE);
         
         // Check admin role
         if (!isUserAdmin()) {
@@ -92,7 +91,7 @@ public class AdminActivity extends AppCompatActivity {
     }
     
     private boolean isUserAdmin() {
-        int userRole = sharedPreferences.getInt("user_role", 2); // Default to Customer
+        int userRole = sharedPreferences.getInt("userRole", 2); // Default to Customer
         return userRole == 1; // Admin role
     }
     
@@ -115,10 +114,9 @@ public class AdminActivity extends AppCompatActivity {
             getSupportActionBar().setTitle("🎬 Admin Panel");
         }
     }
-    
-    private void loadUserData() {
-        String userEmail = sharedPreferences.getString("user_email", "");
-        String userName = sharedPreferences.getString("user_name", "Admin");
+      private void loadUserData() {
+        String userEmail = sharedPreferences.getString("userEmail", "");
+        String userName = sharedPreferences.getString("userName", "Admin");
         
         welcomeAdminText.setText("Welcome back, Admin!");
         userNameText.setText(userName);
