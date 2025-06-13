@@ -42,6 +42,10 @@ dependencies {
     implementation("androidx.cardview:cardview:1.0.0")
     implementation("androidx.coordinatorlayout:coordinatorlayout:1.2.0")
     
+    // Image loading library
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+    annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
+    
     // JTDS SQL Server driver
     implementation(files("libs/jtds-1.3.1.jar"))
 

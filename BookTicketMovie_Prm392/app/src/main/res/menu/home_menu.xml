@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+      <item
+        android:id="@+id/action_admin_panel"
+        android:title="Admin Panel"
+        android:icon="@drawable/ic_admin_panel"
+        app:showAsAction="ifRoom"
+        android:contentDescription="Admin Panel"
+        android:visible="false" />
     
     <item
         android:id="@+id/action_refresh"

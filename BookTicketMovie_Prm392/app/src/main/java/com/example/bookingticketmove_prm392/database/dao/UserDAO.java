@@ -315,4 +315,49 @@ public class UserDAO extends BaseDAO {
             });
         }
     }
+
+    /**
+     * Modern approach for updating user
+     */
+    public static class UpdateUserTask {
+        private User user;
+        private UserDAO userDAO;
+        private DatabaseTaskListener<Boolean> listener;
+
+        public UpdateUserTask(User user, DatabaseTaskListener<Boolean> listener) {
+            this.user = user;
+            this.listener = listener;
+            this.userDAO = new UserDAO();
+        }
+
+        public void execute() {
+            ExecutorService executor = Executors.newSingleThreadExecutor();
+            Handler mainHandler = new Handler(Looper.getMainLooper());
+            
+            executor.execute(() -> {
+                Boolean result = false;
+                Exception exception = null;
+                
+                try {
+                    result = userDAO.updateUser(user);
+                } catch (Exception e) {
+                    Log.e(TAG, "Error updating user", e);
+                    exception = e;
+                }
+                
+                final Boolean finalResult = result;
+                final Exception finalException = exception;
+                
+                mainHandler.post(() -> {
+                    if (listener != null) {
+                        if (finalException != null) {
+                            listener.onError(finalException);
+                        } else {
+                            listener.onSuccess(finalResult);
+                        }
+                    }
+                });
+            });
+        }
+    }
 }

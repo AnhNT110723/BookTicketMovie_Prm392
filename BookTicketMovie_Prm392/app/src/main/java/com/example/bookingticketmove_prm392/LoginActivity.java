@@ -158,35 +158,52 @@ public class LoginActivity extends AppCompatActivity {
         Log.d(TAG, "Login successful for user: " + user.getEmail() + " with role: " + user.getRoleID());
         
         // Save user session data to SharedPreferences
-        getSharedPreferences("MovieBookingApp", MODE_PRIVATE)
+        getSharedPreferences("UserSession", MODE_PRIVATE)
             .edit()
-            .putString("user_email", user.getEmail())
-            .putString("user_name", user.getName())
-            .putInt("user_id", user.getUserID())
-            .putInt("user_role", user.getRoleID())
-            .putFloat("loyalty_points", user.getLoyaltyPoints() != null ? 
+            .putString("userEmail", user.getEmail())
+            .putString("userName", user.getName())
+            .putInt("userId", user.getUserID())
+            .putInt("userRole", user.getRoleID())
+            .putFloat("loyaltyPoints", user.getLoyaltyPoints() != null ? 
                 user.getLoyaltyPoints().floatValue() : 0.0f)
-            .putBoolean("is_logged_in", true)
+            .putBoolean("isLoggedIn", true)
             .apply();
-        
-        // Navigate based on user role
+          // Navigate based on user role
         Intent intent;
         if (user.getRoleID() == 1) { // Admin role
-            intent = new Intent(LoginActivity.this, AdminActivity.class);
-            Toast.makeText(this, "Welcome Admin!", Toast.LENGTH_SHORT).show();
+            // Show dialog to choose between admin panel and home
+            showAdminNavigationDialog(user);
+            return; // Don't navigate immediately, let dialog handle it
         } else { // Customer or FrontDeskOfficer
             intent = new Intent(LoginActivity.this, HomeActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish();
         }
-        
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
-        finish();
-    }
-
-    private void onLoginFailed(String errorMessage) {
+    }    private void onLoginFailed(String errorMessage) {
         Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show();
         
         // Clear password field for security
         passwordInput.setText("");
+    }
+    
+    private void showAdminNavigationDialog(User user) {
+        new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("Welcome Admin!")
+                .setMessage("Where would you like to go?")
+                .setPositiveButton("Admin Panel", (dialog, which) -> {
+                    Intent intent = new Intent(LoginActivity.this, AdminActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    finish();
+                })
+                .setNegativeButton("Home Screen", (dialog, which) -> {
+                    Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    finish();
+                })
+                .setCancelable(false)
+                .show();
     }
 }
