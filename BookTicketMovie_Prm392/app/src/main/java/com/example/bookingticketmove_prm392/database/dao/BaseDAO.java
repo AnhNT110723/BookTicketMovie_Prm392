@@ -70,17 +70,22 @@ public abstract class BaseDAO {
         } catch (SQLException e) {
             Log.e(TAG, "Error closing database resources", e);
         }
-    }
-
-    /**
+    }    /**
      * Base AsyncTask for database operations
+     * Enhanced for MVC pattern integration
      */
     public abstract static class DatabaseTask<T> extends AsyncTask<Void, Void, T> {
         protected Exception exception;
-        protected DatabaseTaskListener<T> listener;
+        public DatabaseTaskListener<T> listener; // Made public for Repository access
 
         public DatabaseTask(DatabaseTaskListener<T> listener) {
             this.listener = listener;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            // Can be overridden by subclasses for loading indicators
+            super.onPreExecute();
         }
 
         @Override
@@ -92,6 +97,13 @@ public abstract class BaseDAO {
                     listener.onSuccess(result);
                 }
             }
+        }
+        
+        /**
+         * Helper method to safely execute database tasks
+         */
+        public void executeOnExecutor() {
+            this.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
     }
 
