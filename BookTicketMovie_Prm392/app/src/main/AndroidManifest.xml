@@ -74,6 +74,12 @@
             android:parentActivityName=".views.activities.MovieDetailActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:screenOrientation="unspecified" />
+        <activity
+            android:name=".views.activities.MyBookingsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".views.activities.BookingDetailActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

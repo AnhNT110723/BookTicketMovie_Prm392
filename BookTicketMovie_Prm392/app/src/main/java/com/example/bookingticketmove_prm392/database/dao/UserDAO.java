@@ -1,152 +1,80 @@
 package com.example.bookingticketmove_prm392.database.dao;
 
-import android.os.Handler;
-import android.os.Looper;
+import android.os.AsyncTask;
 import android.util.Log;
-import com.example.bookingticketmove_prm392.database.DatabaseConfig;
+
+import com.example.bookingticketmove_prm392.database.DatabaseConnection;
 import com.example.bookingticketmove_prm392.models.User;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class UserDAO extends BaseDAO {
     private static final String TAG = "UserDAO";
 
-    /**
-     * Get user by email
-     */
+    public interface DatabaseTaskListener<T> {
+        void onSuccess(T result);
+        void onError(Exception error);
+    }
+    
+    // This is a synchronous method
     public User getUserByEmail(String email) throws SQLException {
-        String sql = "SELECT UserID, Name, Email, Phone, PasswordHash, LoyaltyPoints, " +
-                    "RegistrationDate, IsActive, RoleID FROM " + DatabaseConfig.TABLE_USER + 
-                    " WHERE Email = ?";
-        
-        ResultSet rs = null;
-        PreparedStatement statement = null;
-        
-        try {
-            rs = executeQuery(sql, email);
-            if (rs.next()) {
-                return mapResultSetToUser(rs);
+        String sql = "SELECT UserID, Name, Email, Phone, PasswordHash, LoyaltyPoints, RegistrationDate, IsActive, RoleID FROM [User] WHERE Email = ?";
+        try (Connection conn = DatabaseConnection.getInstance().getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, email);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return mapResultSetToUser(rs);
+                }
             }
-            return null;
-        } finally {
-            closeResources(rs, statement);
+        }
+        return null;
+    }
+
+    // This is an asynchronous method that wraps the synchronous one
+    public void getUserByEmail(String email, DatabaseTaskListener<User> listener) {
+        new GetUserByEmailTask(email, listener).execute();
+    }
+
+    public static class GetUserByEmailTask extends AsyncTask<Void, Void, User> {
+        private final String email;
+        private final DatabaseTaskListener<User> listener;
+        private final UserDAO userDAO;
+        private Exception exception;
+
+        public GetUserByEmailTask(String email, DatabaseTaskListener<User> listener) {
+            this.email = email;
+            this.listener = listener;
+            this.userDAO = new UserDAO();
+        }
+
+        @Override
+        protected User doInBackground(Void... voids) {
+            try {
+                return userDAO.getUserByEmail(email);
+            } catch (Exception e) {
+                Log.e(TAG, "Error getting user by email in background", e);
+                exception = e;
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(User user) {
+            if (listener != null) {
+                if (exception != null) {
+                    listener.onError(exception);
+                } else {
+                    listener.onSuccess(user);
+                }
+            }
         }
     }
 
-    /**
-     * Get user by ID
-     */
-    public User getUserById(int userId) throws SQLException {
-        String sql = "SELECT UserID, Name, Email, Phone, PasswordHash, LoyaltyPoints, " +
-                    "RegistrationDate, IsActive, RoleID FROM " + DatabaseConfig.TABLE_USER + 
-                    " WHERE UserID = ?";
-        
-        ResultSet rs = null;
-        PreparedStatement statement = null;
-        
-        try {
-            rs = executeQuery(sql, userId);
-            if (rs.next()) {
-                return mapResultSetToUser(rs);
-            }
-            return null;
-        } finally {
-            closeResources(rs, statement);
-        }
-    }
-
-    /**
-     * Create a new user
-     */
-    public boolean createUser(User user) throws SQLException {
-        String sql = "INSERT INTO " + DatabaseConfig.TABLE_USER + 
-                    " (Name, Email, Phone, PasswordHash, LoyaltyPoints, RegistrationDate, IsActive, RoleID) " +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        
-        int result = executeUpdate(sql, 
-            user.getName(),
-            user.getEmail(),
-            user.getPhone(),
-            user.getPasswordHash(),
-            user.getLoyaltyPoints(),
-            new Timestamp(user.getRegistrationDate().getTime()),
-            user.isActive() ? 1 : 0,
-            user.getRoleID()
-        );
-        
-        return result > 0;
-    }
-
-    /**
-     * Update user information
-     */
-    public boolean updateUser(User user) throws SQLException {
-        String sql = "UPDATE " + DatabaseConfig.TABLE_USER + 
-                    " SET Name = ?, Phone = ?, LoyaltyPoints = ?, IsActive = ?, RoleID = ? " +
-                    "WHERE UserID = ?";
-        
-        int result = executeUpdate(sql,
-            user.getName(),
-            user.getPhone(),
-            user.getLoyaltyPoints(),
-            user.isActive() ? 1 : 0,
-            user.getRoleID(),
-            user.getUserID()
-        );
-        
-        return result > 0;
-    }
-
-    /**
-     * Get all users
-     */
-    public List<User> getAllUsers() throws SQLException {
-        String sql = "SELECT UserID, Name, Email, Phone, PasswordHash, LoyaltyPoints, " +
-                    "RegistrationDate, IsActive, RoleID FROM " + DatabaseConfig.TABLE_USER;
-        
-        List<User> users = new ArrayList<>();
-        ResultSet rs = null;
-        PreparedStatement statement = null;
-        
-        try {
-            rs = executeQuery(sql);
-            while (rs.next()) {
-                users.add(mapResultSetToUser(rs));
-            }
-            return users;
-        } finally {
-            closeResources(rs, statement);
-        }
-    }
-
-    /**
-     * Check if email exists
-     */
-    public boolean isEmailExists(String email) throws SQLException {
-        String sql = "SELECT COUNT(*) FROM " + DatabaseConfig.TABLE_USER + " WHERE Email = ?";
-        
-        ResultSet rs = null;
-        PreparedStatement statement = null;
-        
-        try {
-            rs = executeQuery(sql, email);
-            if (rs.next()) {
-                return rs.getInt(1) > 0;
-            }
-            return false;
-        } finally {
-            closeResources(rs, statement);
-        }
-    }    /**
-     * Map ResultSet to User object
-     */
-    private User mapResultSetToUser(ResultSet rs) throws SQLException {
+    private static User mapResultSetToUser(ResultSet rs) throws SQLException {
         User user = new User();
         user.setUserID(rs.getInt("UserID"));
         user.setName(rs.getString("Name"));
@@ -160,123 +88,82 @@ public class UserDAO extends BaseDAO {
         return user;
     }
 
-    /**
-     * Login user with email and password
-     */
     public User loginUser(String email, String passwordHash) throws SQLException {
-        String sql = "SELECT UserID, Name, Email, Phone, PasswordHash, LoyaltyPoints, " +
-                    "RegistrationDate, IsActive, RoleID FROM " + DatabaseConfig.TABLE_USER + 
-                    " WHERE Email = ? AND PasswordHash = ? AND IsActive = 1";
-        
-        ResultSet rs = null;
-        PreparedStatement statement = null;
-        
-        try {
-            rs = executeQuery(sql, email, passwordHash);
-            if (rs.next()) {
-                return mapResultSetToUser(rs);
+        String sql = "SELECT * FROM [User] WHERE Email = ? AND PasswordHash = ? AND IsActive = 1";
+        try (Connection conn = DatabaseConnection.getInstance().getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, email);
+            stmt.setString(2, passwordHash);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return mapResultSetToUser(rs);
+                }
             }
-            return null;
-        } finally {
-            closeResources(rs, statement);
         }
-    }    /**
-     * Modern approach for getting user by email
-     */
-    public static class GetUserByEmailTask {
-        private String email;
-        private UserDAO userDAO;
-        private DatabaseTaskListener<User> listener;
+        return null;
+    }
 
-        public GetUserByEmailTask(String email, DatabaseTaskListener<User> listener) {
-            this.email = email;
-            this.listener = listener;
-            this.userDAO = new UserDAO();
-        }
-
-        public void execute() {
-            ExecutorService executor = Executors.newSingleThreadExecutor();
-            Handler mainHandler = new Handler(Looper.getMainLooper());
-            
-            executor.execute(() -> {
-                User result = null;
-                Exception exception = null;
-                
-                try {
-                    result = userDAO.getUserByEmail(email);
-                } catch (Exception e) {
-                    Log.e(TAG, "Error getting user by email", e);
-                    exception = e;
-                }
-                
-                final User finalResult = result;
-                final Exception finalException = exception;
-                
-                mainHandler.post(() -> {
-                    if (listener != null) {
-                        if (finalException != null) {
-                            listener.onError(finalException);
-                        } else {
-                            listener.onSuccess(finalResult);
-                        }
-                    }
-                });
-            });
+    public boolean createUser(User user) throws SQLException {
+        String sql = "INSERT INTO [User] (Name, Email, Phone, PasswordHash, LoyaltyPoints, RegistrationDate, IsActive, RoleID) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        try (Connection conn = DatabaseConnection.getInstance().getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, user.getName());
+            stmt.setString(2, user.getEmail());
+            stmt.setString(3, user.getPhone());
+            stmt.setString(4, user.getPasswordHash());
+            stmt.setBigDecimal(5, user.getLoyaltyPoints());
+            stmt.setTimestamp(6, new Timestamp(System.currentTimeMillis()));
+            stmt.setBoolean(7, true);
+            stmt.setInt(8, user.getRoleID());
+            return stmt.executeUpdate() > 0;
         }
     }
 
-    /**
-     * Modern approach for creating a user
-     */
-    public static class CreateUserTask {
-        private User user;
-        private UserDAO userDAO;
-        private DatabaseTaskListener<Boolean> listener;
-
-        public CreateUserTask(User user, DatabaseTaskListener<Boolean> listener) {
-            this.user = user;
-            this.listener = listener;
-            this.userDAO = new UserDAO();
-        }
-
-        public void execute() {
-            ExecutorService executor = Executors.newSingleThreadExecutor();
-            Handler mainHandler = new Handler(Looper.getMainLooper());
-            
-            executor.execute(() -> {
-                Boolean result = false;
-                Exception exception = null;
-                
-                try {
-                    result = userDAO.createUser(user);
-                } catch (Exception e) {
-                    Log.e(TAG, "Error creating user", e);
-                    exception = e;
+    public User getUserById(int userId) throws SQLException {
+        String sql = "SELECT * FROM [User] WHERE UserID = ?";
+        try (Connection conn = DatabaseConnection.getInstance().getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, userId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return mapResultSetToUser(rs);
                 }
-                
-                final Boolean finalResult = result;
-                final Exception finalException = exception;
-                  mainHandler.post(() -> {
-                    if (listener != null) {
-                        if (finalException != null) {
-                            listener.onError(finalException);
-                        } else {
-                            listener.onSuccess(finalResult);
-                        }
-                    }
-                });
-            });
+            }
+        }
+        return null;
+    }
+
+    public boolean updateUser(User user) throws SQLException {
+        String sql = "UPDATE [User] SET Name = ?, Phone = ? WHERE UserID = ?";
+        try (Connection conn = DatabaseConnection.getInstance().getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, user.getName());
+            stmt.setString(2, user.getPhone());
+            stmt.setInt(3, user.getUserID());
+            return stmt.executeUpdate() > 0;
         }
     }
 
-    /**
-     * Modern approach for user login
-     */
-    public static class LoginUserTask {
-        private String email;
-        private String passwordHash;
-        private UserDAO userDAO;
-        private DatabaseTaskListener<User> listener;
+    public boolean isEmailExists(String email) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM [User] WHERE Email = ?";
+        try (Connection conn = DatabaseConnection.getInstance().getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, email);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        }
+        return false;
+    }
+
+    public static class LoginUserTask extends AsyncTask<Void, Void, User> {
+        private final String email;
+        private final String passwordHash;
+        private final DatabaseTaskListener<User> listener;
+        private final UserDAO userDAO;
+        private Exception exception;
 
         public LoginUserTask(String email, String passwordHash, DatabaseTaskListener<User> listener) {
             this.email = email;
@@ -285,44 +172,69 @@ public class UserDAO extends BaseDAO {
             this.userDAO = new UserDAO();
         }
 
-        public void execute() {
-            ExecutorService executor = Executors.newSingleThreadExecutor();
-            Handler mainHandler = new Handler(Looper.getMainLooper());
-            
-            executor.execute(() -> {
-                User result = null;
-                Exception exception = null;
-                
-                try {
-                    result = userDAO.loginUser(email, passwordHash);
-                } catch (Exception e) {
-                    Log.e(TAG, "Error logging in user", e);
-                    exception = e;
+        @Override
+        protected User doInBackground(Void... voids) {
+            try {
+                return userDAO.loginUser(email, passwordHash);
+            } catch (Exception e) {
+                Log.e(TAG, "Error logging in user", e);
+                exception = e;
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(User user) {
+            if (listener != null) {
+                if (exception != null) {
+                    listener.onError(exception);
+                } else {
+                    listener.onSuccess(user);
                 }
-                
-                final User finalResult = result;
-                final Exception finalException = exception;
-                
-                mainHandler.post(() -> {
-                    if (listener != null) {
-                        if (finalException != null) {
-                            listener.onError(finalException);
-                        } else {
-                            listener.onSuccess(finalResult);
-                        }
-                    }
-                });
-            });
+            }
         }
     }
 
-    /**
-     * Modern approach for updating user
-     */
-    public static class UpdateUserTask {
-        private User user;
-        private UserDAO userDAO;
-        private DatabaseTaskListener<Boolean> listener;
+    public static class CreateUserTask extends AsyncTask<Void, Void, Boolean> {
+        private final User user;
+        private final DatabaseTaskListener<Boolean> listener;
+        private final UserDAO userDAO;
+        private Exception exception;
+
+        public CreateUserTask(User user, DatabaseTaskListener<Boolean> listener) {
+            this.user = user;
+            this.listener = listener;
+            this.userDAO = new UserDAO();
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            try {
+                return userDAO.createUser(user);
+            } catch (Exception e) {
+                Log.e(TAG, "Error creating user", e);
+                exception = e;
+                return false;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Boolean success) {
+            if (listener != null) {
+                if (exception != null) {
+                    listener.onError(exception);
+                } else {
+                    listener.onSuccess(success);
+                }
+            }
+        }
+    }
+
+    public static class UpdateUserTask extends AsyncTask<Void, Void, Boolean> {
+        private final User user;
+        private final DatabaseTaskListener<Boolean> listener;
+        private final UserDAO userDAO;
+        private Exception exception;
 
         public UpdateUserTask(User user, DatabaseTaskListener<Boolean> listener) {
             this.user = user;
@@ -330,34 +242,28 @@ public class UserDAO extends BaseDAO {
             this.userDAO = new UserDAO();
         }
 
-        public void execute() {
-            ExecutorService executor = Executors.newSingleThreadExecutor();
-            Handler mainHandler = new Handler(Looper.getMainLooper());
-            
-            executor.execute(() -> {
-                Boolean result = false;
-                Exception exception = null;
-                
-                try {
-                    result = userDAO.updateUser(user);
-                } catch (Exception e) {
-                    Log.e(TAG, "Error updating user", e);
-                    exception = e;
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            try {
+                return userDAO.updateUser(user);
+            } catch (Exception e) {
+                Log.e(TAG, "Error updating user", e);
+                exception = e;
+                return false;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Boolean success) {
+            if (listener != null) {
+                if (exception != null) {
+                    listener.onError(exception);
+                } else {
+                    listener.onSuccess(success);
                 }
-                
-                final Boolean finalResult = result;
-                final Exception finalException = exception;
-                
-                mainHandler.post(() -> {
-                    if (listener != null) {
-                        if (finalException != null) {
-                            listener.onError(finalException);
-                        } else {
-                            listener.onSuccess(finalResult);
-                        }
-                    }
-                });
-            });
+            }
         }
     }
+    
+    // Other synchronous methods can be added here...
 }
