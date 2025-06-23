@@ -29,11 +29,7 @@
     
     <!-- Admin Theme Colors -->
     <!-- Additional Movie Detail Colors -->
-    <color name="rating_color">#FFC107</color>
-    <color name="price_color">#4CAF50</color>
-    <color name="border_color">#E0E0E0</color>
-    <color name="colorPrimary">@color/primary</color>
-    
+
     <!-- Enhanced Login Screen Colors -->
     <color name="card_background">#FFFFFF</color>
     <color name="button_ripple">#40FFFFFF</color>

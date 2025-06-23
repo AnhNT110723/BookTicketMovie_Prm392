@@ -97,10 +97,48 @@ public class User {
 
     public int getRoleID() {
         return roleID;
+    }    public void setRoleID(int roleID) {
+        this.roleID = roleID;
     }
 
-    public void setRoleID(int roleID) {
-        this.roleID = roleID;
+    // Convenience methods for UserManagementAdapter compatibility
+    public int getUserId() {
+        return this.userID;
+    }
+
+    public String getUsername() {
+        return this.name;
+    }
+
+    public String getFirstName() {
+        // For simplicity, we'll split the name field
+        if (this.name != null && this.name.contains(" ")) {
+            return this.name.split(" ")[0];
+        }
+        return this.name;
+    }
+
+    public String getLastName() {
+        // For simplicity, we'll split the name field
+        if (this.name != null && this.name.contains(" ")) {
+            String[] parts = this.name.split(" ");
+            if (parts.length > 1) {
+                return parts[parts.length - 1];
+            }
+        }
+        return null;
+    }
+
+    public Date getJoinDate() {
+        return this.registrationDate;
+    }
+
+    public int getRole() {
+        return this.roleID;
+    }
+
+    public void setRole(int role) {
+        this.roleID = role;
     }
 
     @Override

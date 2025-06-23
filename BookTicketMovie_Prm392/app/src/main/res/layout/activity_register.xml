@@ -35,14 +35,12 @@
 
                 <!-- App Logo/Icon -->
                 <ImageView
-                    android:id="@+id/app_logo"
                     android:layout_width="80dp"
                     android:layout_height="80dp"
                     android:layout_gravity="center"
-                    android:layout_marginBottom="24dp"
-                    android:background="@drawable/circle_gradient_primary"
+                    android:layout_marginBottom="24dp"                    android:background="@drawable/circle_gradient_primary"
                     android:padding="16dp"
-                    android:src="@drawable/ic_person_add"
+                    android:src="@android:drawable/ic_input_add"
                     android:contentDescription="@string/app_logo" />
 
                 <!-- App Title -->
@@ -91,9 +89,8 @@
                     app:boxCornerRadiusTopEnd="12dp"
                     app:boxCornerRadiusTopStart="12dp"
                     app:boxStrokeColor="@color/primary"
-                    app:boxStrokeWidth="2dp"
-                    app:hintTextColor="@color/text_hint"
-                    app:startIconDrawable="@drawable/ic_person"
+                    app:boxStrokeWidth="2dp"                    app:hintTextColor="@color/text_hint"
+                    app:startIconDrawable="@android:drawable/ic_menu_myplaces"
                     app:startIconTint="@color/primary">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -120,9 +117,8 @@
                     app:boxCornerRadiusTopEnd="12dp"
                     app:boxCornerRadiusTopStart="12dp"
                     app:boxStrokeColor="@color/primary"
-                    app:boxStrokeWidth="2dp"
-                    app:hintTextColor="@color/text_hint"
-                    app:startIconDrawable="@drawable/ic_email"
+                    app:boxStrokeWidth="2dp"                    app:hintTextColor="@color/text_hint"
+                    app:startIconDrawable="@android:drawable/ic_dialog_email"
                     app:startIconTint="@color/primary">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -149,9 +145,8 @@
                     app:boxCornerRadiusTopEnd="12dp"
                     app:boxCornerRadiusTopStart="12dp"
                     app:boxStrokeColor="@color/primary"
-                    app:boxStrokeWidth="2dp"
-                    app:hintTextColor="@color/text_hint"
-                    app:startIconDrawable="@drawable/ic_phone"
+                    app:boxStrokeWidth="2dp"                    app:hintTextColor="@color/text_hint"
+                    app:startIconDrawable="@android:drawable/ic_menu_call"
                     app:startIconTint="@color/primary">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -170,8 +165,7 @@
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:hint="@string/password"
+                    android:layout_marginBottom="16dp"                    android:hint="@string/password"
                     app:boxBackgroundColor="@color/input_background"
                     app:boxCornerRadiusBottomEnd="12dp"
                     app:boxCornerRadiusBottomStart="12dp"
@@ -182,7 +176,7 @@
                     app:hintTextColor="@color/text_hint"
                     app:passwordToggleEnabled="true"
                     app:passwordToggleTint="@color/primary"
-                    app:startIconDrawable="@drawable/ic_lock"
+                    app:startIconDrawable="@android:drawable/ic_lock_lock"
                     app:startIconTint="@color/primary">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -201,8 +195,7 @@
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="24dp"
-                    android:hint="@string/confirm_password"
+                    android:layout_marginBottom="24dp"                    android:hint="@string/confirm_password"
                     app:boxBackgroundColor="@color/input_background"
                     app:boxCornerRadiusBottomEnd="12dp"
                     app:boxCornerRadiusBottomStart="12dp"
@@ -213,7 +206,7 @@
                     app:hintTextColor="@color/text_hint"
                     app:passwordToggleEnabled="true"
                     app:passwordToggleTint="@color/primary"
-                    app:startIconDrawable="@drawable/ic_lock"
+                    app:startIconDrawable="@android:drawable/ic_lock_lock"
                     app:startIconTint="@color/primary">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -319,7 +312,6 @@
 
         <!-- Floating Elements for Visual Appeal -->
         <ImageView
-            android:id="@+id/floating_element_1"
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:alpha="0.1"
@@ -330,7 +322,6 @@
             android:layout_marginTop="80dp" />
 
         <ImageView
-            android:id="@+id/floating_element_2"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:alpha="0.08"

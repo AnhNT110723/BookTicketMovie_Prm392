@@ -34,7 +34,6 @@
 
             <!-- App Logo -->
             <ImageView
-                android:id="@+id/app_logo"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:layout_gravity="center"
@@ -227,7 +226,6 @@
 
     <!-- Floating Elements for Visual Appeal -->
     <ImageView
-        android:id="@+id/floating_element_1"
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:alpha="0.08"
@@ -238,7 +236,6 @@
         android:layout_marginTop="120dp" />
 
     <ImageView
-        android:id="@+id/floating_element_2"
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:alpha="0.06"
