@@ -346,8 +346,7 @@ public class UserDAO extends BaseDAO {
                 }
                 
                 final Boolean finalResult = result;
-                final Exception finalException = exception;
-                
+                final Exception finalException = exception;                
                 mainHandler.post(() -> {
                     if (listener != null) {
                         if (finalException != null) {
@@ -358,6 +357,108 @@ public class UserDAO extends BaseDAO {
                     }
                 });
             });
+        }
+    }
+
+    /**
+     * Delete user by ID
+     */
+    public boolean deleteUser(int userId) throws SQLException {
+        String sql = "DELETE FROM " + DatabaseConfig.TABLE_USER + " WHERE UserID = ?";
+        return executeUpdate(sql, userId) > 0;
+    }
+
+    /**
+     * Reset user password
+     */
+    public boolean resetUserPassword(int userId, String newPasswordHash) throws SQLException {
+        String sql = "UPDATE " + DatabaseConfig.TABLE_USER + " SET PasswordHash = ? WHERE UserID = ?";
+        return executeUpdate(sql, newPasswordHash, userId) > 0;
+    }
+
+    /**
+     * Toggle user active status
+     */
+    public boolean toggleUserActiveStatus(int userId) throws SQLException {
+        String sql = "UPDATE " + DatabaseConfig.TABLE_USER + " SET IsActive = NOT IsActive WHERE UserID = ?";
+        return executeUpdate(sql, userId) > 0;
+    }
+
+    /**
+     * Update user role
+     */
+    public boolean updateUserRole(int userId, int roleId) throws SQLException {
+        String sql = "UPDATE " + DatabaseConfig.TABLE_USER + " SET RoleID = ? WHERE UserID = ?";
+        return executeUpdate(sql, roleId, userId) > 0;
+    }
+
+    /**
+     * Get users by role
+     */
+    public List<User> getUsersByRole(int roleId) throws SQLException {
+        String sql = "SELECT UserID, Name, Email, Phone, PasswordHash, LoyaltyPoints, " +
+                    "RegistrationDate, IsActive, RoleID FROM " + DatabaseConfig.TABLE_USER + 
+                    " WHERE RoleID = ? ORDER BY RegistrationDate DESC";
+        
+        List<User> users = new ArrayList<>();
+        ResultSet rs = null;
+        PreparedStatement statement = null;
+        
+        try {
+            rs = executeQuery(sql, roleId);
+            while (rs.next()) {
+                users.add(mapResultSetToUser(rs));
+            }
+            return users;
+        } finally {
+            closeResources(rs, statement);
+        }
+    }
+
+    /**
+     * Get active/inactive users
+     */
+    public List<User> getUsersByActiveStatus(boolean isActive) throws SQLException {
+        String sql = "SELECT UserID, Name, Email, Phone, PasswordHash, LoyaltyPoints, " +
+                    "RegistrationDate, IsActive, RoleID FROM " + DatabaseConfig.TABLE_USER + 
+                    " WHERE IsActive = ? ORDER BY RegistrationDate DESC";
+        
+        List<User> users = new ArrayList<>();
+        ResultSet rs = null;
+        PreparedStatement statement = null;
+        
+        try {
+            rs = executeQuery(sql, isActive);
+            while (rs.next()) {
+                users.add(mapResultSetToUser(rs));
+            }
+            return users;
+        } finally {
+            closeResources(rs, statement);
+        }
+    }
+
+    /**
+     * Search users by username or email
+     */
+    public List<User> searchUsers(String searchTerm) throws SQLException {
+        String sql = "SELECT UserID, Name, Email, Phone, PasswordHash, LoyaltyPoints, " +
+                    "RegistrationDate, IsActive, RoleID FROM " + DatabaseConfig.TABLE_USER + 
+                    " WHERE Name LIKE ? OR Email LIKE ? ORDER BY RegistrationDate DESC";
+        
+        String searchPattern = "%" + searchTerm + "%";
+        List<User> users = new ArrayList<>();
+        ResultSet rs = null;
+        PreparedStatement statement = null;
+        
+        try {
+            rs = executeQuery(sql, searchPattern, searchPattern);
+            while (rs.next()) {
+                users.add(mapResultSetToUser(rs));
+            }
+            return users;
+        } finally {
+            closeResources(rs, statement);
         }
     }
 }

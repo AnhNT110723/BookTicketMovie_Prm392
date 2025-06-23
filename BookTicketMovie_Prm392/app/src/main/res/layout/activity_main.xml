@@ -1,97 +1,196 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_light"
-    tools:context=".MainActivity">
+    android:fillViewport="true"
+    android:background="@drawable/login_background_gradient">
 
-    <TextView
-        android:id="@+id/app_title"
-        android:layout_width="wrap_content"
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="24dp"
+    tools:context=".MainActivity">    <!-- Hero Section Card -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/hero_card"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="@string/movie_ticket_booking"
-        android:textSize="28sp"
-        android:textStyle="bold"
-        android:textColor="@color/primary"
         android:layout_marginTop="60dp"
-        android:gravity="center"
+        app:cardBackgroundColor="@color/card_background"
+        app:cardCornerRadius="24dp"
+        app:cardElevation="16dp"
+        app:cardUseCompatPadding="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <TextView
-        android:id="@+id/welcome_message"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="32dp">
+
+            <!-- App Logo -->
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center"
+                android:layout_marginBottom="24dp"
+                android:background="@drawable/circle_gradient_primary"
+                android:padding="20dp"
+                android:src="@drawable/ic_movie_ticket"
+                android:contentDescription="@string/app_logo" />
+
+            <!-- App Title -->
+            <TextView
+                android:id="@+id/app_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/movie_ticket_booking"
+                android:textSize="28sp"
+                android:textStyle="bold"
+                android:textColor="@color/primary"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Welcome Message -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="🎬 Welcome to the ultimate movie experience!\n\nBook your favorite movies, discover new releases, and enjoy seamless ticketing."
+                android:textSize="16sp"
+                android:textColor="@color/text_secondary"
+                android:gravity="center"
+                android:lineSpacingExtra="4dp"
+                android:layout_marginBottom="32dp" />
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>    <!-- Action Buttons Card -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/actions_card"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Welcome to our Movie Ticket Booking System!\nPlease login or register to continue."
-        android:textSize="18sp"
-        android:textColor="@color/text_secondary"
-        android:gravity="center"
-        android:layout_marginTop="30dp"
-        android:layout_marginStart="30dp"
-        android:layout_marginEnd="30dp"
+        android:layout_marginTop="24dp"
+        app:cardBackgroundColor="@color/card_background"
+        app:cardCornerRadius="24dp"
+        app:cardElevation="12dp"
+        app:cardUseCompatPadding="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/app_title" />
+        app:layout_constraintTop_toBottomOf="@id/hero_card">
 
-    <!-- Login Button -->
-    <Button
-        android:id="@+id/login_button"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="24dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Get Started"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="@color/text_primary"
+                android:layout_marginBottom="24dp" />
+
+            <!-- Login Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/login_button"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/button_gradient_primary"
+                android:elevation="8dp"
+                android:text="@string/sign_in"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:backgroundTint="@null"
+                app:cornerRadius="28dp"
+                app:icon="@drawable/ic_login"
+                app:iconGravity="textStart"
+                app:iconPadding="8dp"
+                app:iconTint="@color/white"
+                app:rippleColor="@color/button_ripple" />
+
+            <!-- Register Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/register_button"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginBottom="16dp"
+                android:text="@string/sign_up"
+                android:textColor="@color/primary"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:cornerRadius="28dp"
+                app:icon="@drawable/ic_person_add"
+                app:iconGravity="textStart"
+                app:iconPadding="8dp"
+                app:iconTint="@color/primary"
+                app:rippleColor="@color/button_ripple"
+                app:strokeColor="@color/primary"
+                app:strokeWidth="2dp" />
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>    <!-- Developer Tools Card (Optional) -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/dev_tools_card"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="@string/sign_in"
-        android:textColor="@color/white"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:background="@drawable/button_primary_selector"
-        android:layout_marginTop="50dp"
-        android:layout_marginStart="40dp"
-        android:layout_marginEnd="40dp"
-        android:minHeight="50dp"
-        android:elevation="4dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/welcome_message" />
-
-    <!-- Register Button -->
-    <Button
-        android:id="@+id/register_button"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="40dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="40dp"
-        android:background="@drawable/edit_text_selector"
-        android:minHeight="50dp"
-        android:text="@string/sign_up"
-        android:textColor="@color/primary_light"
-        android:textSize="16sp"
-        android:textStyle="bold"
+        android:layout_marginBottom="32dp"
+        app:cardBackgroundColor="@color/card_background"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="4dp"
+        app:cardUseCompatPadding="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/login_button" />
+        app:layout_constraintTop_toBottomOf="@id/actions_card"
+        app:layout_constraintBottom_toTopOf="@id/status_scroll_view">
 
-    <!-- Database Test Button -->
-    <Button
-        android:id="@+id/test_db_button"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Test Database Connection"
-        android:textColor="@color/text_secondary"
-        android:textSize="14sp"
-        android:background="?android:attr/selectableItemBackground"
-        android:layout_marginTop="40dp"
-        android:layout_marginStart="40dp"
-        android:layout_marginEnd="40dp"
-        android:minHeight="40dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/register_button" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
 
-    <!-- Status ScrollView (hidden by default) -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Developer Tools"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="@color/text_secondary"
+                android:layout_marginBottom="12dp" />
+
+            <!-- Database Test Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/test_db_button"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Test Database Connection"
+                android:textColor="@color/text_secondary"
+                android:textSize="14sp"
+                app:cornerRadius="12dp"
+                app:icon="@drawable/ic_database"
+                app:iconGravity="textStart"
+                app:iconPadding="8dp"
+                app:iconTint="@color/text_secondary"
+                app:rippleColor="@color/button_ripple" />
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>    <!-- Status ScrollView (hidden by default) -->
     <ScrollView
         android:id="@+id/status_scroll_view"
         android:layout_width="0dp"
@@ -101,20 +200,51 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/test_db_button">
+        app:layout_constraintTop_toBottomOf="@id/dev_tools_card">
 
-        <TextView
-            android:id="@+id/status_text"
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Initializing..."
-            android:textSize="14sp"
-            android:textColor="#2c3e50"
-            android:lineSpacingExtra="4dp"
-            android:padding="20dp"
-            android:background="@drawable/status_background"
-            android:fontFamily="monospace" />
+            app:cardBackgroundColor="@color/card_background"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="8dp">
+
+            <TextView
+                android:id="@+id/status_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Initializing..."
+                android:textSize="12sp"
+                android:textColor="@color/text_primary"
+                android:lineSpacingExtra="4dp"
+                android:padding="20dp"
+                android:fontFamily="monospace" />
+
+        </androidx.cardview.widget.CardView>
 
     </ScrollView>
 
+    <!-- Floating Elements for Visual Appeal -->
+    <ImageView
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:alpha="0.08"
+        android:src="@drawable/ic_movie_reel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="120dp" />
+
+    <ImageView
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:alpha="0.06"
+        android:src="@drawable/ic_popcorn"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginStart="24dp"
+        android:layout_marginBottom="100dp" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>

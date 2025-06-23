@@ -1,27 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
+    xmlns:tools="http://schemas.android.com/tools"    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_light"
+    android:background="@drawable/login_background_gradient"
     tools:context=".HomeActivity">
 
     <!-- App Bar Layout -->
     <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/app_bar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/primary"
-        android:elevation="4dp">
-
-        <androidx.appcompat.widget.Toolbar
+        android:background="@drawable/button_gradient_primary"
+        android:elevation="0dp">        <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@color/primary"
-            app:title="🎬 Movie Booking"
+            android:background="@android:color/transparent"
+            app:title="🎬 Movie Magic"
             app:titleTextColor="@color/white"
             app:layout_scrollFlags="scroll|enterAlways" />
 
@@ -32,85 +28,144 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-        <LinearLayout
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="20dp">
 
-            <!-- Welcome Section -->
+            <!-- Enhanced Welcome Section with Login Style -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="4dp"
-                android:background="@color/surface">
+                android:layout_marginBottom="24dp"
+                app:cardBackgroundColor="@color/card_background"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="12dp"
+                app:cardUseCompatPadding="true">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="20dp">
+                    android:orientation="horizontal"
+                    android:padding="24dp"
+                    android:gravity="center_vertical">
 
-                    <TextView
-                        android:id="@+id/welcome_text"
+                    <!-- User Avatar Circle -->
+                    <ImageView
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_marginEnd="16dp"
+                        android:background="@drawable/circle_gradient_primary"
+                        android:padding="16dp"
+                        android:src="@drawable/ic_movie_ticket"
+                        android:contentDescription="User Avatar" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/welcome_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Welcome back!"
+                            android:textSize="22sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/text_primary" />
+
+                        <TextView
+                            android:id="@+id/user_name_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Movie Lover"
+                            android:textSize="16sp"
+                            android:textColor="@color/primary"
+                            android:layout_marginTop="2dp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Ready for your next cinematic adventure?"
+                            android:textSize="13sp"
+                            android:textColor="@color/text_secondary"
+                            android:layout_marginTop="4dp" />
+
+                    </LinearLayout>
+
+                    <!-- Loyalty Points Badge -->
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Welcome back!"
-                        android:textSize="24sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/text_primary" />
+                        android:orientation="vertical"
+                        android:gravity="center">
 
-                    <TextView
-                        android:id="@+id/user_name_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="John Doe"
-                        android:textSize="18sp"
-                        android:textColor="@color/primary"
-                        android:layout_marginTop="4dp" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="⭐"
+                            android:textSize="24sp" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Ready to book your next movie adventure?"
-                        android:textSize="14sp"
-                        android:textColor="@color/text_secondary"
-                        android:layout_marginTop="8dp" />
+                        <TextView
+                            android:id="@+id/loyalty_points_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="1,250"
+                            android:textSize="12sp"
+                            android:textColor="@color/primary"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
 
                 </LinearLayout>
 
-            </androidx.cardview.widget.CardView>
-
-            <!-- Quick Actions Grid -->
-            <TextView
-                android:layout_width="wrap_content"
+            </androidx.cardview.widget.CardView>            <!-- Enhanced Quick Actions Section -->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Quick Actions"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="@color/text_primary"
-                android:layout_marginBottom="12dp" />
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="16dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="✨ Quick Actions"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/white" />                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Explore"
+                    android:textSize="14sp"
+                    android:textColor="@color/accent"
+                    android:textStyle="bold"
+                    android:padding="15dp"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+            </LinearLayout>
 
             <GridLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:columnCount="2"
                 android:rowCount="2"
-                android:layout_marginBottom="24dp">
-
-                <!-- Browse Movies Card -->
+                android:layout_marginBottom="32dp">                <!-- Browse Movies Card -->
                 <androidx.cardview.widget.CardView
                     android:id="@+id/browse_movies_card"
                     android:layout_width="0dp"
-                    android:layout_height="120dp"
+                    android:layout_height="140dp"
                     android:layout_columnWeight="1"
-                    android:layout_margin="6dp"
-                    app:cardCornerRadius="12dp"
-                    app:cardElevation="4dp"
+                    android:layout_margin="8dp"
+                    app:cardBackgroundColor="@color/card_background"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="8dp"
+                    app:cardUseCompatPadding="true"
                     android:foreground="?android:attr/selectableItemBackground"
                     android:clickable="true"
                     android:focusable="true">
@@ -120,15 +175,14 @@
                         android:layout_height="match_parent"
                         android:orientation="vertical"
                         android:gravity="center"
-                        android:padding="16dp"
-                        android:background="@color/surface">
+                        android:padding="20dp">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="🎬"
-                            android:textSize="32sp"
-                            android:layout_marginBottom="8dp" />
+                            android:textSize="40sp"
+                            android:layout_marginBottom="12dp" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -136,22 +190,30 @@
                             android:text="Browse Movies"
                             android:textSize="14sp"
                             android:textStyle="bold"
-                            android:textColor="@color/text_primary"
+                            android:textColor="@color/primary_dark"
                             android:textAlignment="center" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Discover films"
+                            android:textSize="11sp"
+                            android:textColor="@color/primary_dark"
+                            android:layout_marginTop="2dp" />
 
                     </LinearLayout>
 
-                </androidx.cardview.widget.CardView>
-
-                <!-- My Bookings Card -->
+                </androidx.cardview.widget.CardView>                <!-- My Bookings Card -->
                 <androidx.cardview.widget.CardView
                     android:id="@+id/my_bookings_card"
                     android:layout_width="0dp"
-                    android:layout_height="120dp"
+                    android:layout_height="140dp"
                     android:layout_columnWeight="1"
-                    android:layout_margin="6dp"
-                    app:cardCornerRadius="12dp"
-                    app:cardElevation="4dp"
+                    android:layout_margin="8dp"
+                    app:cardBackgroundColor="@color/card_background"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="8dp"
+                    app:cardUseCompatPadding="true"
                     android:foreground="?android:attr/selectableItemBackground"
                     android:clickable="true"
                     android:focusable="true">
@@ -161,15 +223,14 @@
                         android:layout_height="match_parent"
                         android:orientation="vertical"
                         android:gravity="center"
-                        android:padding="16dp"
-                        android:background="@color/surface">
+                        android:padding="20dp">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="🎫"
-                            android:textSize="32sp"
-                            android:layout_marginBottom="8dp" />
+                            android:textSize="40sp"
+                            android:layout_marginBottom="12dp" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -180,19 +241,27 @@
                             android:textColor="@color/text_primary"
                             android:textAlignment="center" />
 
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="View tickets"
+                            android:textSize="11sp"
+                            android:textColor="@color/text_secondary"
+                            android:layout_marginTop="2dp" />
+
                     </LinearLayout>
 
-                </androidx.cardview.widget.CardView>
-
-                <!-- Cinemas Card -->
+                </androidx.cardview.widget.CardView>                <!-- Cinemas Card -->
                 <androidx.cardview.widget.CardView
                     android:id="@+id/cinemas_card"
                     android:layout_width="0dp"
-                    android:layout_height="120dp"
+                    android:layout_height="140dp"
                     android:layout_columnWeight="1"
-                    android:layout_margin="6dp"
-                    app:cardCornerRadius="12dp"
-                    app:cardElevation="4dp"
+                    android:layout_margin="8dp"
+                    app:cardBackgroundColor="@color/card_background"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="8dp"
+                    app:cardUseCompatPadding="true"
                     android:foreground="?android:attr/selectableItemBackground"
                     android:clickable="true"
                     android:focusable="true">
@@ -202,15 +271,14 @@
                         android:layout_height="match_parent"
                         android:orientation="vertical"
                         android:gravity="center"
-                        android:padding="16dp"
-                        android:background="@color/surface">
+                        android:padding="20dp">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="🏢"
-                            android:textSize="32sp"
-                            android:layout_marginBottom="8dp" />
+                            android:textSize="40sp"
+                            android:layout_marginBottom="12dp" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -221,19 +289,27 @@
                             android:textColor="@color/text_primary"
                             android:textAlignment="center" />
 
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Find locations"
+                            android:textSize="11sp"
+                            android:textColor="@color/text_secondary"
+                            android:layout_marginTop="2dp" />
+
                     </LinearLayout>
 
-                </androidx.cardview.widget.CardView>
-
-                <!-- Profile Card -->
+                </androidx.cardview.widget.CardView>                <!-- Profile Card -->
                 <androidx.cardview.widget.CardView
                     android:id="@+id/profile_card"
                     android:layout_width="0dp"
-                    android:layout_height="120dp"
+                    android:layout_height="140dp"
                     android:layout_columnWeight="1"
-                    android:layout_margin="6dp"
-                    app:cardCornerRadius="12dp"
-                    app:cardElevation="4dp"
+                    android:layout_margin="8dp"
+                    app:cardBackgroundColor="@color/card_background"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="8dp"
+                    app:cardUseCompatPadding="true"
                     android:foreground="?android:attr/selectableItemBackground"
                     android:clickable="true"
                     android:focusable="true">
@@ -243,15 +319,14 @@
                         android:layout_height="match_parent"
                         android:orientation="vertical"
                         android:gravity="center"
-                        android:padding="16dp"
-                        android:background="@color/surface">
+                        android:padding="20dp">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="👤"
-                            android:textSize="32sp"
-                            android:layout_marginBottom="8dp" />
+                            android:textSize="40sp"
+                            android:layout_marginBottom="12dp" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -261,6 +336,14 @@
                             android:textStyle="bold"
                             android:textColor="@color/text_primary"
                             android:textAlignment="center" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Account info"
+                            android:textSize="11sp"
+                            android:textColor="@color/text_secondary"
+                            android:layout_marginTop="2dp" />
 
                     </LinearLayout>
 
@@ -272,66 +355,93 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:layout_marginBottom="12dp">
+                android:layout_marginBottom="16dp">
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="🔥 Trending Movies"
-                    android:textSize="18sp"
+                    android:textSize="20sp"
                     android:textStyle="bold"
-                    android:textColor="@color/text_primary" />
-
-                <TextView
+                    android:textColor="@color/white" />                <TextView
                     android:id="@+id/see_all_trending"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="See All"
+                    android:text="View All"
                     android:textSize="14sp"
-                    android:textColor="@color/primary"
+                    android:textColor="@color/accent"
                     android:textStyle="bold"
                     android:padding="8dp"
                     android:background="?android:attr/selectableItemBackground"
                     android:clickable="true"
                     android:focusable="true" />
 
-            </LinearLayout>
-
-            <!-- Trending Movies RecyclerView -->
+            </LinearLayout>            <!-- Trending Movies RecyclerView -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/trending_movies_recycler"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
+                android:layout_marginBottom="32dp"
                 android:clipToPadding="false"
                 android:paddingStart="8dp"
-                android:paddingEnd="8dp" />
-
-            <!-- Featured Movies Section -->
+                android:paddingEnd="8dp" /><!-- Featured Movies Section -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:layout_marginBottom="12dp">
+                android:layout_marginBottom="16dp">
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="🎬 Featured Movies"
-                    android:textSize="18sp"
+                    android:textSize="20sp"
                     android:textStyle="bold"
-                    android:textColor="@color/text_primary" />
-
-                <TextView
+                    android:textColor="@color/white" />                <TextView
                     android:id="@+id/see_all_featured"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="See All"
+                    android:text="View All"
                     android:textSize="14sp"
-                    android:textColor="@color/primary"
+                    android:textColor="@color/accent"
+                    android:textStyle="bold"
+                    android:padding="8dp"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+            </LinearLayout>            <!-- Featured Movies RecyclerView -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/featured_movies_recycler"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="32dp"
+                android:clipToPadding="false"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp" />            <!-- Movie Recommendations Section -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="16dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="⭐ Recommended for You"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/white" />                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Personalize"
+                    android:textSize="14sp"
+                    android:textColor="@color/accent"
                     android:textStyle="bold"
                     android:padding="8dp"
                     android:background="?android:attr/selectableItemBackground"
@@ -340,45 +450,34 @@
 
             </LinearLayout>
 
-            <!-- Featured Movies RecyclerView -->
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/featured_movies_recycler"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp" />
-
-            <!-- Movie Recommendations Section -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="⭐ Recommended for You"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="@color/text_primary"
-                android:layout_marginBottom="12dp" />
-
             <!-- Recommendations Placeholder -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
-                android:layout_height="120dp"
-                android:layout_marginBottom="16dp"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="4dp"
-                android:background="@color/surface">
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                app:cardBackgroundColor="@color/card_background"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="12dp"
+                app:cardUseCompatPadding="true"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true">
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:gravity="center"
-                    android:padding="20dp">
+                    android:gravity="center_vertical"
+                    android:padding="24dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="🎯"
-                        android:textSize="32sp"
-                        android:layout_marginEnd="16dp" />
+                    <!-- Recommendation Icon with Gradient Background -->
+                    <ImageView
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_marginEnd="16dp"                        android:background="@drawable/circle_gradient_primary"
+                        android:padding="12dp"
+                        android:src="@android:drawable/btn_star_big_on"
+                        android:contentDescription="Recommendations Icon" />
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -390,39 +489,58 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Personalized Recommendations"
-                            android:textSize="16sp"
+                            android:textSize="18sp"
                             android:textStyle="bold"
                             android:textColor="@color/text_primary" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Based on your viewing history and preferences"
+                            android:text="Discover movies tailored to your taste and viewing history"
                             android:textSize="13sp"
                             android:textColor="@color/text_secondary"
                             android:layout_marginTop="4dp" />
 
                     </LinearLayout>
 
+                    <!-- Action Arrow -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="→"
+                        android:textSize="24sp"
+                        android:textColor="@color/primary" />
+
                 </LinearLayout>
 
-            </androidx.cardview.widget.CardView>
-
-            <!-- Loyalty Points Section -->
+            </androidx.cardview.widget.CardView>            <!-- Loyalty Points Section -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="4dp"
-                android:background="@color/surface">
+                android:layout_marginBottom="24dp"
+                app:cardBackgroundColor="@color/card_background"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="12dp"
+                app:cardUseCompatPadding="true"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:padding="20dp"
+                    android:padding="24dp"
                     android:gravity="center_vertical">
+
+                    <!-- Loyalty Icon with Gradient Background -->
+                    <ImageView
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_marginEnd="16dp"                        android:background="@drawable/circle_gradient_primary"
+                        android:padding="12dp"
+                        android:src="@android:drawable/btn_star_big_on"
+                        android:contentDescription="Loyalty Points Icon" />
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -433,27 +551,52 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Loyalty Points"
-                            android:textSize="16sp"
+                            android:text="Loyalty Rewards"
+                            android:textSize="18sp"
                             android:textStyle="bold"
                             android:textColor="@color/text_primary" />
 
                         <TextView
-                            android:id="@+id/loyalty_points_text"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="0 points"
+                            android:text="1,250 points available"
                             android:textSize="14sp"
                             android:textColor="@color/primary"
-                            android:layout_marginTop="4dp" />
+                            android:textStyle="bold"
+                            android:layout_marginTop="2dp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Earn points with every booking"
+                            android:textSize="12sp"
+                            android:textColor="@color/text_secondary"
+                            android:layout_marginTop="2dp" />
 
                     </LinearLayout>
 
-                    <TextView
+                    <!-- Large Star Badge -->
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="⭐"
-                        android:textSize="32sp" />
+                        android:orientation="vertical"
+                        android:gravity="center">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="⭐"
+                            android:textSize="32sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="VIP"
+                            android:textSize="10sp"
+                            android:textColor="@color/primary"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
 
                 </LinearLayout>
 
@@ -461,18 +604,17 @@
 
         </LinearLayout>
 
-    </androidx.core.widget.NestedScrollView>
-
-    <!-- Floating Action Button for Quick Booking -->
+    </androidx.core.widget.NestedScrollView>    <!-- Floating Action Button for Quick Booking -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_quick_booking"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="16dp"
+        android:layout_gravity="bottom|end"        android:layout_margin="20dp"
         android:src="@android:drawable/ic_input_add"
-        app:backgroundTint="@color/accent"
+        app:backgroundTint="@color/primary"
         app:tint="@color/white"
-        android:contentDescription="Quick Booking" />
+        app:elevation="12dp"
+        app:borderWidth="0dp"
+        android:contentDescription="Quick Movie Booking" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -2,8 +2,6 @@
     <string name="app_name">BookingTicketMove_Prm392</string>
     
     <!-- Authentication Strings -->
-    <string name="login">Login</string>
-    <string name="register">Register</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
     <string name="confirm_password">Confirm Password</string>
@@ -32,13 +30,11 @@
     <string name="login_successful">Welcome back!</string>
     
     <!-- Loading Messages -->
-    <string name="logging_in">Logging in...</string>
-    <string name="registering">Creating account...</string>
-    
     <!-- App Title -->
     <string name="movie_ticket_booking">🎬 Movie Ticket Booking</string>
     <string name="welcome_back">Welcome Back!</string>
     <string name="create_account">Create Your Account</string>
     <string name="login_subtitle">Sign in to continue booking your favorite movies</string>
     <string name="register_subtitle">Join us to start booking amazing movie experiences</string>
+    <string name="app_logo">App Logo</string>
 </resources>
