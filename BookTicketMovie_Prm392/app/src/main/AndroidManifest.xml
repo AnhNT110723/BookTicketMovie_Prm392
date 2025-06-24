@@ -106,12 +106,6 @@
             android:exported="false"
             android:theme="@style/Theme.BookingTicketMove_Prm392"
             android:parentActivityName=".UserManagementActivity" />
-
-        <activity
-            android:name=".ContactUsActivity"
-            android:exported="false"
-            android:theme="@style/Theme.BookingTicketMove_Prm392" />
-
     </application>
 
 </manifest>
