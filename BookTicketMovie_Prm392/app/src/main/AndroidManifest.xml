@@ -104,6 +104,15 @@
             android:exported="false"
             android:theme="@style/Theme.BookingTicketMove_Prm392"
             android:parentActivityName=".UserManagementActivity" />
+
+        <activity
+            android:name=".MyBookingsActivity"
+            android:exported="false"
+            android:theme="@style/Theme.BookingTicketMove_Prm392" />
+        <activity
+            android:name=".BookingDetailActivity"
+            android:exported="false"
+            android:theme="@style/Theme.BookingTicketMove_Prm392" />
     </application>
 
 </manifest>
