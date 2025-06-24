@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "769020256627",
+    "project_id": "bookingticketmove-a7a08",
+    "storage_bucket": "bookingticketmove-a7a08.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:769020256627:android:c84139c84accb7ebe02506",
+        "android_client_info": {
+          "package_name": "com.example.bookingticketmove_prm392"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBbbLdGs0AwvLpZcsnP9rlK2USCyeNKF-o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

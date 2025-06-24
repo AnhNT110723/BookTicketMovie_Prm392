@@ -76,7 +76,8 @@ public class LoginActivity extends AppCompatActivity {
         });
         
         forgotPasswordLink.setOnClickListener(v -> {
-            Toast.makeText(this, "Forgot password feature coming soon!", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(LoginActivity.this, ForgotPasswordActivity.class);
+            startActivity(intent);
         });
     }
 
