@@ -4,13 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/login_background_gradient"
     android:fitsSystemWindows="true"
     tools:context=".MovieDetailActivity">
 
     <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/app_bar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/button_gradient_primary"
         android:fitsSystemWindows="true"
         app:elevation="0dp">
 
@@ -18,7 +19,9 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
+            android:background="@android:color/transparent"
+            app:title="🎬 Movie Details"
+            app:titleTextColor="@color/white"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
             app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
 
@@ -27,67 +30,62 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-        <LinearLayout
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="20dp">
 
             <!-- Movie Poster and Basic Info -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="4dp">
-
-                <LinearLayout
+                android:layout_marginBottom="24dp"
+                app:cardBackgroundColor="@color/card_background"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="12dp"
+                app:cardUseCompatPadding="true">                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:padding="16dp">
+                    android:padding="24dp">
 
                     <ImageView
                         android:id="@+id/poster_image_view"
-                        android:layout_width="120dp"
-                        android:layout_height="180dp"
-                        android:layout_marginEnd="16dp"
-                        android:background="@drawable/rounded_corner_background"
+                        android:layout_width="130dp"
+                        android:layout_height="190dp"
+                        android:layout_marginEnd="20dp"
+                        android:background="@drawable/circle_gradient_primary"
                         android:scaleType="centerCrop"
-                        android:src="@drawable/ic_movie_placeholder"
+                        android:src="@drawable/ic_movie_reel"
+                        android:padding="8dp"
                         tools:ignore="ContentDescription" />
 
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:orientation="vertical">
-
-                        <TextView
+                        android:orientation="vertical">                        <TextView
                             android:id="@+id/title_text_view"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="8dp"
                             android:text="Movie Title"
                             android:textColor="@color/text_primary"
-                            android:textSize="20sp"
+                            android:textSize="22sp"
                             android:textStyle="bold" />
 
                         <TextView
                             android:id="@+id/director_text_view"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginBottom="8dp"
+                            android:layout_marginBottom="12dp"
                             android:text="Directed by Director Name"
                             android:textColor="@color/text_secondary"
-                            android:textSize="14sp" />
-
-                        <LinearLayout
+                            android:textSize="15sp" />                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginBottom="8dp"
+                            android:layout_marginBottom="12dp"
                             android:orientation="horizontal">
 
                             <TextView
@@ -96,19 +94,19 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginEnd="16dp"
                                 android:drawablePadding="4dp"
-                                android:text="2h 30m"
+                                android:text="⏱ 2h 30m"
                                 android:textColor="@color/text_secondary"
-                                android:textSize="12sp"
-                                app:drawableStartCompat="@drawable/ic_clock" />
+                                android:textSize="13sp" />
 
                             <TextView
                                 android:id="@+id/rating_text_view"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:drawablePadding="4dp"
-                                android:text="★ 8.5"
-                                android:textColor="@color/rating_color"
-                                android:textSize="12sp" />
+                                android:text="⭐ 8.5"
+                                android:textColor="@color/primary"
+                                android:textSize="13sp"
+                                android:textStyle="bold" />
 
                         </LinearLayout>
 
@@ -116,19 +114,168 @@
                             android:id="@+id/release_date_text_view"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginBottom="8dp"
-                            android:text="Released: Jan 1, 2024"
+                            android:layout_marginBottom="12dp"
+                            android:text="📅 Released: Jan 1, 2024"
                             android:textColor="@color/text_secondary"
-                            android:textSize="12sp" />
+                            android:textSize="13sp" />
 
                         <TextView
                             android:id="@+id/price_text_view"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="$12.99"
-                            android:textColor="@color/price_color"
-                            android:textSize="18sp"
+                            android:text="💰 $12.99"
+                            android:textColor="@color/primary"
+                            android:textSize="20sp"
                             android:textStyle="bold" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>            <!-- Trailer Section -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/trailer_card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                app:cardBackgroundColor="@color/card_background"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="12dp"
+                app:cardUseCompatPadding="true"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <!-- Trailer Header -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="16dp">
+
+                        <ImageView
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:layout_marginEnd="12dp"
+                            android:background="@drawable/circle_gradient_primary"
+                            android:padding="8dp"
+                            android:src="@drawable/ic_movie_reel"
+                            android:contentDescription="Trailer Icon" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="🎬 Official Trailer"
+                                android:textColor="@color/text_primary"
+                                android:textSize="18sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Watch the movie trailer"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="13sp"
+                                android:layout_marginTop="2dp" />
+
+                        </LinearLayout>
+
+                        <Button
+                            android:id="@+id/fullscreen_button"
+                            style="@style/Widget.Material3.Button.OutlinedButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="36dp"
+                            android:text="⛶ Fullscreen"
+                            android:textColor="@color/primary"
+                            android:textSize="12sp"
+                            android:minWidth="0dp"
+                            android:paddingStart="12dp"
+                            android:paddingEnd="12dp"
+                            app:strokeColor="@color/primary"
+                            app:strokeWidth="1dp" />
+
+                    </LinearLayout>
+
+                    <!-- Loading Progress -->
+                    <LinearLayout
+                        android:id="@+id/trailer_loading_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:background="@android:color/black"
+                        android:visibility="visible">
+
+                        <ProgressBar
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:indeterminateTint="@color/primary" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Loading trailer..."
+                            android:textColor="@color/white"
+                            android:textSize="14sp"
+                            android:layout_marginTop="16dp" />
+
+                    </LinearLayout>                    <!-- WebView for Trailer -->
+                    <WebView
+                        android:id="@+id/embedded_trailer_webview"
+                        android:layout_width="match_parent"
+                        android:layout_height="320dp"
+                        android:background="@android:color/black"
+                        android:visibility="gone" />
+
+                    <!-- Error State -->
+                    <LinearLayout
+                        android:id="@+id/trailer_error_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:background="@android:color/black"
+                        android:visibility="gone"
+                        android:padding="32dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="⚠️"
+                            android:textSize="32sp"
+                            android:layout_marginBottom="12dp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Unable to load trailer"
+                            android:textColor="@color/white"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:layout_marginBottom="8dp"
+                            android:textAlignment="center" />
+
+                        <Button
+                            android:id="@+id/retry_trailer_button"
+                            style="@style/Widget.Material3.Button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/button_gradient_primary"
+                            android:text="🔄 Retry"
+                            android:textColor="@color/white"
+                            android:textStyle="bold"
+                            android:layout_marginTop="8dp" />
 
                     </LinearLayout>
 
@@ -140,23 +287,25 @@
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="4dp">
+                android:layout_marginBottom="24dp"
+                app:cardBackgroundColor="@color/card_background"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="12dp"
+                app:cardUseCompatPadding="true">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:padding="24dp">
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="8dp"
-                        android:text="Genres"
+                        android:layout_marginBottom="16dp"
+                        android:text="🎭 Genres"
                         android:textColor="@color/text_primary"
-                        android:textSize="16sp"
+                        android:textSize="18sp"
                         android:textStyle="bold" />
 
                     <com.google.android.material.chip.ChipGroup
@@ -167,75 +316,59 @@
 
                 </LinearLayout>
 
-            </androidx.cardview.widget.CardView>
-
-            <!-- Description -->
+            </androidx.cardview.widget.CardView>            <!-- Description -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="4dp">
+                android:layout_marginBottom="24dp"
+                app:cardBackgroundColor="@color/card_background"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="12dp"
+                app:cardUseCompatPadding="true">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:padding="24dp">
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="8dp"
-                        android:text="Synopsis"
+                        android:layout_marginBottom="16dp"
+                        android:text="📖 Synopsis"
                         android:textColor="@color/text_primary"
-                        android:textSize="16sp"
+                        android:textSize="18sp"
                         android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/description_text_view"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:lineSpacingExtra="4dp"
+                        android:lineSpacingExtra="6dp"
                         android:text="Movie description will appear here..."
                         android:textColor="@color/text_secondary"
-                        android:textSize="14sp" />
+                        android:textSize="15sp" />
 
                 </LinearLayout>
 
-            </androidx.cardview.widget.CardView>
-
-            <!-- Action Buttons -->
+            </androidx.cardview.widget.CardView>            <!-- Action Buttons -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:orientation="horizontal"
-                android:weightSum="2">
-
-                <Button
-                    android:id="@+id/watch_trailer_button"
-                    style="@style/Widget.Material3.Button.OutlinedButton"
-                    android:layout_width="0dp"
-                    android:layout_height="56dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_weight="1"
-                    android:text="Watch Trailer"
-                    android:textColor="@color/colorPrimary"
-                    app:icon="@drawable/ic_play"
-                    app:iconGravity="textStart" />
+                android:layout_marginBottom="24dp"
+                android:orientation="horizontal">
 
                 <Button
                     android:id="@+id/book_ticket_button"
                     style="@style/Widget.Material3.Button"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="56dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_weight="1"
-                    android:text="Book Tickets"
-                    android:textColor="@android:color/white"
-                    app:icon="@drawable/ic_ticket"
-                    app:iconGravity="textStart" />
+                    android:background="@drawable/button_gradient_primary"
+                    android:text="🎫 Book Tickets"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
 
             </LinearLayout>
 

@@ -30,15 +30,14 @@
     <!-- Success Messages -->
     <string name="registration_successful">Registration successful! Please login</string>
     <string name="login_successful">Welcome back!</string>
+    <string name="send_reset_link">Send Reset Link</string>
 
     <!-- Loading Messages -->
-    <string name="logging_in">Logging in...</string>
-    <string name="registering">Creating account...</string>
-
     <!-- App Title -->
     <string name="movie_ticket_booking">🎬 Movie Ticket Booking</string>
     <string name="welcome_back">Welcome Back!</string>
     <string name="create_account">Create Your Account</string>
     <string name="login_subtitle">Sign in to continue booking your favorite movies</string>
     <string name="register_subtitle">Join us to start booking amazing movie experiences</string>
+    <string name="app_logo">App Logo</string>
 </resources>

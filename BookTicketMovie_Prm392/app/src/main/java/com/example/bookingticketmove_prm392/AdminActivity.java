@@ -151,10 +151,9 @@ public class AdminActivity extends AppCompatActivity {
             long trendingCount = allMovies.stream().mapToLong(movie -> movie.isTrending() ? 1 : 0).sum();
             Toast.makeText(this, "Trending Movies: " + trendingCount, Toast.LENGTH_SHORT).show();
         });
-        
-        totalUsersCard.setOnClickListener(v -> {
-            Toast.makeText(this, "User Management - Coming Soon!", Toast.LENGTH_SHORT).show();
-            // TODO: Navigate to UserManagementActivity
+          totalUsersCard.setOnClickListener(v -> {
+            Intent intent = new Intent(this, UserManagementActivity.class);
+            startActivity(intent);
         });
     }
     
@@ -218,9 +217,9 @@ public class AdminActivity extends AppCompatActivity {
         } else if (id == R.id.action_refresh) {
             loadMoviesAndStatistics();
             Toast.makeText(this, "Refreshed", Toast.LENGTH_SHORT).show();
-            return true;
-        } else if (id == R.id.action_user_management) {
-            Toast.makeText(this, "User Management - Coming Soon!", Toast.LENGTH_SHORT).show();
+            return true;        } else if (id == R.id.action_user_management) {
+            Intent intent = new Intent(this, UserManagementActivity.class);
+            startActivity(intent);
             return true;
         }
         

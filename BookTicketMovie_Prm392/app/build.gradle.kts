@@ -29,6 +29,12 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+    packaging {
+        resources {
+            excludes += "/META-INF/NOTICE.md"
+            excludes += "/META-INF/LICENSE.md"
+        }
+    }
 }
 
 dependencies {
@@ -37,11 +43,13 @@ dependencies {
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
-    
-    // CardView for home screen
+      // CardView for home screen
     implementation("androidx.cardview:cardview:1.0.0")
     implementation("androidx.coordinatorlayout:coordinatorlayout:1.2.0")
     
+    // SwipeRefreshLayout for User Management
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
+
     // Image loading library
     implementation("com.github.bumptech.glide:glide:4.16.0")
     annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
@@ -52,6 +60,15 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+
+    // Thêm Firebase Authentication
+//    implementation(platform("com.google.firebase:firebase-bom:33.15.0"))
+//    implementation("com.google.firebase:firebase-auth")
+//    implementation("com.google.firebase:firebase-analytics")
+
+    implementation("com.sun.mail:android-mail:1.6.7")
+    implementation("com.sun.mail:android-activation:1.6.7")
+
 
     // Card View
     implementation ("androidx.cardview:cardview:1.0.0")

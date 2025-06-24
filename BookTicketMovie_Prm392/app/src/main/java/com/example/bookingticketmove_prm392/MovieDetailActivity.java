@@ -2,19 +2,31 @@ package com.example.bookingticketmove_prm392;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
+import android.graphics.Color;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
 
 import com.example.bookingticketmove_prm392.database.dao.MovieDAO;
 import com.example.bookingticketmove_prm392.models.Movie;
@@ -28,8 +40,7 @@ import java.util.Locale;
 public class MovieDetailActivity extends AppCompatActivity {
     private static final String TAG = "MovieDetailActivity";
     public static final String EXTRA_MOVIE_ID = "movie_id";
-    
-    // UI Components
+      // UI Components
     private Toolbar toolbar;
     private ImageView posterImageView;
     private TextView titleTextView;
@@ -38,14 +49,24 @@ public class MovieDetailActivity extends AppCompatActivity {
     private TextView durationTextView;
     private TextView releaseDateTextView;
     private TextView ratingTextView;
-    private TextView priceTextView;
-    private ChipGroup genreChipGroup;
+    private TextView priceTextView;    private ChipGroup genreChipGroup;
     private Button bookTicketButton;
-    private Button watchTrailerButton;
     
-    // Data
+    // Embedded Trailer Components
+    private CardView trailerCard;
+    private WebView embeddedTrailerWebview;
+    private LinearLayout trailerLoadingLayout;
+    private LinearLayout trailerErrorLayout;
+    private Button fullscreenButton;
+    private Button retryTrailerButton;    // Data
     private Movie currentMovie;
     private int movieId;
+    private boolean isFullscreen = false;
+    
+    // Fullscreen video handling
+    private View customView;
+    private WebChromeClient.CustomViewCallback customViewCallback;
+    private FrameLayout fullscreenContainer;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,8 +86,7 @@ public class MovieDetailActivity extends AppCompatActivity {
         loadMovieDetails();
         setupClickListeners();
     }
-    
-    private void initViews() {
+      private void initViews() {
         toolbar = findViewById(R.id.toolbar);
         posterImageView = findViewById(R.id.poster_image_view);
         titleTextView = findViewById(R.id.title_text_view);
@@ -75,10 +95,22 @@ public class MovieDetailActivity extends AppCompatActivity {
         durationTextView = findViewById(R.id.duration_text_view);
         releaseDateTextView = findViewById(R.id.release_date_text_view);
         ratingTextView = findViewById(R.id.rating_text_view);
-        priceTextView = findViewById(R.id.price_text_view);
-        genreChipGroup = findViewById(R.id.genre_chip_group);
+        priceTextView = findViewById(R.id.price_text_view);        genreChipGroup = findViewById(R.id.genre_chip_group);
         bookTicketButton = findViewById(R.id.book_ticket_button);
-        watchTrailerButton = findViewById(R.id.watch_trailer_button);
+        
+        // Initialize embedded trailer components
+        trailerCard = findViewById(R.id.trailer_card);
+        embeddedTrailerWebview = findViewById(R.id.embedded_trailer_webview);
+        trailerLoadingLayout = findViewById(R.id.trailer_loading_layout);
+        trailerErrorLayout = findViewById(R.id.trailer_error_layout);
+        fullscreenButton = findViewById(R.id.fullscreen_button);
+        retryTrailerButton = findViewById(R.id.retry_trailer_button);
+        
+        // Initialize fullscreen container
+        fullscreenContainer = new FrameLayout(this);
+        fullscreenContainer.setBackgroundColor(Color.BLACK);
+        
+        setupEmbeddedTrailer();
     }
     
     private void setupToolbar() {
@@ -89,12 +121,155 @@ public class MovieDetailActivity extends AppCompatActivity {
             getSupportActionBar().setTitle("Movie Details");
         }
     }
+      private void setupEmbeddedTrailer() {
+        // Configure WebView settings
+        WebSettings webSettings = embeddedTrailerWebview.getSettings();
+        webSettings.setJavaScriptEnabled(true);
+        webSettings.setDomStorageEnabled(true);
+        webSettings.setLoadWithOverviewMode(true);
+        webSettings.setUseWideViewPort(true);
+        webSettings.setBuiltInZoomControls(false);
+        webSettings.setDisplayZoomControls(false);
+        webSettings.setSupportZoom(false);
+        webSettings.setAllowFileAccess(false);
+        webSettings.setAllowContentAccess(false);
+        webSettings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        
+        // Set WebView client to handle page loading
+        embeddedTrailerWebview.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageStarted(WebView view, String url, android.graphics.Bitmap favicon) {
+                super.onPageStarted(view, url, favicon);
+                showTrailerLoadingState();
+            }
+            
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                showTrailerWebView();
+            }
+            
+            @Override
+            public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
+                super.onReceivedError(view, errorCode, description, failingUrl);
+                Log.e(TAG, "WebView error: " + description);
+                showTrailerErrorState();
+            }
+        });
+          // Set WebChromeClient for better media support
+        embeddedTrailerWebview.setWebChromeClient(new WebChromeClient() {
+            @Override
+            public void onProgressChanged(WebView view, int newProgress) {
+                super.onProgressChanged(view, newProgress);
+                if (newProgress == 100) {
+                    showTrailerWebView();
+                }
+            }
+            
+            @Override
+            public void onShowCustomView(View view, CustomViewCallback callback) {
+                super.onShowCustomView(view, callback);
+                // Handle fullscreen video playback
+                enterFullscreenVideo(view, callback);
+            }
+            
+            @Override
+            public void onHideCustomView() {
+                super.onHideCustomView();
+                // Exit fullscreen video playback
+                exitFullscreenVideo();
+            }
+        });
+    }
+    
+    private void loadEmbeddedTrailer(String trailerUrl) {
+        if (trailerUrl == null || trailerUrl.isEmpty()) {
+            trailerCard.setVisibility(View.GONE);
+            return;
+        }
+        
+        try {
+            // Show trailer card
+            trailerCard.setVisibility(View.VISIBLE);
+            
+            // Convert YouTube URL to embeddable format
+            String embedUrl = convertToEmbedUrl(trailerUrl);
+            
+            if (embedUrl != null) {
+                // Create HTML content for embedded YouTube player
+                String htmlContent = createEmbedHtml(embedUrl);
+                embeddedTrailerWebview.loadDataWithBaseURL("https://www.youtube.com", htmlContent, "text/html", "UTF-8", null);
+            } else {
+                showTrailerErrorState();
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error loading embedded trailer: " + e.getMessage());
+            showTrailerErrorState();
+        }
+    }
+    
+    private String convertToEmbedUrl(String youtubeUrl) {
+        try {
+            // Extract video ID from various YouTube URL formats
+            String videoId = null;
+            
+            if (youtubeUrl.contains("youtube.com/watch?v=")) {
+                videoId = youtubeUrl.split("v=")[1].split("&")[0];
+            } else if (youtubeUrl.contains("youtu.be/")) {
+                videoId = youtubeUrl.split("youtu.be/")[1].split("\\?")[0];
+            } else if (youtubeUrl.contains("youtube.com/embed/")) {
+                return youtubeUrl; // Already in embed format
+            }
+            
+            if (videoId != null && !videoId.isEmpty()) {
+                return "https://www.youtube.com/embed/" + videoId + "?autoplay=0&rel=0&modestbranding=1";
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error converting YouTube URL: " + e.getMessage());
+        }
+        return null;
+    }
+      private String createEmbedHtml(String embedUrl) {
+        return "<!DOCTYPE html>" +
+                "<html>" +
+                "<head>" +
+                "<meta name='viewport' content='width=device-width, initial-scale=1.0'>" +
+                "<style>" +
+                "body { margin: 0; padding: 0; background: #000; }" +
+                "iframe { width: 100%; height: 320px; border: none; }" +
+                "</style>" +
+                "</head>" +
+                "<body>" +
+                "<iframe src='" + embedUrl + "' " +
+                "frameborder='0' " +
+                "allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture' " +
+                "allowfullscreen>" +
+                "</iframe>" +
+                "</body>" +
+                "</html>";
+    }
+    
+    private void showTrailerLoadingState() {
+        trailerLoadingLayout.setVisibility(View.VISIBLE);
+        embeddedTrailerWebview.setVisibility(View.GONE);
+        trailerErrorLayout.setVisibility(View.GONE);
+    }
+    
+    private void showTrailerWebView() {
+        trailerLoadingLayout.setVisibility(View.GONE);
+        embeddedTrailerWebview.setVisibility(View.VISIBLE);
+        trailerErrorLayout.setVisibility(View.GONE);
+    }
+      private void showTrailerErrorState() {
+        trailerLoadingLayout.setVisibility(View.GONE);
+        embeddedTrailerWebview.setVisibility(View.GONE);
+        trailerErrorLayout.setVisibility(View.VISIBLE);
+    }
     
     private void loadMovieDetails() {
         new LoadMovieDetailsTask().execute(movieId);
     }
-    
-    private void setupClickListeners() {
+      private void setupClickListeners() {
         bookTicketButton.setOnClickListener(v -> {
             if (currentMovie != null) {
                 // Check if user is logged in
@@ -114,15 +289,33 @@ public class MovieDetailActivity extends AppCompatActivity {
                 intent.putExtra("movie_title", currentMovie.getTitle());
                 intent.putExtra("movie_price", currentMovie.getPrice());
                 startActivity(intent);
+            }        });
+        
+        // Fullscreen button click listener
+        fullscreenButton.setOnClickListener(v -> {
+            if (currentMovie != null && currentMovie.getTrailerUrl() != null && !currentMovie.getTrailerUrl().isEmpty()) {
+                try {
+                    // Load trailer with fullscreen capabilities
+                    String embedUrl = convertToEmbedUrl(currentMovie.getTrailerUrl());
+                    if (embedUrl != null) {
+                        String fullscreenHtml = createFullscreenEmbedHtml(embedUrl);
+                        embeddedTrailerWebview.loadDataWithBaseURL("https://www.youtube.com", fullscreenHtml, "text/html", "UTF-8", null);
+                        Toast.makeText(this, "Tap the video to enter fullscreen", Toast.LENGTH_LONG).show();
+                    }
+                } catch (Exception e) {
+                    Log.e(TAG, "Error loading fullscreen trailer: " + e.getMessage());
+                    Toast.makeText(this, "Error loading fullscreen trailer", Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                Toast.makeText(this, "Trailer not available", Toast.LENGTH_SHORT).show();
             }
         });
         
-        watchTrailerButton.setOnClickListener(v -> {
+        // Retry button click listener
+        retryTrailerButton.setOnClickListener(v -> {
             if (currentMovie != null && currentMovie.getTrailerUrl() != null && !currentMovie.getTrailerUrl().isEmpty()) {
-                // TODO: Implement trailer viewing functionality
-                Toast.makeText(this, "Trailer feature coming soon", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(this, "Trailer not available", Toast.LENGTH_SHORT).show();
+                loadEmbeddedTrailer(currentMovie.getTrailerUrl());
+                Toast.makeText(this, "Retrying trailer load...", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -170,11 +363,17 @@ public class MovieDetailActivity extends AppCompatActivity {
         
         // Load poster image using ImageUtils
         ImageUtils.loadMoviePosterFitCenter(this, posterImageView, movie.getPosterUrl());
-        
-        // Enable/disable book button based on movie status
+          // Enable/disable book button based on movie status
         bookTicketButton.setEnabled(movie.isActive());
         if (!movie.isActive()) {
             bookTicketButton.setText("Not Available");
+        }
+        
+        // Load embedded trailer if available
+        if (movie.getTrailerUrl() != null && !movie.getTrailerUrl().isEmpty()) {
+            loadEmbeddedTrailer(movie.getTrailerUrl());
+        } else {
+            trailerCard.setVisibility(View.GONE);
         }
     }
     
@@ -190,6 +389,13 @@ public class MovieDetailActivity extends AppCompatActivity {
                 genreChipGroup.addView(chip);
             }
         }
+    }
+      @Override
+    protected void onDestroy() {
+        if (embeddedTrailerWebview != null) {
+            embeddedTrailerWebview.destroy();
+        }
+        super.onDestroy();
     }
     
     @Override
@@ -227,10 +433,102 @@ public class MovieDetailActivity extends AppCompatActivity {
             startActivity(Intent.createChooser(shareIntent, "Share Movie"));
         }
     }
-    
-    private void toggleFavorite() {
+      private void toggleFavorite() {
         // TODO: Implement favorite functionality
         Toast.makeText(this, "Favorite feature coming soon", Toast.LENGTH_SHORT).show();
+    }
+      private String createFullscreenEmbedHtml(String embedUrl) {
+        return "<!DOCTYPE html>" +
+                "<html>" +
+                "<head>" +
+                "<meta name='viewport' content='width=device-width, initial-scale=1.0'>" +
+                "<style>" +
+                "body { margin: 0; padding: 0; background: #000; }" +
+                "iframe { width: 100%; height: 320px; border: none; }" +
+                "</style>" +
+                "</head>" +
+                "<body>" +
+                "<iframe src='" + embedUrl + "&autoplay=0&fs=1' " +
+                "frameborder='0' " +
+                "allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen' " +
+                "allowfullscreen " +
+                "webkitallowfullscreen " +
+                "mozallowfullscreen>" +
+                "</iframe>" +
+                "</body>" +
+                "</html>";
+    }
+    
+    private void enterFullscreenVideo(View view, WebChromeClient.CustomViewCallback callback) {
+        if (customView != null) {
+            callback.onCustomViewHidden();
+            return;
+        }
+        
+        customView = view;
+        customViewCallback = callback;
+        
+        // Hide system UI
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().getDecorView().setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_FULLSCREEN |
+                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
+                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+        
+        // Set landscape orientation
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        
+        // Add custom view to fullscreen container
+        fullscreenContainer.addView(customView, new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT));
+        
+        // Add fullscreen container to root view
+        ViewGroup rootView = (ViewGroup) getWindow().getDecorView();
+        rootView.addView(fullscreenContainer, new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT));
+        
+        isFullscreen = true;
+    }
+    
+    private void exitFullscreenVideo() {
+        if (customView == null) {
+            return;
+        }
+        
+        // Remove fullscreen container from root view
+        ViewGroup rootView = (ViewGroup) getWindow().getDecorView();
+        rootView.removeView(fullscreenContainer);
+        
+        // Remove custom view from fullscreen container
+        fullscreenContainer.removeView(customView);
+        
+        // Restore system UI
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+        
+        // Restore portrait orientation
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        
+        // Clean up
+        customView = null;
+        if (customViewCallback != null) {
+            customViewCallback.onCustomViewHidden();
+            customViewCallback = null;
+        }
+        
+        isFullscreen = false;
+    }
+    
+    @Override
+    public void onBackPressed() {
+        if (isFullscreen) {
+            exitFullscreenVideo();
+        } else {
+            super.onBackPressed();
+        }
     }
       private class LoadMovieDetailsTask extends AsyncTask<Integer, Void, Movie> {
         @Override

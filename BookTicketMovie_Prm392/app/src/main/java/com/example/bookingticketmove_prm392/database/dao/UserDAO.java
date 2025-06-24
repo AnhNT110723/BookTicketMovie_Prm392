@@ -5,6 +5,8 @@ import android.os.Looper;
 import android.util.Log;
 import com.example.bookingticketmove_prm392.database.DatabaseConfig;
 import com.example.bookingticketmove_prm392.models.User;
+import com.example.bookingticketmove_prm392.utils.PasswordUtils;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -104,6 +106,185 @@ public class UserDAO extends BaseDAO {
     }
 
     /**
+     * saveResetToken
+     */
+    public void saveResetToken(String email, String token, Timestamp expiresAt, DatabaseTaskListener<Boolean> listener) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Handler mainHandler = new Handler(Looper.getMainLooper());
+
+        executor.execute(() -> {
+            Boolean result = false;
+            Exception error = null;
+
+            try {
+                User user = getUserByEmail(email);
+                if (user == null) {
+                    throw new Exception("Không tìm thấy người dùng");
+                }
+
+                int userId = user.getUserID();
+                // 1. Kiểm tra xem đã có token reset cho user chưa
+                String checkSql = "SELECT COUNT(*) FROM Tokens WHERE UserID = ? AND TokenType = 'password_reset'";
+                ResultSet rs = executeQuery(checkSql, userId);
+                boolean tokenExists = false;
+                if (rs != null && rs.next()) {
+                    tokenExists = rs.getInt(1) > 0;
+                }
+                rs.close();
+
+                if (tokenExists) {
+                    result = updateResetToken(userId, token, expiresAt);
+                } else {
+                    // 3. Nếu chưa thì insert
+                    result = insertResetToken(userId, token, expiresAt);
+                }
+            } catch (Exception e) {
+                error = e;
+                Log.e(TAG, "Lỗi khi lưu token reset", e);
+            }
+
+            Boolean finalResult = result;
+            Exception finalError = error;
+
+            mainHandler.post(() -> {
+                if (listener != null) {
+                    if (finalError != null) {
+                        listener.onError(finalError);
+                    } else {
+                        listener.onSuccess(finalResult);
+                    }
+                }
+            });
+        });
+    }
+
+    /**
+     * isTokenExists
+     */
+    private boolean isTokenExists(int userId) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM Tokens WHERE UserID = ? AND TokenType = 'password_reset'";
+        ResultSet rs = executeQuery(sql, userId);
+        boolean exists = false;
+        if (rs != null && rs.next()) {
+            exists = rs.getInt(1) > 0;
+        }
+        if (rs != null) rs.close();
+        return exists;
+    }
+    /**
+     * insertResetToken
+     */
+    private boolean insertResetToken(int userId, String token, Timestamp expiresAt) throws SQLException {
+        String sql = "INSERT INTO Tokens (UserID, TokenValue, TokenType, IssuedAt, ExpiresAt, IsRevoked, Version) " +
+                "VALUES (?, ?, 'password_reset', GETDATE(), ?, 0, 1)";
+        return executeUpdate(sql, userId, token, expiresAt) > 0;
+    }
+    /**
+     * updateResetToken
+     */
+    private boolean updateResetToken(int userId, String token, Timestamp expiresAt) throws SQLException {
+        String sql = "UPDATE Tokens SET TokenValue = ?, IssuedAt = GETDATE(), ExpiresAt = ?, IsRevoked = 0, Version = Version + 1 " +
+                "WHERE UserID = ? AND TokenType = 'password_reset'";
+        return executeUpdate(sql, token, expiresAt, userId) > 0;
+    }
+
+    /**
+     * verify ResetToken
+     */
+    public void verifyResetToken(String token, DatabaseTaskListener<String> listener) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Handler mainHandler = new Handler(Looper.getMainLooper());
+
+        executor.execute(() -> {
+            String email = null;
+            Exception error = null;
+
+            try {
+                String sql = "SELECT u.Email FROM Tokens t " +
+                        "JOIN [User] u ON t.UserID = u.UserID " +
+                        "WHERE t.TokenValue = ? AND t.TokenType = 'password_reset' " +
+                        "AND t.ExpiresAt > GETDATE() AND t.IsRevoked = 0";
+
+                ResultSet rs = executeQuery(sql, token);
+                if (rs != null && rs.next()) {
+                    email = rs.getString("Email");
+                } else {
+                    throw new Exception("Token không hợp lệ hoặc đã hết hạn");
+                }
+                if (rs != null) rs.close();
+            } catch (Exception e) {
+                error = e;
+            }
+
+            String finalEmail = email;
+            Exception finalError = error;
+
+            mainHandler.post(() -> {
+                if (listener != null) {
+                    if (finalError != null) {
+                        listener.onError(finalError);
+                    } else {
+                        listener.onSuccess(finalEmail);
+                    }
+                }
+            });
+        });
+    }
+
+    /**
+     * update Password
+     */
+    public boolean updatePassword(String email, String newPassword) throws SQLException {
+        String sql = "UPDATE [User] SET PasswordHash = ? WHERE Email = ?";
+        String hashedPassword = PasswordUtils.simpleHash(newPassword); // hoặc BCrypt nếu bạn có
+        int rows = executeUpdate(sql, hashedPassword, email);
+        return rows > 0;
+    }
+
+    /**
+     * Update Password Task
+     */
+    public static class UpdatePasswordTask {
+        private final String email;
+        private final String newPassword;
+        private final UserDAO userDAO = new UserDAO();
+        private final DatabaseTaskListener<Boolean> listener;
+
+        public UpdatePasswordTask(String email, String newPassword, DatabaseTaskListener<Boolean> listener) {
+            this.email = email;
+            this.newPassword = newPassword;
+            this.listener = listener;
+        }
+
+        public void execute() {
+            ExecutorService executor = Executors.newSingleThreadExecutor();
+            Handler handler = new Handler(Looper.getMainLooper());
+
+            executor.execute(() -> {
+                boolean result = false;
+                Exception error = null;
+
+                try {
+                    result = userDAO.updatePassword(email, newPassword);
+                } catch (Exception e) {
+                    error = e;
+                }
+
+                boolean finalResult = result;
+                Exception finalError = error;
+
+                handler.post(() -> {
+                    if (finalError != null) {
+                        listener.onError(finalError);
+                    } else {
+                        listener.onSuccess(finalResult);
+                    }
+                });
+            });
+        }
+    }
+
+    /**
      * Get all users
      */
     public List<User> getAllUsers() throws SQLException {
@@ -128,22 +309,51 @@ public class UserDAO extends BaseDAO {
     /**
      * Check if email exists
      */
-    public boolean isEmailExists(String email) throws SQLException {
-        String sql = "SELECT COUNT(*) FROM " + DatabaseConfig.TABLE_USER + " WHERE Email = ?";
-        
-        ResultSet rs = null;
-        PreparedStatement statement = null;
-        
-        try {
-            rs = executeQuery(sql, email);
-            if (rs.next()) {
-                return rs.getInt(1) > 0;
+    public void isEmailExists(String email, DatabaseTaskListener<Boolean> databaseTaskListener) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Handler mainHandler = new Handler(Looper.getMainLooper());
+
+        executor.execute(() -> {
+            Boolean result = false;
+            Exception exception = null;
+
+            try {
+                String sql = "SELECT COUNT(*) FROM " + DatabaseConfig.TABLE_USER + " WHERE Email = ?";
+                ResultSet rs = null;
+                PreparedStatement statement = null;
+
+                try {
+                    Log.d(TAG, "Executing query for email: " + email); // Thêm log để kiểm tra
+                    rs = executeQuery(sql, email);
+                    if (rs != null && rs.next()) {
+                        result = rs.getInt(1) > 0;
+                        Log.d(TAG, "Query result: " + result); // Kiểm tra kết quả
+                    }
+                } finally {
+                    closeResources(rs, statement);
+                }
+            } catch (Exception e) {
+                Log.e(TAG, "Error checking email existence", e); // Log lỗi chi tiết
+                exception = e;
             }
-            return false;
-        } finally {
-            closeResources(rs, statement);
-        }
-    }    /**
+
+            final Boolean finalResult = result;
+            final Exception finalException = exception;
+
+            mainHandler.post(() -> {
+                if (databaseTaskListener != null) {
+                    if (finalException != null) {
+                        Log.e(TAG, "Calling onError with exception: " + finalException.getMessage());
+                        databaseTaskListener.onError(finalException);
+                    } else {
+                        Log.d(TAG, "Calling onSuccess with result: " + finalResult);
+                        databaseTaskListener.onSuccess(finalResult);
+                    }
+                }
+            });
+        });
+    }
+       /**
      * Map ResultSet to User object
      */
     private User mapResultSetToUser(ResultSet rs) throws SQLException {
@@ -346,8 +556,7 @@ public class UserDAO extends BaseDAO {
                 }
                 
                 final Boolean finalResult = result;
-                final Exception finalException = exception;
-                
+                final Exception finalException = exception;                
                 mainHandler.post(() -> {
                     if (listener != null) {
                         if (finalException != null) {
@@ -358,6 +567,108 @@ public class UserDAO extends BaseDAO {
                     }
                 });
             });
+        }
+    }
+
+    /**
+     * Delete user by ID
+     */
+    public boolean deleteUser(int userId) throws SQLException {
+        String sql = "DELETE FROM " + DatabaseConfig.TABLE_USER + " WHERE UserID = ?";
+        return executeUpdate(sql, userId) > 0;
+    }
+
+    /**
+     * Reset user password
+     */
+    public boolean resetUserPassword(int userId, String newPasswordHash) throws SQLException {
+        String sql = "UPDATE " + DatabaseConfig.TABLE_USER + " SET PasswordHash = ? WHERE UserID = ?";
+        return executeUpdate(sql, newPasswordHash, userId) > 0;
+    }
+
+    /**
+     * Toggle user active status
+     */
+    public boolean toggleUserActiveStatus(int userId) throws SQLException {
+        String sql = "UPDATE " + DatabaseConfig.TABLE_USER + " SET IsActive = NOT IsActive WHERE UserID = ?";
+        return executeUpdate(sql, userId) > 0;
+    }
+
+    /**
+     * Update user role
+     */
+    public boolean updateUserRole(int userId, int roleId) throws SQLException {
+        String sql = "UPDATE " + DatabaseConfig.TABLE_USER + " SET RoleID = ? WHERE UserID = ?";
+        return executeUpdate(sql, roleId, userId) > 0;
+    }
+
+    /**
+     * Get users by role
+     */
+    public List<User> getUsersByRole(int roleId) throws SQLException {
+        String sql = "SELECT UserID, Name, Email, Phone, PasswordHash, LoyaltyPoints, " +
+                    "RegistrationDate, IsActive, RoleID FROM " + DatabaseConfig.TABLE_USER + 
+                    " WHERE RoleID = ? ORDER BY RegistrationDate DESC";
+        
+        List<User> users = new ArrayList<>();
+        ResultSet rs = null;
+        PreparedStatement statement = null;
+        
+        try {
+            rs = executeQuery(sql, roleId);
+            while (rs.next()) {
+                users.add(mapResultSetToUser(rs));
+            }
+            return users;
+        } finally {
+            closeResources(rs, statement);
+        }
+    }
+
+    /**
+     * Get active/inactive users
+     */
+    public List<User> getUsersByActiveStatus(boolean isActive) throws SQLException {
+        String sql = "SELECT UserID, Name, Email, Phone, PasswordHash, LoyaltyPoints, " +
+                    "RegistrationDate, IsActive, RoleID FROM " + DatabaseConfig.TABLE_USER + 
+                    " WHERE IsActive = ? ORDER BY RegistrationDate DESC";
+        
+        List<User> users = new ArrayList<>();
+        ResultSet rs = null;
+        PreparedStatement statement = null;
+        
+        try {
+            rs = executeQuery(sql, isActive);
+            while (rs.next()) {
+                users.add(mapResultSetToUser(rs));
+            }
+            return users;
+        } finally {
+            closeResources(rs, statement);
+        }
+    }
+
+    /**
+     * Search users by username or email
+     */
+    public List<User> searchUsers(String searchTerm) throws SQLException {
+        String sql = "SELECT UserID, Name, Email, Phone, PasswordHash, LoyaltyPoints, " +
+                    "RegistrationDate, IsActive, RoleID FROM " + DatabaseConfig.TABLE_USER + 
+                    " WHERE Name LIKE ? OR Email LIKE ? ORDER BY RegistrationDate DESC";
+        
+        String searchPattern = "%" + searchTerm + "%";
+        List<User> users = new ArrayList<>();
+        ResultSet rs = null;
+        PreparedStatement statement = null;
+        
+        try {
+            rs = executeQuery(sql, searchPattern, searchPattern);
+            while (rs.next()) {
+                users.add(mapResultSetToUser(rs));
+            }
+            return users;
+        } finally {
+            closeResources(rs, statement);
         }
     }
 }

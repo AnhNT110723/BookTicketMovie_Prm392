@@ -1,11 +1,18 @@
 package com.example.bookingticketmove_prm392;
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,9 +31,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
 public class LoginActivity extends AppCompatActivity {
-    private static final String TAG = "LoginActivity";
-
-    // UI Components
+    private static final String TAG = "LoginActivity";    // UI Components
     private TextInputEditText emailInput;
     private TextInputEditText passwordInput;
     private TextInputLayout emailInputLayout;
@@ -35,6 +40,10 @@ public class LoginActivity extends AppCompatActivity {
     private ProgressBar loadingIndicator;
     private TextView registerLink;
     private TextView forgotPasswordLink;
+    private TextView appTitle;
+    private TextView welcomeTitle;
+    private TextView welcomeSubtitle;
+    private ImageView logoImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,13 +59,12 @@ public class LoginActivity extends AppCompatActivity {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
-        });
-
-        // Set up click listeners
+        });        // Set up click listeners
         setupClickListeners();
-    }
 
-    private void initViews() {
+        // Start entrance animations
+        startEntranceAnimations();
+    }    private void initViews() {
         emailInput = findViewById(R.id.email_input);
         passwordInput = findViewById(R.id.password_input);
         emailInputLayout = findViewById(R.id.email_input_layout);
@@ -65,18 +73,32 @@ public class LoginActivity extends AppCompatActivity {
         loadingIndicator = findViewById(R.id.loading_indicator);
         registerLink = findViewById(R.id.register_link);
         forgotPasswordLink = findViewById(R.id.forgot_password);
-    }
+        appTitle = findViewById(R.id.app_title);
+        welcomeTitle = findViewById(R.id.welcome_title);
+        welcomeSubtitle = findViewById(R.id.welcome_subtitle);
 
-    private void setupClickListeners() {
-        loginButton.setOnClickListener(v -> attemptLogin());
+        // Set initial alpha for animations
+        setViewsForAnimation();
+    }    private void setupClickListeners() {
+        loginButton.setOnClickListener(v -> {
+            // Add button press animation
+            animateButtonPress(v);
+            new Handler().postDelayed(this::attemptLogin, 100);
+        });
         
         registerLink.setOnClickListener(v -> {
-            Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
-            startActivity(intent);
+            animateButtonPress(v);
+            new Handler().postDelayed(() -> {
+                Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+                startActivity(intent);
+                overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+            }, 100);
         });
         
         forgotPasswordLink.setOnClickListener(v -> {
-            Toast.makeText(this, "Forgot password feature coming soon!", Toast.LENGTH_SHORT).show();
+
+            Intent intent = new Intent(LoginActivity.this, ForgotPasswordActivity.class);
+            startActivity(intent);
         });
     }
 
@@ -103,9 +125,9 @@ public class LoginActivity extends AppCompatActivity {
         if (TextUtils.isEmpty(password)) {
             passwordInputLayout.setError(getString(R.string.error_empty_password));
             isValid = false;
-        }
-
-        if (!isValid) {
+        }        if (!isValid) {
+            // Shake animation for invalid inputs
+            shakeView(emailInput.getText().toString().isEmpty() ? emailInputLayout : passwordInputLayout);
             return;
         }
 
@@ -137,23 +159,45 @@ public class LoginActivity extends AppCompatActivity {
             });
 
         loginTask.execute();
-    }
-
-    private void setLoadingState(boolean isLoading) {
+    }    private void setLoadingState(boolean isLoading) {
         if (isLoading) {
             loginButton.setText("");
             loadingIndicator.setVisibility(View.VISIBLE);
             loginButton.setEnabled(false);
             emailInput.setEnabled(false);
             passwordInput.setEnabled(false);
+
+            // Animate button to loading state
+            ObjectAnimator scaleX = ObjectAnimator.ofFloat(loginButton, "scaleX", 1f, 0.95f);
+            ObjectAnimator scaleY = ObjectAnimator.ofFloat(loginButton, "scaleY", 1f, 0.95f);
+            AnimatorSet animatorSet = new AnimatorSet();
+            animatorSet.playTogether(scaleX, scaleY);
+            animatorSet.setDuration(150);
+            animatorSet.start();
         } else {
             loginButton.setText(R.string.sign_in);
             loadingIndicator.setVisibility(View.GONE);
             loginButton.setEnabled(true);
             emailInput.setEnabled(true);
             passwordInput.setEnabled(true);
+
+            // Animate button back to normal state
+            ObjectAnimator scaleX = ObjectAnimator.ofFloat(loginButton, "scaleX", 0.95f, 1f);
+            ObjectAnimator scaleY = ObjectAnimator.ofFloat(loginButton, "scaleY", 0.95f, 1f);
+            AnimatorSet animatorSet = new AnimatorSet();
+            animatorSet.playTogether(scaleX, scaleY);
+            animatorSet.setDuration(150);
+            animatorSet.start();
         }
     }    private void onLoginSuccess(User user) {
+        // Success animation
+        ObjectAnimator pulseX = ObjectAnimator.ofFloat(loginButton, "scaleX", 1f, 1.1f, 1f);
+        ObjectAnimator pulseY = ObjectAnimator.ofFloat(loginButton, "scaleY", 1f, 1.1f, 1f);
+        AnimatorSet pulseAnimator = new AnimatorSet();
+        pulseAnimator.playTogether(pulseX, pulseY);
+        pulseAnimator.setDuration(300);
+        pulseAnimator.start();
+
         Toast.makeText(this, getString(R.string.login_successful), Toast.LENGTH_SHORT).show();
         Log.d(TAG, "Login successful for user: " + user.getEmail() + " with role: " + user.getRoleID());
         
@@ -168,19 +212,26 @@ public class LoginActivity extends AppCompatActivity {
                 user.getLoyaltyPoints().floatValue() : 0.0f)
             .putBoolean("isLoggedIn", true)
             .apply();
-          // Navigate based on user role
-        Intent intent;
-        if (user.getRoleID() == 1) { // Admin role
-            // Show dialog to choose between admin panel and home
-            showAdminNavigationDialog(user);
-            return; // Don't navigate immediately, let dialog handle it
-        } else { // Customer or FrontDeskOfficer
-            intent = new Intent(LoginActivity.this, HomeActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-            finish();
-        }
+
+        // Delayed navigation for animation
+        new Handler().postDelayed(() -> {
+            // Navigate based on user role
+            Intent intent;
+            if (user.getRoleID() == 1) { // Admin role
+                showAdminNavigationDialog(user);
+                return;
+            } else { // Customer or FrontDeskOfficer
+                intent = new Intent(LoginActivity.this, HomeActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                finish();
+            }
+        }, 500);
     }    private void onLoginFailed(String errorMessage) {
+        // Error shake animation
+        shakeView(loginButton);
+
         Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show();
         
         // Clear password field for security
@@ -205,5 +256,93 @@ public class LoginActivity extends AppCompatActivity {
                 })
                 .setCancelable(false)
                 .show();
+    }
+
+    /**
+     * Animation methods for enhanced user experience
+     */
+
+    private void setViewsForAnimation() {
+        // Set initial alpha to 0 for fade-in animation
+        appTitle.setAlpha(0f);
+        welcomeTitle.setAlpha(0f);
+        welcomeSubtitle.setAlpha(0f);
+        emailInputLayout.setAlpha(0f);
+        passwordInputLayout.setAlpha(0f);
+        loginButton.setAlpha(0f);
+        forgotPasswordLink.setAlpha(0f);
+        findViewById(R.id.register_link_layout).setAlpha(0f);
+
+        // Set initial translation for slide-in animation
+        appTitle.setTranslationY(-50f);
+        welcomeTitle.setTranslationY(-30f);
+        welcomeSubtitle.setTranslationY(-20f);
+        emailInputLayout.setTranslationY(30f);
+        passwordInputLayout.setTranslationY(30f);
+        loginButton.setTranslationY(50f);
+        forgotPasswordLink.setTranslationY(20f);
+        findViewById(R.id.register_link_layout).setTranslationY(30f);
+    }
+
+    private void startEntranceAnimations() {
+        // Animate app title
+        animateViewFadeInSlide(appTitle, 200, 0);
+
+        // Animate welcome texts
+        animateViewFadeInSlide(welcomeTitle, 250, 100);
+        animateViewFadeInSlide(welcomeSubtitle, 300, 200);
+
+        // Animate input fields
+        animateViewFadeInSlide(emailInputLayout, 350, 300);
+        animateViewFadeInSlide(passwordInputLayout, 400, 400);
+
+        // Animate buttons
+        animateViewFadeInSlide(loginButton, 450, 500);
+        animateViewFadeInSlide(forgotPasswordLink, 300, 600);
+        animateViewFadeInSlide(findViewById(R.id.register_link_layout), 350, 700);
+    }
+
+    private void animateViewFadeInSlide(View view, long duration, long delay) {
+        ObjectAnimator fadeIn = ObjectAnimator.ofFloat(view, "alpha", 0f, 1f);
+        ObjectAnimator slideY = ObjectAnimator.ofFloat(view, "translationY", view.getTranslationY(), 0f);
+        ObjectAnimator scaleX = ObjectAnimator.ofFloat(view, "scaleX", 0.8f, 1f);
+        ObjectAnimator scaleY = ObjectAnimator.ofFloat(view, "scaleY", 0.8f, 1f);
+
+        AnimatorSet animatorSet = new AnimatorSet();
+        animatorSet.playTogether(fadeIn, slideY, scaleX, scaleY);
+        animatorSet.setDuration(duration);
+        animatorSet.setStartDelay(delay);
+        animatorSet.setInterpolator(new AccelerateDecelerateInterpolator());
+        animatorSet.start();
+    }
+
+    private void animateButtonPress(View view) {
+        ObjectAnimator scaleDownX = ObjectAnimator.ofFloat(view, "scaleX", 1f, 0.95f);
+        ObjectAnimator scaleDownY = ObjectAnimator.ofFloat(view, "scaleY", 1f, 0.95f);
+        ObjectAnimator scaleUpX = ObjectAnimator.ofFloat(view, "scaleX", 0.95f, 1f);
+        ObjectAnimator scaleUpY = ObjectAnimator.ofFloat(view, "scaleY", 0.95f, 1f);
+
+        AnimatorSet scaleDown = new AnimatorSet();
+        scaleDown.playTogether(scaleDownX, scaleDownY);
+        scaleDown.setDuration(100);
+
+        AnimatorSet scaleUp = new AnimatorSet();
+        scaleUp.playTogether(scaleUpX, scaleUpY);
+        scaleUp.setDuration(100);
+
+        scaleDown.addListener(new android.animation.AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(android.animation.Animator animation) {
+                scaleUp.start();
+            }
+        });
+
+        scaleDown.start();
+    }
+
+    private void shakeView(View view) {
+        ObjectAnimator shake = ObjectAnimator.ofFloat(view, "translationX", 0, 25, -25, 25, -25, 15, -15, 6, -6, 0);
+        shake.setDuration(600);
+        shake.start();
     }
 }
