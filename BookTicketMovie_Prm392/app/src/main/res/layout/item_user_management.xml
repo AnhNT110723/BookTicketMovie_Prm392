@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/user_card"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardBackgroundColor="@color/card_background"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="4dp"
+    app:cardUseCompatPadding="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp">
+
+        <!-- User Avatar -->
+        <ImageView
+            android:id="@+id/avatar_image_view"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/circle_gradient_primary"
+            android:padding="12dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_user_avatar"
+            tools:ignore="ContentDescription" />
+
+        <!-- User Info -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <!-- Username and Menu -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/username_text_view"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="username"
+                    android:textColor="@color/text_primary"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />                <ImageView
+                    android:id="@+id/menu_image_view"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:padding="4dp"
+                    android:src="@android:drawable/ic_menu_more"
+                    android:contentDescription="User menu"
+                    app:tint="@color/text_secondary" />
+
+            </LinearLayout>
+
+            <!-- Email -->
+            <TextView
+                android:id="@+id/email_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="user@example.com"
+                android:textColor="@color/text_secondary"
+                android:textSize="14sp" />
+
+            <!-- Full Name -->
+            <TextView
+                android:id="@+id/full_name_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="Full Name"
+                android:textColor="@color/text_secondary"
+                android:textSize="13sp"
+                android:visibility="gone" />
+
+            <!-- Join Date -->
+            <TextView
+                android:id="@+id/join_date_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Joined: Jan 1, 2024"
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp" />
+
+            <!-- Role and Status Chips -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal">
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/role_chip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    android:layout_marginEnd="8dp"
+                    android:text="Customer"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
+                    app:chipBackgroundColor="@color/primary"
+                    app:chipCornerRadius="16dp"
+                    app:chipMinHeight="32dp" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/status_chip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    android:text="Active"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
+                    app:chipBackgroundColor="@android:color/holo_green_light"
+                    app:chipCornerRadius="16dp"
+                    app:chipMinHeight="32dp" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

@@ -9,8 +9,8 @@ public class DatabaseConfig {
     public static final String DB_PASSWORD = "Tuan2003";
     
     // Connection timeout settings
-    public static final int CONNECTION_TIMEOUT = 30; // seconds
-    public static final int SOCKET_TIMEOUT = 60; // seconds
+    public static final int CONNECTION_TIMEOUT = 1; // seconds
+    public static final int SOCKET_TIMEOUT = 1; // seconds
     
     // Connection pool settings (for future implementation)
     public static final int MAX_POOL_SIZE = 10;
