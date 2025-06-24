@@ -49,7 +49,7 @@ dependencies {
     
     // SwipeRefreshLayout for User Management
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
-    
+
     // Image loading library
     implementation("com.github.bumptech.glide:glide:4.16.0")
     annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
@@ -69,4 +69,7 @@ dependencies {
     implementation("com.sun.mail:android-mail:1.6.7")
     implementation("com.sun.mail:android-activation:1.6.7")
 
+
+    // Card View
+    implementation ("androidx.cardview:cardview:1.0.0")
 }

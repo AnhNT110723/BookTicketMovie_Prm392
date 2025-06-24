@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Style cho linear layout của phone, email, address -->
+    <style name="phoneNumber">
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:padding">15dp</item>
+        <item name="android:background">@drawable/border</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">70dp</item>
+        <item name="android:layout_marginTop">15dp</item>
+        <item name="android:textSize">15dp</item>
+    </style>
+
+<!--    android:layout_width="match_parent"
+                    android:layout_height="70dp"-->
+
+<!--    Style cho title của edit text in form-->
+    <style name="title_edt">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">17dp</item>
+        <item name="android:textColor">#777e90</item>
+        <item name="android:layout_marginTop">20dp</item>
+    </style>
+
+<!--    Style cho edit text in form-->
+    <style name="EmailEditText">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/border_radius</item>
+        <item name="android:ems">10</item>
+        <item name="android:padding">20dp</item>
+        <item name="android:layout_marginTop">5dp</item>
+    </style>
+
+    <!--    Style cho message edit text in form-->
+    <style name="MessageEDT">
+        <item name="android:layout_width">match_parent</item>
+
+        <item name="android:background">@drawable/border_radius</item>
+        <item name="android:ems">10</item>
+        <item name="android:padding">20dp</item>
+        <item name="android:layout_marginTop">5dp</item>
+    </style>
+<!--
+ android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/border_radius"
+            android:ems="10"
+            android:hint="email@gmail.com"
+            android:inputType="textEmailAddress"
+            android:padding="20dp"
+            android:layout_marginTop="5dp"-->
+</resources>
