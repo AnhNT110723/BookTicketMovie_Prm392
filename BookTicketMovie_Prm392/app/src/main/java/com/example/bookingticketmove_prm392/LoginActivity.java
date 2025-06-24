@@ -61,7 +61,7 @@ public class LoginActivity extends AppCompatActivity {
             return insets;
         });        // Set up click listeners
         setupClickListeners();
-        
+
         // Start entrance animations
         startEntranceAnimations();
     }    private void initViews() {
@@ -76,7 +76,7 @@ public class LoginActivity extends AppCompatActivity {
         appTitle = findViewById(R.id.app_title);
         welcomeTitle = findViewById(R.id.welcome_title);
         welcomeSubtitle = findViewById(R.id.welcome_subtitle);
-        
+
         // Set initial alpha for animations
         setViewsForAnimation();
     }    private void setupClickListeners() {
@@ -96,10 +96,9 @@ public class LoginActivity extends AppCompatActivity {
         });
         
         forgotPasswordLink.setOnClickListener(v -> {
-            animateButtonPress(v);
-            new Handler().postDelayed(() -> {
-                Toast.makeText(this, "Forgot password feature coming soon!", Toast.LENGTH_SHORT).show();
-            }, 100);
+
+            Intent intent = new Intent(LoginActivity.this, ForgotPasswordActivity.class);
+            startActivity(intent);
         });
     }
 
@@ -167,7 +166,7 @@ public class LoginActivity extends AppCompatActivity {
             loginButton.setEnabled(false);
             emailInput.setEnabled(false);
             passwordInput.setEnabled(false);
-            
+
             // Animate button to loading state
             ObjectAnimator scaleX = ObjectAnimator.ofFloat(loginButton, "scaleX", 1f, 0.95f);
             ObjectAnimator scaleY = ObjectAnimator.ofFloat(loginButton, "scaleY", 1f, 0.95f);
@@ -181,7 +180,7 @@ public class LoginActivity extends AppCompatActivity {
             loginButton.setEnabled(true);
             emailInput.setEnabled(true);
             passwordInput.setEnabled(true);
-            
+
             // Animate button back to normal state
             ObjectAnimator scaleX = ObjectAnimator.ofFloat(loginButton, "scaleX", 0.95f, 1f);
             ObjectAnimator scaleY = ObjectAnimator.ofFloat(loginButton, "scaleY", 0.95f, 1f);
@@ -198,7 +197,7 @@ public class LoginActivity extends AppCompatActivity {
         pulseAnimator.playTogether(pulseX, pulseY);
         pulseAnimator.setDuration(300);
         pulseAnimator.start();
-        
+
         Toast.makeText(this, getString(R.string.login_successful), Toast.LENGTH_SHORT).show();
         Log.d(TAG, "Login successful for user: " + user.getEmail() + " with role: " + user.getRoleID());
         
@@ -213,7 +212,7 @@ public class LoginActivity extends AppCompatActivity {
                 user.getLoyaltyPoints().floatValue() : 0.0f)
             .putBoolean("isLoggedIn", true)
             .apply();
-            
+
         // Delayed navigation for animation
         new Handler().postDelayed(() -> {
             // Navigate based on user role
@@ -232,7 +231,7 @@ public class LoginActivity extends AppCompatActivity {
     }    private void onLoginFailed(String errorMessage) {
         // Error shake animation
         shakeView(loginButton);
-        
+
         Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show();
         
         // Clear password field for security
@@ -258,11 +257,11 @@ public class LoginActivity extends AppCompatActivity {
                 .setCancelable(false)
                 .show();
     }
-    
+
     /**
      * Animation methods for enhanced user experience
      */
-    
+
     private void setViewsForAnimation() {
         // Set initial alpha to 0 for fade-in animation
         appTitle.setAlpha(0f);
@@ -273,7 +272,7 @@ public class LoginActivity extends AppCompatActivity {
         loginButton.setAlpha(0f);
         forgotPasswordLink.setAlpha(0f);
         findViewById(R.id.register_link_layout).setAlpha(0f);
-        
+
         // Set initial translation for slide-in animation
         appTitle.setTranslationY(-50f);
         welcomeTitle.setTranslationY(-30f);
@@ -284,31 +283,31 @@ public class LoginActivity extends AppCompatActivity {
         forgotPasswordLink.setTranslationY(20f);
         findViewById(R.id.register_link_layout).setTranslationY(30f);
     }
-    
+
     private void startEntranceAnimations() {
         // Animate app title
         animateViewFadeInSlide(appTitle, 200, 0);
-        
+
         // Animate welcome texts
         animateViewFadeInSlide(welcomeTitle, 250, 100);
         animateViewFadeInSlide(welcomeSubtitle, 300, 200);
-        
+
         // Animate input fields
         animateViewFadeInSlide(emailInputLayout, 350, 300);
         animateViewFadeInSlide(passwordInputLayout, 400, 400);
-        
+
         // Animate buttons
         animateViewFadeInSlide(loginButton, 450, 500);
         animateViewFadeInSlide(forgotPasswordLink, 300, 600);
         animateViewFadeInSlide(findViewById(R.id.register_link_layout), 350, 700);
     }
-    
+
     private void animateViewFadeInSlide(View view, long duration, long delay) {
         ObjectAnimator fadeIn = ObjectAnimator.ofFloat(view, "alpha", 0f, 1f);
         ObjectAnimator slideY = ObjectAnimator.ofFloat(view, "translationY", view.getTranslationY(), 0f);
         ObjectAnimator scaleX = ObjectAnimator.ofFloat(view, "scaleX", 0.8f, 1f);
         ObjectAnimator scaleY = ObjectAnimator.ofFloat(view, "scaleY", 0.8f, 1f);
-        
+
         AnimatorSet animatorSet = new AnimatorSet();
         animatorSet.playTogether(fadeIn, slideY, scaleX, scaleY);
         animatorSet.setDuration(duration);
@@ -316,31 +315,31 @@ public class LoginActivity extends AppCompatActivity {
         animatorSet.setInterpolator(new AccelerateDecelerateInterpolator());
         animatorSet.start();
     }
-    
+
     private void animateButtonPress(View view) {
         ObjectAnimator scaleDownX = ObjectAnimator.ofFloat(view, "scaleX", 1f, 0.95f);
         ObjectAnimator scaleDownY = ObjectAnimator.ofFloat(view, "scaleY", 1f, 0.95f);
         ObjectAnimator scaleUpX = ObjectAnimator.ofFloat(view, "scaleX", 0.95f, 1f);
         ObjectAnimator scaleUpY = ObjectAnimator.ofFloat(view, "scaleY", 0.95f, 1f);
-        
+
         AnimatorSet scaleDown = new AnimatorSet();
         scaleDown.playTogether(scaleDownX, scaleDownY);
         scaleDown.setDuration(100);
-        
+
         AnimatorSet scaleUp = new AnimatorSet();
         scaleUp.playTogether(scaleUpX, scaleUpY);
         scaleUp.setDuration(100);
-        
+
         scaleDown.addListener(new android.animation.AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(android.animation.Animator animation) {
                 scaleUp.start();
             }
         });
-        
+
         scaleDown.start();
     }
-    
+
     private void shakeView(View view) {
         ObjectAnimator shake = ObjectAnimator.ofFloat(view, "translationX", 0, 25, -25, 25, -25, 15, -15, 6, -6, 0);
         shake.setDuration(600);

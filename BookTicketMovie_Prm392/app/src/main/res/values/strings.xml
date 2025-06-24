@@ -28,7 +28,8 @@
     <!-- Success Messages -->
     <string name="registration_successful">Registration successful! Please login</string>
     <string name="login_successful">Welcome back!</string>
-    
+    <string name="send_reset_link">Send Reset Link</string>
+
     <!-- Loading Messages -->
     <!-- App Title -->
     <string name="movie_ticket_booking">🎬 Movie Ticket Booking</string>
