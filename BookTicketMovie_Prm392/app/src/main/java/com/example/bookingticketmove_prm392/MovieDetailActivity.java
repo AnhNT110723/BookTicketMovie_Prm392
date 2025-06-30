@@ -288,6 +288,7 @@ public class MovieDetailActivity extends AppCompatActivity {
                 intent.putExtra("movie_id", currentMovie.getMovieId());
                 intent.putExtra("movie_title", currentMovie.getTitle());
                 intent.putExtra("movie_price", currentMovie.getPrice());
+                intent.putExtra("movie_image", currentMovie.getPosterUrl());
                 startActivity(intent);
             }        });
         

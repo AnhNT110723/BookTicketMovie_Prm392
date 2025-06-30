@@ -5,7 +5,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/background_light">
-
     <!-- Toolbar -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -15,53 +14,109 @@
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
-    <!-- Movie Info Header -->
+    <!-- Poster + Movie Info -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="180dp">
+
+        <ImageView
+            android:id="@+id/movie_poster"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:src="@drawable/bg_movie_placeholder" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="12dp"
+            android:layout_alignParentBottom="true"
+            android:background="#66000000">
+
+            <TextView
+                android:id="@+id/movie_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="MA KHÔNG ĐẦU"
+                android:textColor="@android:color/white"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/movie_duration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="115 phút | T18"
+                android:textColor="@android:color/white"
+                android:textSize="14sp" />
+        </LinearLayout>
+    </RelativeLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp"
-        android:background="@color/white"
-        android:elevation="2dp">
-
-        <TextView
-            android:id="@+id/movie_title_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Movie Title"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="@color/text_primary"
-            android:layout_marginBottom="4dp" />
-
-        <TextView
-            android:id="@+id/movie_price_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="$0.00"
-            android:textSize="16sp"
-            android:textColor="@color/primary"
-            android:textStyle="bold" />
-
-    </LinearLayout>
-
-    <!-- Section Title -->
-    <TextView
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
+        android:background="@drawable/login_background_gradient">
+    <!-- Ngày chiếu -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/date_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Select Cinema"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:textColor="@color/text_primary"
-        android:padding="16dp"
-        android:paddingBottom="8dp" />
+        android:paddingVertical="8dp"
+        android:layout_marginTop="4dp"
+        android:orientation="horizontal"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:overScrollMode="never" />
 
-    <!-- Cinemas RecyclerView -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/cinemas_recycler_view"
+    <!-- Tỉnh thành -->
+    <!-- Tỉnh thành với cuộn ngang -->
+    <HorizontalScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingHorizontal="16dp"
-        android:clipToPadding="false" />
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:scrollbars="horizontal"
+        android:fillViewport="true">
 
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/city_chip_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:layout_marginBottom="4dp"
+            app:singleSelection="true"
+            app:chipSpacing="8dp"
+           />
+    </HorizontalScrollView>
+    </LinearLayout>
+    <!-- Danh sách rạp + giờ -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/cinema_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="8dp"
+            android:clipToPadding="false"
+            android:background="@drawable/login_background_gradient"
+            android:overScrollMode="never"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+        <!-- TextView thông báo khi không có rạp -->
+        <TextView
+            android:id="@+id/no_cinema_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Không có xuất chiếu nào"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"
+            android:gravity="center"
+            android:padding="16dp"
+            android:visibility="gone" />
+    </FrameLayout>
 </LinearLayout>
