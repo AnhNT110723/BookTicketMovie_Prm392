@@ -20,6 +20,7 @@ import com.example.bookingticketmove_prm392.adapters.DateAdapter;
 import com.example.bookingticketmove_prm392.database.dao.CinemaDAO;
 import com.example.bookingticketmove_prm392.models.Cinema;
 import com.example.bookingticketmove_prm392.models.CinemaWithShowtimes;
+import com.example.bookingticketmove_prm392.models.Showtime;
 import com.example.bookingticketmove_prm392.utils.ImageUtils;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
@@ -29,7 +30,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CinemaSelectionActivity extends AppCompatActivity implements CinemaAdapter.OnCinemaClickListener {
+public class CinemaSelectionActivity extends AppCompatActivity implements CinemaAdapter.OnShowtimeSelectedListener {
     private static final String TAG = "CinemaSelectionActivity";
 
     // UI Components
@@ -78,7 +79,6 @@ public class CinemaSelectionActivity extends AppCompatActivity implements Cinema
         setupRecyclerView();
         displayMovieInfo();
         //loadCinemas();
-
     }
 
     private void initViews() {
@@ -119,7 +119,7 @@ public class CinemaSelectionActivity extends AppCompatActivity implements Cinema
         dateRecyclerView.setAdapter(dateAdapter);
         cinemaWithShowtimesList = new ArrayList<>(); // Thay cinemaList bằng cinemaWithShowtimesList
         cinemaAdapter = new CinemaAdapter(this, cinemaWithShowtimesList, movieId, selectedDate);
-        cinemaAdapter.setOnCinemaClickListener(this);
+        cinemaAdapter.setOnShowtimeSelectedListener(this);
         cinemasRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         cinemasRecyclerView.setAdapter(cinemaAdapter);
 
@@ -148,17 +148,7 @@ public class CinemaSelectionActivity extends AppCompatActivity implements Cinema
 //        new LoadCinemasTask().execute();
 //    }
 
-    @Override
-    public void onCinemaClick(CinemaWithShowtimes cinema) {
-        // Navigate to showtime selection
-//        Intent intent = new Intent(this, ShowtimeSelectionActivity.class);
-//        intent.putExtra("movie_id", movieId);
-//        intent.putExtra("movie_title", movieTitle);
-//        intent.putExtra("movie_price", moviePrice);
-//        intent.putExtra("cinema_id", cinema.getCinema().getCinemaId());
-//        intent.putExtra("cinema_name", cinema.getCinema().getName());
-//        startActivity(intent);
-    }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -167,6 +157,31 @@ public class CinemaSelectionActivity extends AppCompatActivity implements Cinema
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onShowtimeSelected(CinemaWithShowtimes cinema, Showtime showtime, LocalDate selectedDate, boolean isHeaderClick) {
+        if (isHeaderClick) {
+            // Đây là click vào CardView của rạp (header), chỉ để mở rộng/thu gọn
+            // Cập nhật trạng thái mở rộng vào Map để ghi nhớ
+            Log.d(TAG, "Cinema Header Clicked: " + cinema.getCinema().getName() + ", Expanded: " + cinema.isExpanded());
+
+        } else {
+            // Đây là click vào một khung giờ chiếu phim cụ thể, chuyển sang màn hình chọn ghế
+            Log.d(TAG, "Showtime Clicked: " + cinema.getCinema().getName() + " - " + showtime.getStartTime().toLocalTime().toString());
+
+            Intent intent = new Intent(CinemaSelectionActivity.this, ShowtimeSelectionActivity.class);
+            intent.putExtra("movie_id", movieId);
+            intent.putExtra("movie_title", movieTitle);
+            intent.putExtra("movie_price", moviePrice);
+            intent.putExtra("movie_image", moviePoster);
+            intent.putExtra("cinema_id", cinema.getCinema().getCinemaId());
+            intent.putExtra("cinema_name", cinema.getCinema().getName());
+            intent.putExtra("showtime_id", showtime.getShowtimeId());
+            intent.putExtra("showtime_time", showtime.getStartTime().toLocalTime().toString());
+            intent.putExtra("showtime_date", selectedDate.toString());
+            startActivity(intent);
+        }
     }
 
     private class LoadDataTask extends AsyncTask<Void, Void, Boolean> {
