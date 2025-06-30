@@ -51,6 +51,7 @@ public class ProfileActivity extends AppCompatActivity {
     private Button favoriteMoviesButton;
     private ProgressBar loadingIndicator;
     private NestedScrollView contentLayout;
+    private Button contactUs;
 
     // User data
     private User currentUser;
@@ -99,6 +100,7 @@ public class ProfileActivity extends AppCompatActivity {
         favoriteMoviesButton = findViewById(R.id.favorite_movies_button);
         loadingIndicator = findViewById(R.id.loading_indicator);
         contentLayout = findViewById(R.id.content_layout);
+        contactUs = findViewById(R.id.contact_us_button);
     }
 
     private void setupToolbar() {
@@ -221,6 +223,12 @@ public class ProfileActivity extends AppCompatActivity {
             // Intent intent = new Intent(this, FavoriteMoviesActivity.class);
             // startActivity(intent);
         });
+
+        contactUs.setOnClickListener(v -> {
+            Intent intent = new Intent(this, ContactUsActivity.class);
+            startActivity(intent);
+        });
+
     }
 
     private void showEditProfileDialog() {

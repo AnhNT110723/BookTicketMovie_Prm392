@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView  xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ContactUsActivity"
+    android:background="@color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!--Card infor của system-->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="500dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginHorizontal="20dp"
+            app:cardCornerRadius="20dp"
+            android:padding="20dp"
+            android:layout_marginTop="20dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#ECABC1"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <TextView
+                    android:id="@+id/contact_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Contact Information"
+                    android:textColor="@color/white"
+                    android:textSize="30dp"/>
+
+                <TextView
+                    android:id="@+id/contact_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Fill in the form or drop an email"
+                    android:textColor="@color/white"
+                    android:textSize="15dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="15dp"/>
+
+                <!--        Phone Number-->
+                <LinearLayout
+                    style="@style/phoneNumber">
+
+                    <ImageView
+                        android:id="@+id/imageView2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:srcCompat="@drawable/baseline_phone_24" />
+
+                    <TextView
+                        android:id="@+id/textView7"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:text="+328126701"
+                        android:textColor="@color/white"
+                        android:textSize="16dp"/>
+                </LinearLayout>
+
+                <!--        email-->
+                <LinearLayout
+
+                    style="@style/phoneNumber">
+
+                    <ImageView
+                        android:id="@+id/icon_email"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:srcCompat="@drawable/send_me" />
+
+                    <TextView
+                        android:id="@+id/txt_mail"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:text="bookticketmovie@gmail.com"
+                        android:textColor="@color/white"
+                        android:textSize="16dp"/>
+                </LinearLayout>
+
+                <!--        address-->
+                <LinearLayout
+
+                    style="@style/phoneNumber">
+
+                    <ImageView
+                        android:id="@+id/icon_address"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:srcCompat="@drawable/outline_add_location_24" />
+
+                    <TextView
+                        android:id="@+id/txt_address"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:text="FPT University, Thach That Ha Noi"
+                        android:textColor="@color/white"
+                        android:textSize="16dp"/>
+                </LinearLayout>
+
+            </LinearLayout>
+
+
+        </androidx.cardview.widget.CardView>
+
+        <!--    Form-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <!--    Input Email-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:orientation="vertical"
+                tools:layout_editor_absoluteX="20dp"
+                tools:layout_editor_absoluteY="373dp">
+
+                <TextView
+                    android:id="@+id/title_email"
+                    style="@style/title_edt"
+                    android:text="Email" />
+
+                <EditText
+                    android:id="@+id/edt_email"
+                    style="@style/EmailEditText"
+                    android:hint="Example@gmail.com"
+                    android:inputType="textEmailAddress" />
+            </LinearLayout>
+            <!--Input subject-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:orientation="vertical"
+                tools:layout_editor_absoluteY="351dp">
+
+                <TextView
+                    android:id="@+id/title_subject"
+                    style="@style/title_edt"
+                    android:text="Subject" />
+
+                <EditText
+                    android:id="@+id/edt_subject"
+                    style="@style/EmailEditText"
+                    android:hint="How to book ticket easily"
+                    android:inputType="textShortMessage" />
+            </LinearLayout>
+
+            <!--    Input Message-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:orientation="vertical"
+                tools:layout_editor_absoluteY="351dp">
+
+                <TextView
+                    android:id="@+id/title_message"
+                    style="@style/title_edt"
+                    android:text="Message" />
+
+                <EditText
+                    android:id="@+id/edt_message"
+                    style="@style/MessageEDT"
+                    android:layout_height="150dp"
+                    android:hint="Sure, Follow all instraction..."
+                    android:inputType="text"
+                    android:gravity="top"
+                    />
+
+
+            </LinearLayout>
+            <!--        Butotn SEND-->
+            <Button
+                android:id="@+id/btn_send"
+                android:layout_width="120dp"
+                android:layout_height="55dp"
+                android:text="Send"
+                android:layout_margin="20dp"
+                android:backgroundTint="#ECABC1"
+                app:cornerRadius="10dp"
+                android:textSize="20dp"/>
+        </LinearLayout>
+    </LinearLayout>
+
+
+
+
+</ScrollView >
