@@ -49,7 +49,7 @@ dependencies {
     
     // SwipeRefreshLayout for User Management
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
-
+    
     // Image loading library
     implementation("com.github.bumptech.glide:glide:4.16.0")
     annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
@@ -72,4 +72,10 @@ dependencies {
 
     // Card View
     implementation ("androidx.cardview:cardview:1.0.0")
+
+    // ZXing và Barcode Scanner
+    implementation("com.journeyapps:zxing-android-embedded:4.3.0")
+    implementation("com.google.zxing:core:3.5.2")
+
+    implementation ("com.jakewharton.threetenabp:threetenabp:1.4.0")
 }
