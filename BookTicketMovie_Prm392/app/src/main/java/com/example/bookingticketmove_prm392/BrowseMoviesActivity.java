@@ -48,7 +48,8 @@ public class BrowseMoviesActivity extends AppCompatActivity implements MovieAdap
     // Data
     private MovieAdapter movieAdapter;
     private List<Movie> allMovies;
-    private List<Movie> filteredMovies;    private String currentCategory = CATEGORY_ALL;
+    private List<Movie> filteredMovies;
+    private String currentCategory = CATEGORY_ALL;
     private String currentSearchQuery = "";
     private String selectedGenre = "";
     private String currentSortBy = "title"; // Default sort by title
