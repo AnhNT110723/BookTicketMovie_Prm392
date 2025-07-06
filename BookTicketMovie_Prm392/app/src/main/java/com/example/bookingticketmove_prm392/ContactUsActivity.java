@@ -58,7 +58,7 @@ public class ContactUsActivity extends AppCompatActivity {
         // Hiển thị nút quay lại
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true); // icon back
-            getSupportActionBar().setTitle("Profile User"); // đặt tiêu đề
+            getSupportActionBar().setTitle("Contact Us"); // đặt tiêu đề
         }
     }
 
