@@ -213,7 +213,8 @@
                 android:layout_margin="20dp"
                 app:cornerRadius="10dp"
                 android:textSize="20dp"
-                android:onClick="handleAddContactMessage"/>
+                android:onClick="handleAddContactMessage"
+                android:background="@drawable/button_border"/>
         </LinearLayout>
     </LinearLayout>
 

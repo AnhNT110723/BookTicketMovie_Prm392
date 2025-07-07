@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".FeedbackActivity"
+    android:orientation="vertical"
+    >
+
+    <!-- Toolbar -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/primary"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:layout_scrollFlags="scroll|enterAlways"
+        />
+
+
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            app:cardCornerRadius="8dp"
+            >
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="10dp">
+                <TextView
+                    android:id="@+id/txt_comment"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Đánh giá sản phẩm"
+                    android:textSize="12dp"
+                    android:textStyle="normal"
+                    android:textColor="@color/gray"
+                    android:layout_marginVertical="5dp"
+                    />
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginVertical="10dp"
+                    >
+
+                    <ImageView
+                        android:id="@+id/star_1"
+                        app:srcCompat="@drawable/star_border"
+                        app:tint="#FFD700"
+                        style="@style/star"
+
+                        />
+                    <ImageView
+                        android:id="@+id/star_2"
+                        style="@style/star"
+                        app:srcCompat="@drawable/star_border"
+                        app:tint="#FFD700"/>
+
+                    <ImageView
+                        android:id="@+id/star_3"
+                        style="@style/star"
+                        app:srcCompat="@drawable/star_border"
+                        app:tint="#FFD700"/>
+                    <ImageView
+                        android:id="@+id/star_4"
+                        style="@style/star"
+                        app:srcCompat="@drawable/star_border"
+                        app:tint="#FFD700"/>
+                    <ImageView
+                        android:id="@+id/star_5"
+                        style="@style/star"
+                        app:srcCompat="@drawable/star_border"
+                        app:tint="#FFD700"/>
+
+
+
+                </LinearLayout>
+
+                <EditText
+                    android:id="@+id/edt_enter_comment"
+                    android:layout_width="match_parent"
+                    android:layout_height="85dp"
+                    android:layout_marginTop="5dp"
+                    android:padding="10dp"
+                    android:background="@drawable/border_radius"
+                    android:hint="Nhập bình luận của bạn.."
+                    android:gravity="top"
+                    />
+
+                <Button
+                    android:id="@+id/btn_submit"
+                    android:layout_width="87dp"
+                    android:layout_height="40dp"
+                    android:text="Gửi"
+                    android:textSize="18dp"
+                    android:layout_marginVertical="10dp"
+                    android:layout_marginLeft="280dp"
+                    android:background="@drawable/button_submit_feedback"
+                    android:backgroundTint="@null"
+                    />
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+
+
+    <!--    list comment-->
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="No comments"
+        android:visibility="gone"
+        android:id="@+id/txt_no_comment"
+        android:textSize="25dp"
+        android:textColor="@color/gray"
+        android:gravity="center"/>
+
+
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/recycler_view"
+        android:background="@color/white"
+        android:visibility="visible">
+
+    </androidx.recyclerview.widget.RecyclerView>
+
+
+
+
+</LinearLayout>
