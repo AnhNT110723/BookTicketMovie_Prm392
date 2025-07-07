@@ -166,7 +166,32 @@ public class MovieDAO extends BaseDAO {    // Get all active movies
         }
 
         return movies;
-    }// Add new movie
+    }
+
+    //Get moviefavorite by userId
+    public List<Movie> getMovieFavorite(int userId) throws SQLException {
+        List<Movie> movies = new ArrayList<>();
+        String query =  " SELECT * FROM MovieFavorite JOIN Movie ON MovieFavorite.MovieID = Movie.MovieID WHERE MovieFavorite.UserID = ?";
+
+        ResultSet rs = null;
+        PreparedStatement statement = null;
+
+        try {
+
+            rs = executeQuery(query, userId);
+            while (rs.next()) {
+                Movie movie = mapResultSetToMovie(rs);
+                movies.add(movie);
+            }
+        } finally {
+            closeResources(rs, statement);
+        }
+
+        return movies;
+    }
+
+
+    // Add new movie
     public boolean addMovie(Movie movie) throws SQLException {
         String query = "INSERT INTO [Movie] (title, description, genre, duration, director, releaseDate, rating, posterUrl, trailerUrl, price, isActive, isTrending, createdDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 

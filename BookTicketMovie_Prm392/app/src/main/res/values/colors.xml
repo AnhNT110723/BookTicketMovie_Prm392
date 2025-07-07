@@ -50,6 +50,8 @@
     <color name="default_date_background">#E0E0E0</color>
     <color name="default_date_text">#000000</color>
 
+    <color name="red">#fe4f4a</color>
+
 
 <!--    Seat Selection-->
 

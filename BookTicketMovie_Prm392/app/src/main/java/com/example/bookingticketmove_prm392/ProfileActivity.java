@@ -218,10 +218,8 @@ public class ProfileActivity extends AppCompatActivity {
         });
         
         favoriteMoviesButton.setOnClickListener(v -> {
-            Toast.makeText(this, "Favorite Movies - Coming Soon!", Toast.LENGTH_SHORT).show();
-            // TODO: Navigate to FavoriteMoviesActivity
-            // Intent intent = new Intent(this, FavoriteMoviesActivity.class);
-            // startActivity(intent);
+            Intent intent = new Intent(this, MovieFavoriteActivity.class);
+            startActivity(intent);
         });
 
         contactUs.setOnClickListener(v -> {
