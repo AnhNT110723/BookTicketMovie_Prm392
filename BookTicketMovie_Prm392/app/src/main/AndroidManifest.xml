@@ -17,7 +17,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BookingTicketMove_Prm392"
         tools:targetApi="31">
-        <activity android:name=".ResetPasswordActivity"
+        <activity
+            android:name=".SeatSelectionActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ResetPasswordActivity"
             android:exported="true">
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
@@ -26,9 +30,9 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="https"
                     android:host="bookingticketmove.page.link"
-                    android:pathPrefix="/reset-password" />
+                    android:pathPrefix="/reset-password"
+                    android:scheme="https" />
             </intent-filter>
         </activity>
         <activity
@@ -43,39 +47,34 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-          <activity
+        <activity
             android:name=".LoginActivity"
             android:exported="false"
             android:theme="@style/Theme.BookingTicketMove_Prm392" />
-            
         <activity
             android:name=".RegisterActivity"
             android:exported="false"
             android:theme="@style/Theme.BookingTicketMove_Prm392" />
-            
         <activity
             android:name=".HomeActivity"
             android:exported="false"
             android:theme="@style/Theme.BookingTicketMove_Prm392" />
-            
         <activity
             android:name=".AdminActivity"
             android:exported="false"
             android:theme="@style/Theme.BookingTicketMove_Prm392" />
-              <activity
+        <activity
             android:name=".ProfileActivity"
             android:exported="false"
             android:theme="@style/Theme.BookingTicketMove_Prm392" />
-              <activity
+        <activity
             android:name=".MovieDetailActivity"
-                  android:exported="false"
-                  android:theme="@style/Theme.BookingTicketMove_Prm392" />
-
+            android:exported="false"
+            android:theme="@style/Theme.BookingTicketMove_Prm392" />
         <activity
             android:name=".CinemaSelectionActivity"
             android:exported="false"
             android:theme="@style/Theme.BookingTicketMove_Prm392" />
-            
         <activity
             android:name=".ShowtimeSelectionActivity"
             android:exported="false"
@@ -83,41 +82,36 @@
         <activity
             android:name=".AddEditMovieActivity"
             android:exported="false"
-            android:theme="@style/Theme.BookingTicketMove_Prm392"
-            android:parentActivityName=".AdminActivity" />
-              <activity
+            android:parentActivityName=".AdminActivity"
+            android:theme="@style/Theme.BookingTicketMove_Prm392" />
+        <activity
             android:name=".BrowseMoviesActivity"
             android:exported="false"
-            android:theme="@style/Theme.BookingTicketMove_Prm392"
-            android:parentActivityName=".HomeActivity" />
-              <activity
+            android:parentActivityName=".HomeActivity"
+            android:theme="@style/Theme.BookingTicketMove_Prm392" />
+        <activity
             android:name=".UserManagementActivity"
             android:exported="false"
-            android:theme="@style/Theme.BookingTicketMove_Prm392"
-            android:parentActivityName=".AdminActivity" />
-
+            android:parentActivityName=".AdminActivity"
+            android:theme="@style/Theme.BookingTicketMove_Prm392" />
         <activity
             android:name=".AddEditUserActivity"
             android:exported="false"
-            android:theme="@style/Theme.BookingTicketMove_Prm392"
-            android:parentActivityName=".UserManagementActivity" />
-
+            android:parentActivityName=".UserManagementActivity"
+            android:theme="@style/Theme.BookingTicketMove_Prm392" />
         <activity
             android:name=".UserDetailsActivity"
             android:exported="false"
-            android:theme="@style/Theme.BookingTicketMove_Prm392"
-            android:parentActivityName=".UserManagementActivity" />
-
+            android:parentActivityName=".UserManagementActivity"
+            android:theme="@style/Theme.BookingTicketMove_Prm392" />
         <activity
             android:name=".MyBookingsActivity"
             android:exported="false"
             android:theme="@style/Theme.BookingTicketMove_Prm392" />
-
         <activity
             android:name=".BookingDetailActivity"
             android:exported="false"
             android:theme="@style/Theme.BookingTicketMove_Prm392" />
-
         <activity
             android:name=".ContactUsActivity"
             android:exported="false"
