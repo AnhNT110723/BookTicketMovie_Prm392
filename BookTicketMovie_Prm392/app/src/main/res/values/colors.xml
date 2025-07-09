@@ -43,6 +43,7 @@
 
     <color name="primary_text">#212121</color>
     <color name="secondary_text">#757575</color>
+    <color name="gray">#8a8a8a</color>
 
 
     <color name="selected_date_background">#007BFF</color>

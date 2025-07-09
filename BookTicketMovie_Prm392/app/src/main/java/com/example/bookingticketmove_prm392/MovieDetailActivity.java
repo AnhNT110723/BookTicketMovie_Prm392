@@ -69,6 +69,7 @@ public class MovieDetailActivity extends AppCompatActivity {
     private Movie currentMovie;
     private int movieId;
     private boolean isFullscreen = false;
+    private Button btn_comments;
 
     // Fullscreen video handling
     private View customView;
@@ -114,6 +115,7 @@ public class MovieDetailActivity extends AppCompatActivity {
         trailerErrorLayout = findViewById(R.id.trailer_error_layout);
         fullscreenButton = findViewById(R.id.fullscreen_button);
         retryTrailerButton = findViewById(R.id.retry_trailer_button);
+        btn_comments = findViewById(R.id.btn_comments);
 
         // Initialize fullscreen container
         fullscreenContainer = new FrameLayout(this);
@@ -288,6 +290,7 @@ public class MovieDetailActivity extends AppCompatActivity {
                 // Check if user is logged in
                 SharedPreferences prefs = getSharedPreferences("UserSession", MODE_PRIVATE);
                 boolean isLoggedIn = prefs.getBoolean("isLoggedIn", false);
+                int userId = prefs.getInt("userId", -1);
 
                 if (!isLoggedIn) {
                     Toast.makeText(this, "Please login to book tickets", Toast.LENGTH_SHORT).show();
@@ -332,6 +335,14 @@ public class MovieDetailActivity extends AppCompatActivity {
                 loadEmbeddedTrailer(currentMovie.getTrailerUrl());
                 Toast.makeText(this, "Retrying trailer load...", Toast.LENGTH_SHORT).show();
             }
+        });
+
+        // All comments button click listener
+        btn_comments.setOnClickListener(v -> {
+
+            Intent intent = new Intent(this, FeedbackActivity.class);
+            intent.putExtra("movie_id", currentMovie.getMovieId());
+            startActivity(intent);
         });
     }
 
