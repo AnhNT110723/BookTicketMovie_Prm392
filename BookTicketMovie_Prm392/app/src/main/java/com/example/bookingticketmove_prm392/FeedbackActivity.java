@@ -28,9 +28,12 @@ import com.example.bookingticketmove_prm392.models.Feedback;
 import com.example.bookingticketmove_prm392.models.Movie;
 import com.example.bookingticketmove_prm392.models.Vote;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class FeedbackActivity extends AppCompatActivity {
 
@@ -158,6 +161,8 @@ public class FeedbackActivity extends AppCompatActivity {
         star_5.setOnClickListener(v -> updateUIStar(5));
         btn_submit.setOnClickListener(v -> {
             String commentText = edt_enter_comment.getText().toString().trim();
+            String currentTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
+
             boolean hasComment = !commentText.isEmpty();
             boolean hasRating = selectedRatingValue > 0;
 
@@ -176,11 +181,11 @@ public class FeedbackActivity extends AppCompatActivity {
             }
 
             if (hasRating) {
-                new addVote(userId, movieId, selectedRatingValue).execute();
+                new addVote(userId, movieId, selectedRatingValue, currentTime).execute();
             }
 
             if (hasComment) {
-                new addComment(userId, movieId, commentText).execute();
+                new addComment(userId, movieId, commentText, currentTime).execute();
             }
 
             // Reset UI
@@ -234,16 +239,18 @@ public class FeedbackActivity extends AppCompatActivity {
         private int userId;
         private int movieId;
         private String commentText;
-        public addComment(int userId, int movieId, String commentText){
+        private String commentTime;
+        public addComment(int userId, int movieId, String commentText, String commentTime){
             this.userId = userId;
             this.movieId = movieId;
             this.commentText = commentText;
+            this.commentTime = commentTime;
         }
         @Override
         protected Boolean doInBackground(Void... voids) {
             try{
                 FeedbackDAO feedbackDAO = new FeedbackDAO();
-                return feedbackDAO.addComment(new Comment(userId, movieId, commentText));
+                return feedbackDAO.addComment(new Comment(userId, movieId, commentText, commentTime));
             } catch (Exception e) {
                 Log.d(TAG, "Error add comment: " + e.getMessage());
                 return false;
@@ -267,11 +274,13 @@ public class FeedbackActivity extends AppCompatActivity {
         private int userId;
         private int movieId;
         private int ratingValue;
+        private String voteTime;
 
-        public addVote(int userId, int movieId, int ratingValue){
+        public addVote(int userId, int movieId, int ratingValue, String voteTime){
             this.userId=userId;
             this.movieId=movieId;
             this.ratingValue=ratingValue;
+            this.voteTime=voteTime;
         }
 
 
@@ -279,7 +288,7 @@ public class FeedbackActivity extends AppCompatActivity {
         protected Boolean doInBackground(Void... voids) {
             try{
                 FeedbackDAO feedbackDAO = new FeedbackDAO();
-                return feedbackDAO.addVote(new Vote(userId, movieId, ratingValue));
+                return feedbackDAO.addVote(new Vote(userId, movieId, ratingValue, voteTime));
             } catch (Exception e) {
                 Log.d(TAG, "Error add comment: " + e.getMessage());
                 return false;
@@ -290,7 +299,7 @@ public class FeedbackActivity extends AppCompatActivity {
         protected void onPostExecute(Boolean result){
             if (result) {
                 Toast.makeText(FeedbackActivity.this, "Vote rating successfull", Toast.LENGTH_SHORT).show();
-
+                new getFeedbackList(movieId).execute();
                 adapter.notifyDataSetChanged(); // Thông báo cập nhật giao diện
                 Log.d(TAG, "Create vote successful");
 

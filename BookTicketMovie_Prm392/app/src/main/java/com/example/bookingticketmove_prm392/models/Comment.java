@@ -4,11 +4,21 @@ public class Comment {
     private int userId;
     private int movieId;
     private String commentText;
+    private String commentTime;
 
-    public Comment(int userId, int movieId, String commentText) {
+    public Comment(int userId, int movieId, String commentText, String commentTime  ) {
         this.userId = userId;
         this.movieId = movieId;
         this.commentText = commentText;
+        this.commentTime = commentTime;
+    }
+
+    public String getCommentTime() {
+        return commentTime;
+    }
+
+    public void setCommentTime(String commentTime) {
+        this.commentTime = commentTime;
     }
 
     public Comment() {

@@ -16,20 +16,22 @@ public class FeedbackDAO extends BaseDAO{
     //Get all feedback by movie id
     public List<Feedback> getAllFeedbackByMovieId(int movieId) throws SQLException {
         List<Feedback>  feedbackList = new ArrayList<>();
-        String query = "SELECT\n" +
+        String query = "SELECT \n" +
                 "    u.Name,\n" +
                 "    COALESCE(c.UserID, v.UserID) AS UserID,\n" +
                 "    COALESCE(c.MovieID, v.MovieID) AS MovieID,\n" +
                 "    c.CommentText,\n" +
-                "    v.RatingValue\n" +
-                "   \n" +
+                "    v.RatingValue,\n" +
+                "    COALESCE(c.CommentTime, v.VoteTime) AS ActionTime\n" +
                 "FROM Comment c\n" +
                 "FULL OUTER JOIN Vote v \n" +
-                "    ON c.UserID = v.UserID AND c.MovieID = v.MovieID\n" +
+                "    ON c.UserID = v.UserID \n" +
+                "    AND c.MovieID = v.MovieID \n" +
+                "    AND FORMAT(c.CommentTime, 'yyyy-MM-dd HH:mm:ss') = FORMAT(v.VoteTime, 'yyyy-MM-dd HH:mm:ss')\n" +
                 "LEFT JOIN [User] u \n" +
-                "    ON COALESCE(c.UserID, v.UserID) = u.UserID\n" +
+                "    ON u.UserID = COALESCE(c.UserID, v.UserID)\n" +
                 "WHERE COALESCE(c.MovieID, v.MovieID) = ?\n" +
-                "ORDER BY coalesce(c.CommentTime, v.VoteTime)";
+                "ORDER BY ActionTime";
 
 
         ResultSet rs = null;

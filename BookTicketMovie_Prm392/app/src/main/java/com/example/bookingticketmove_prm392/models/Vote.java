@@ -4,13 +4,23 @@ public class Vote {
     private int userId;
     private int movieId;
     private int ratingValue;
+    private String voteTime;
 
 
 
-    public Vote(int userId, int movieId, int ratingValue) {
+    public Vote(int userId, int movieId, int ratingValue, String voteTime) {
         this.userId = userId;
         this.movieId = movieId;
         this.ratingValue = ratingValue;
+        this.voteTime = voteTime;
+    }
+
+    public String getVoteTime() {
+        return voteTime;
+    }
+
+    public void setVoteTime(String voteTime) {
+        this.voteTime = voteTime;
     }
 
     public Vote() {

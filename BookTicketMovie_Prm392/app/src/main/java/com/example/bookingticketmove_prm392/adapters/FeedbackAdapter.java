@@ -82,6 +82,12 @@ public class FeedbackAdapter extends RecyclerView.Adapter<FeedbackAdapter.Feedba
                 if (rating >= 3) star_3.setImageResource(R.drawable.ic_star);
                 if (rating >= 4) star_4.setImageResource(R.drawable.ic_star);
                 if (rating >= 5) star_5.setImageResource(R.drawable.ic_star);
+            }else{
+                star_1.setVisibility(View.GONE);
+                star_2.setVisibility(View.GONE);
+                star_3.setVisibility(View.GONE);
+                star_4.setVisibility(View.GONE);
+                star_5.setVisibility(View.GONE);
             }
 
         }
