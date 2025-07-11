@@ -8,9 +8,13 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
@@ -42,6 +46,7 @@ public class CinemaManagementActivity extends AppCompatActivity {
     private List<Cinema> filterCinema;
     private SearchView searchView;
     private String searchQuery = "";
+    private ActivityResultLauncher<Intent> cinemaEditLauncher;
 
 
     @Override
@@ -55,6 +60,16 @@ public class CinemaManagementActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        // Create launcher
+        cinemaEditLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK) {
+                        new getCinemaList().execute();
+                    }
+                }
+        );
 
         initView();
         setupToolbar();
@@ -106,7 +121,15 @@ public class CinemaManagementActivity extends AppCompatActivity {
 
         });
         adapter.setOnCinemaDeleteListener((Cinema cinema, int position) -> {
-            //TODO: handle delete cinema
+            new AlertDialog.Builder(this)
+                    .setTitle("Confirmation")
+                    .setMessage("Are you sure you want to delete this cinema?")
+                    .setPositiveButton("Yes", (dialog, which) -> {
+                        new deleteCinema(cinema.getCinemaId()).execute();
+                    })
+                    .setNegativeButton("No", null)
+                    .show();
+
         });
         recyler_view.setAdapter(adapter);
     }
@@ -153,7 +176,7 @@ public class CinemaManagementActivity extends AppCompatActivity {
     private void setupClickButton(){
         btn_add_cinema.setOnClickListener(v -> {
             Intent intent = new Intent(this, CinemaEditFormActivity.class);
-            startActivity(intent);
+            cinemaEditLauncher.launch(intent);
         });
     }
 
@@ -183,6 +206,45 @@ public class CinemaManagementActivity extends AppCompatActivity {
                 recyler_view.setVisibility(View.GONE);
                 recyler_view.setVisibility(View.VISIBLE);
                 Log.e(TAG, "Fail load list cinema");
+            }
+        }
+
+    }
+
+    public class deleteCinema extends AsyncTask<Void, Void, Boolean> {
+        private int cinemaId;
+
+        public deleteCinema(int cinemaId){
+            this.cinemaId = cinemaId;
+        }
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            try{
+                CinemaDAO cinemaDAO = new CinemaDAO();
+                return cinemaDAO.deleteCinema(cinemaId);
+                } catch (Exception e) {
+                Log.e(TAG, "Error loading list cinema", e);
+                return null;
+            }
+        }
+        @Override
+        protected void onPostExecute(Boolean result){
+            super.onPostExecute(result);
+            if(result){
+                for (int i = 0; i < cinemaList.size(); i++) {
+                    if (cinemaList.get(i).getCinemaId() == cinemaId) {
+                        cinemaList.remove(i);
+                        adapter.notifyItemRemoved(i);
+                        break;
+                    }
+                }
+
+                Log.d(TAG, "Delete cinema  success");
+                Toast.makeText(CinemaManagementActivity.this, "Delete cinema  success", Toast.LENGTH_SHORT).show();
+            }
+            else{
+                Log.e(TAG, "Fail delete cinema ");
+                Toast.makeText(CinemaManagementActivity.this, "Fail delete cinema ", Toast.LENGTH_SHORT).show();
             }
         }
 

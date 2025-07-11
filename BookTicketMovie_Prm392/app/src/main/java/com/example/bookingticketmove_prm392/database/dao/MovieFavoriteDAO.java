@@ -52,6 +52,7 @@ public class MovieFavoriteDAO extends BaseDAO{
 
     private MovieFavorite mapResultSetToMovieFavorite(ResultSet rs) throws SQLException {
         MovieFavorite mf = new MovieFavorite();
+        mf.setMovieFavoriteId(rs.getInt("MovieFavoriteId"));
         mf.setUserId(rs.getInt("UserId"));
         mf.setMovieId(rs.getInt("MovieId"));
         return mf;

@@ -9,6 +9,13 @@ public class CinemaHall {
     public CinemaHall() {
     }
 
+    public CinemaHall(int hallId,int cinemaId, String name, int totalSeats) {
+        this.hallId = hallId;
+        this.cinemaId = cinemaId;
+        this.name = name;
+        this.totalSeats = totalSeats;
+    }
+
     public CinemaHall(int cinemaId, String name, int totalSeats) {
         this.cinemaId = cinemaId;
         this.name = name;

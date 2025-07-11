@@ -35,15 +35,20 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txt_room" />
 
-    <!-- Border bottom: một View cao 1dp -->
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="200dp" />
+
 
     <ImageView
         android:id="@+id/icon_edit"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:layout_marginStart="104dp"
         android:layout_marginTop="20dp"
-        app:layout_constraintStart_toEndOf="@+id/txt_room"
+        app:layout_constraintStart_toStartOf="@+id/guideline_vertical"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/outline_edit_24" />
 
@@ -52,12 +57,12 @@
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_marginTop="20dp"
-        android:layout_marginEnd="40dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.376"
+        android:layout_marginEnd="16dp"
         app:layout_constraintStart_toEndOf="@+id/icon_edit"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/trash" />
+
 
     <View
         android:layout_width="0dp"

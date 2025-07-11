@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.bookingticketmove_prm392.R;
@@ -76,10 +77,18 @@ public class CinemaHallAdapter extends RecyclerView.Adapter<CinemaHallAdapter.Ci
 
             icon_edit.setOnClickListener(v  -> {
                 // Handle edit icon click
+                int position = getAdapterPosition();
+                if(editItem != null && position != RecyclerView.NO_POSITION){
+                    editItem.onHallEditClick(cinemaHallList.get(position));
+                }
             });
 
             icon_trash.setOnClickListener(v -> {
                 // Handle trash icon click
+                int position = getAdapterPosition();
+                if(deleteItem != null && position != RecyclerView.NO_POSITION){
+                    deleteItem.onHallDeleteClick(cinemaHallList.get(position), position);
+                }
             });
         }
     }

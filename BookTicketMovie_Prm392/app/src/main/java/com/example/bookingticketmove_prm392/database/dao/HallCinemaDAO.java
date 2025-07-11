@@ -55,6 +55,7 @@ public class HallCinemaDAO extends BaseDAO{
 
     private CinemaHall mapResultSetToCinemaHall(ResultSet rs) throws SQLException {
         CinemaHall cinemaHall = new CinemaHall();
+        cinemaHall.setHallId(rs.getInt("HallID"));
         cinemaHall.setCinemaId(rs.getInt("CinemaId"));
         cinemaHall.setName(rs.getString("Name"));
         cinemaHall.setTotalSeats(rs.getInt("TotalSeats"));

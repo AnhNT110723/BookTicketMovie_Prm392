@@ -1,11 +1,14 @@
 package com.example.bookingticketmove_prm392;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -15,6 +18,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
@@ -54,8 +58,8 @@ public class CinemaEditFormActivity extends AppCompatActivity {
     private TextInputEditText edt_cinema_phone;
     private Button btn_save_infor;
     private Button btn_cancel_infor;
-//    private Button btn_cancel_hall;
-//    private Button btn_save_hall;
+
+
     private ImageView icon_add;
     private LinearLayout card_hall_list;
     private CardView card_hall;
@@ -155,11 +159,62 @@ public class CinemaEditFormActivity extends AppCompatActivity {
         adapter = new CinemaHallAdapter(this, cinemaHallList);
         adapter.setOnHallEditClickListener(cinemaHall -> {
            //TODO: handle add cinema hall
+            showEditHallDialog(cinemaHall);
         });
-        adapter.setOnHallDeleteClickListener((CinemaHall cinema, int position) -> {
+        adapter.setOnHallDeleteClickListener( (CinemaHall cinemaHall, int position) -> {
             //TODO: handle delete cinema hall
+            int hallId = cinemaHall.getHallId();
+            new AlertDialog.Builder(this)
+                    .setTitle("Confirmation")
+                    .setMessage("Are you sure you want to delete this cinema hall?")
+                    .setPositiveButton("Yes", (dialog, which) -> {
+                        new deleteCinemaHall(hallId, position).execute();
+                    })
+                    .setNegativeButton("No", null)
+                    .show();
         });
         recyler_view.setAdapter(adapter);
+    }
+
+    private void showEditHallDialog(CinemaHall cinemaHall){
+        Dialog dialog = new Dialog(this); // context = this (Activity) hoặc getContext() (Fragment)
+        dialog.setContentView(R.layout.edit_hall_form);
+        dialog.setCancelable(true); // Bấm ngoài để đóng
+
+        TextInputEditText txtNameOfHall = dialog.findViewById(R.id.edt_name_of_hall);
+        TextInputEditText txtTotalSeats = dialog.findViewById(R.id.edt_total_seats);
+        Button btnOk = dialog.findViewById(R.id.btn_save_hall);
+        Button btnCancel = dialog.findViewById(R.id.btn_cancel_hall);
+
+        txtNameOfHall.setText(cinemaHall.getName());
+        txtTotalSeats.setText(String.valueOf(cinemaHall.getTotalSeats()));
+
+
+        btnOk.setOnClickListener(v -> {
+            String name = txtNameOfHall.getText().toString();
+            int totalSeats = Integer.parseInt(txtTotalSeats.getText().toString());
+            CinemaHall updatedHall = new CinemaHall(
+                    cinemaHall.getHallId(),
+                    cinemaHall.getCinemaId(),
+                    name,
+                    totalSeats
+            );
+            new updateCinemaHall(updatedHall).execute();
+
+            dialog.dismiss(); // đóng dialog
+        });
+
+        btnCancel.setOnClickListener(v -> {
+            dialog.dismiss();
+        });
+
+        dialog.show();
+        // Set kích thước dialog
+        Window window = dialog.getWindow();
+        if (window != null) {
+            window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        }
+
     }
 
     private void loadCinema(){
@@ -352,36 +407,6 @@ public class CinemaEditFormActivity extends AppCompatActivity {
             }
             }
     }
-
-    private class getCityById extends AsyncTask<Void, Void, City>{
-        private int cityId;
-        public getCityById(int cityId){
-            this.cityId = cityId;
-        }
-
-        @Override
-        protected City doInBackground(Void... voids) {
-            try{
-                CityDAO cityDAO = new CityDAO();
-                return cityDAO.getCityById(cityId);
-            }catch (Exception e){
-                Log.e(TAG, "Error loading city", e);
-                return null;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(City city) {
-            super.onPostExecute(city);
-            if(city != null){
-                edt_cinema_city.setText(city.getCityName());
-                Log.d(TAG, "Load city success");
-            }else {
-                Log.e(TAG, "Fail load city");
-            }
-        }
-    }
-
     private class addCinema extends AsyncTask<Void, Void, Boolean>{
         private Cinema cinema;
         public addCinema(Cinema cinema){
@@ -407,9 +432,12 @@ public class CinemaEditFormActivity extends AppCompatActivity {
                 edt_cinema_address.setText("");
                 edt_cinema_phone.setText("");
                 select_city_spinner.setSelection(-1);
+
                 Log.d(TAG, "Add cinema success");
                 new LoadCinemas().execute();
                 Toast.makeText(CinemaEditFormActivity.this, "Add cinema success", Toast.LENGTH_SHORT).show();
+                setResult(RESULT_OK);
+                finish();
             }else{
                 Log.e(TAG, "Fail add cinema");
                 Toast.makeText(CinemaEditFormActivity.this, "Fail add cinema ", Toast.LENGTH_SHORT).show();
@@ -471,5 +499,84 @@ public class CinemaEditFormActivity extends AppCompatActivity {
             }
         }
     }
+
+    private class deleteCinemaHall extends AsyncTask<Void, Void, Boolean>{
+        private int cinemaHallId;
+        private int position;
+
+        public deleteCinemaHall(int cinemaHallId, int position){
+            this.cinemaHallId = cinemaHallId;
+            this.position = position;
+        }
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            try{
+                HallCinemaDAO hallCinemaDAO = new HallCinemaDAO();
+                return hallCinemaDAO.deleteCinemaHall(cinemaHallId);
+            }catch (Exception e){
+                Log.e(TAG, "Error delete cinema hall", e);
+                return false;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            super.onPostExecute(result);
+            if(result){
+                for (int i = 0; i < cinemaHallList.size(); i++) {
+                    if (cinemaHallList.get(i).getHallId() == cinemaHallId) {
+                        cinemaHallList.remove(i);
+                        adapter.notifyItemRemoved(i);
+                        break;
+                    }
+                }
+
+                Log.d(TAG, "Delete cinema hall success");
+                Toast.makeText(CinemaEditFormActivity.this, "Delete cinema hall success", Toast.LENGTH_SHORT).show();
+            }
+            else{
+                Log.e(TAG, "Fail delete cinema hall");
+                Toast.makeText(CinemaEditFormActivity.this, "Fail delete cinema hall", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private class  updateCinemaHall extends AsyncTask<Void, Void, Boolean>{
+        private CinemaHall cinemaHall;
+        public updateCinemaHall(CinemaHall cinemaHall){
+            this.cinemaHall = cinemaHall;
+        }
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            try {
+                HallCinemaDAO hallCinemaDAO = new HallCinemaDAO();
+                return hallCinemaDAO.updateCinemaHall(cinemaHall);
+            } catch (Exception e) {
+                Log.e(TAG, "Error update cinema hall", e);
+                return false;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            super.onPostExecute(result);
+            if(result){
+                for (int i = 0; i < cinemaHallList.size(); i++) {
+                    if (cinemaHallList.get(i).getHallId() == cinemaHall.getHallId()) {
+                        cinemaHallList.set(i, cinemaHall); // Cập nhật item
+                        adapter.notifyItemChanged(i);       // Cập nhật giao diện
+                        break;
+                    }
+                }
+                Log.d(TAG, "Update cinema hall success");
+                Toast.makeText(CinemaEditFormActivity.this, "Update cinema hall success", Toast.LENGTH_SHORT).show();
+            }
+            else{
+                Log.e(TAG, "Fail update cinema hall");
+                Toast.makeText(CinemaEditFormActivity.this, "Fail update cinema hall", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
 
 }
