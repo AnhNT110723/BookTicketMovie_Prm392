@@ -29,6 +29,14 @@ public class Cinema {
         this.contactInfo = contactInfo;
     }
 
+    //Constructor for manage cinema
+    public Cinema(String name, String address, String cityName, String contactInfo){
+        this.name = name;
+        this.address = address;
+        this.cityName = cityName;
+        this.contactInfo = contactInfo;
+    }
+
     // Getters and Setters
     public int getCinemaId() {
         return cinemaId;

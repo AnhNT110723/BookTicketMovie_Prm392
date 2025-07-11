@@ -51,5 +51,6 @@
     <color name="default_date_text">#000000</color>
 
     <color name="red">#fe4f4a</color>
+    <color name="purple">#E8EAF6</color>
 
 </resources>
