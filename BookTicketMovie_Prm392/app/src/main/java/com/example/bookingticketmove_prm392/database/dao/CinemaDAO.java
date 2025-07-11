@@ -169,4 +169,38 @@ public class CinemaDAO extends BaseDAO {    // Get all cinemas
 
         return cities;
     }
+
+    //Add cninema
+    public boolean addCinema(Cinema cinema) throws SQLException{
+        String query = "INSERT INTO Cinema (Name, Address, CityID, ContactInfo) VALUES (?, ?, ?, ?)";
+        int result = executeUpdate(query,
+                cinema.getName(),
+                cinema.getAddress(),
+                cinema.getCityId(),
+                cinema.getContactInfo());
+        return result > 0;
+    }
+
+    //Delete cinema
+    public boolean deleteCinema(int cinemaId) throws SQLException {
+        String query = "DELETE FROM Cinema WHERE CinemaID = ?";
+        int result = executeUpdate(query, cinemaId);
+        return result > 0;
+    }
+
+
+    //update cinema
+    public boolean updateCinema(Cinema cinema) throws SQLException {
+        String query = "UPDATE Cinema SET Name = ?, Address = ?, CityID = ?, ContactInfo = ? WHERE CinemaID = ?";
+
+        int result = executeUpdate(query,
+                cinema.getName(),
+                cinema.getAddress(),
+                cinema.getCityId(),
+                cinema.getContactInfo(),
+                cinema.getCinemaId()
+        );
+
+        return result > 0;
+    }
 }
