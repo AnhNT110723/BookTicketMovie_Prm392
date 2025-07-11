@@ -9,6 +9,9 @@ public class City {
         this.cityName = cityName;
     }
 
+    public City() {
+    }
+
     public int getCityId() {
         return cityId;
     }
@@ -23,5 +26,10 @@ public class City {
 
     public void setCityName(String cityName) {
         this.cityName = cityName;
+    }
+
+    @Override
+    public String toString() {
+        return cityName;
     }
 }

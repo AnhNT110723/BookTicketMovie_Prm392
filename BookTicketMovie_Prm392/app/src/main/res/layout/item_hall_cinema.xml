@@ -20,34 +20,30 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:text=" - "
-        android:textSize="20dp"
-        app:layout_constraintStart_toEndOf="@+id/txt_room"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/txt_seats"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="10dp"
         android:text="120 seats"
-        android:textSize="20dp"
-        app:layout_constraintStart_toEndOf="@+id/textView"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:textColor="@color/text_secondary"
+        android:textSize="18dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txt_room" />
+
+    <!-- Border bottom: một View cao 1dp -->
 
     <ImageView
         android:id="@+id/icon_edit"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:layout_marginStart="64dp"
-        android:layout_marginTop="4dp"
-        app:layout_constraintStart_toEndOf="@+id/txt_seats"
+        android:layout_marginStart="104dp"
+        android:layout_marginTop="20dp"
+        app:layout_constraintStart_toEndOf="@+id/txt_room"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/outline_edit_24" />
 
@@ -55,12 +51,25 @@
         android:id="@+id/icon_trash"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="40dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.557"
+        app:layout_constraintHorizontal_bias="0.376"
         app:layout_constraintStart_toEndOf="@+id/icon_edit"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/trash" />
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="10dp"
+        android:background="#CCCCCC"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

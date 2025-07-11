@@ -6,13 +6,18 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
+import android.widget.Toast;
 
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -25,9 +30,11 @@ import com.example.bookingticketmove_prm392.adapters.CinemaHallAdapter;
 import com.example.bookingticketmove_prm392.adapters.CinemaManagementAdapter;
 import com.example.bookingticketmove_prm392.adapters.MovieFavoriteAdapter;
 import com.example.bookingticketmove_prm392.database.dao.CinemaDAO;
+import com.example.bookingticketmove_prm392.database.dao.CityDAO;
 import com.example.bookingticketmove_prm392.database.dao.HallCinemaDAO;
 import com.example.bookingticketmove_prm392.models.Cinema;
 import com.example.bookingticketmove_prm392.models.CinemaHall;
+import com.example.bookingticketmove_prm392.models.City;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.ArrayList;
@@ -47,21 +54,27 @@ public class CinemaEditFormActivity extends AppCompatActivity {
     private TextInputEditText edt_cinema_phone;
     private Button btn_save_infor;
     private Button btn_cancel_infor;
-    private Button btn_cancel_hall;
-    private Button btn_save_hall;
+//    private Button btn_cancel_hall;
+//    private Button btn_save_hall;
     private ImageView icon_add;
     private LinearLayout card_hall_list;
+    private CardView card_hall;
 
 
     //Load data
+
     private Cinema cinema;
     private List<CinemaHall> cinemaHallList;
     private int cinemaId;
+    private Spinner select_city_spinner;
+    private List<City> cityList;
+    private int selectedCity;
 
     // Fragment
     FragmentManager fragmentManager;
     FragmentTransaction trans;
     AddHallFragment addHallFragment;
+    HallCinemaFragment hallCinemaFragment;
 
 
 
@@ -79,9 +92,10 @@ public class CinemaEditFormActivity extends AppCompatActivity {
 
 
         initView();
+        loadCinema();
         setupToolbar();
         setupRecyclerView();
-        loadCinema();
+        setupSpinnerCity();
         setupOnClick();
     }
 
@@ -91,16 +105,19 @@ public class CinemaEditFormActivity extends AppCompatActivity {
         recyler_view = findViewById(R.id.recycler_view);
         edt_cinema_name = findViewById(R.id.edt_cinema_name);
         edt_cinema_address = findViewById(R.id.edt_cinema_address);
-        edt_cinema_city = findViewById(R.id.edt_cinema_city);
         edt_cinema_phone = findViewById(R.id.edt_cinema_phone);
         btn_save_infor = findViewById(R.id.btn_save_infor);
         btn_cancel_infor = findViewById(R.id.btn_cancel_infor);
-        btn_cancel_hall = findViewById(R.id.btn_cancel_hall);
-        btn_save_hall = findViewById(R.id.btn_save_hall);
+//        btn_cancel_hall = findViewById(R.id.btn_cancel_hall);
+//        btn_save_hall = findViewById(R.id.btn_save_hall);
+        select_city_spinner = findViewById(R.id.select_city_spinner);
         icon_add = findViewById(R.id.icon_add);
         card_hall_list= findViewById(R.id.card_hall_list);
+        card_hall = findViewById(R.id.card_hall);
         fragmentManager = getSupportFragmentManager();
-        addHallFragment = AddHallFragment.newInstance(null, null);
+        addHallFragment = AddHallFragment.newInstance();
+        hallCinemaFragment = hallCinemaFragment.newInstance(cinemaId);
+        cityList = new ArrayList<>();
 
 
     }
@@ -110,7 +127,13 @@ public class CinemaEditFormActivity extends AppCompatActivity {
         // Hiển thị nút quay lại
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true); // icon back
-            getSupportActionBar().setTitle("Edit Cinema"); // đặt tiêu đề
+            if(cinemaId != -1){
+                getSupportActionBar().setTitle("Edit Cinema"); // đặt tiêu đề
+            }else{
+                getSupportActionBar().setTitle("Add Cinema"); // đặt tiêu đề
+                card_hall.setVisibility(View.GONE);
+            }
+
         }
     }
 
@@ -153,20 +176,65 @@ public class CinemaEditFormActivity extends AppCompatActivity {
 
     private void setupOnClick(){
         icon_add.setOnClickListener(v -> {
-            if(cinemaId == -1){
-                //TODO: handle add cinema hall is add new
+                //show fragment add hall cinema
+                //icon_add.setVisibility(View.GONE);
                 card_hall_list.setVisibility(View.VISIBLE);
-                btn_cancel_hall.setVisibility(View.VISIBLE);
-                btn_save_hall.setVisibility(View.VISIBLE);
+                HallCinemaFragment hallCinemaFragment1 = HallCinemaFragment.newInstance(cinemaId);
                 trans = fragmentManager.beginTransaction();
-                trans.replace(R.id.card_hall_list, addHallFragment, "");
+                trans.replace(R.id.card_hall_list, hallCinemaFragment1, "");
+
+
+                hallCinemaFragment1.setOnAddHallSuccessListener(() -> {
+                    new getCinemaHallByCinemaId(cinemaId).execute();
+                });
                 trans.addToBackStack("pushA"); // tên j cx đc
                 trans.commit();
-            }else{
-                //TODO: handle add cinema hall when action is edit
+        });
+
+        btn_save_infor.setOnClickListener(v -> {
+            String name = edt_cinema_name.getText().toString().trim();
+            String address = edt_cinema_address.getText().toString().trim();
+            String phone = edt_cinema_phone.getText().toString().trim();
+            City chooseCity = (City) select_city_spinner.getSelectedItem();
+            int cityId = chooseCity.getCityId();
+
+            if (name.isEmpty() || address.isEmpty() || phone.isEmpty() || cityId == -1) {
+                Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
+                return;
             }
 
+            Cinema cinema = new Cinema(name, address, cityId, phone);
+            if(cinemaId == -1){
+               new addCinema(cinema).execute();
+            }else{
+                cinema.setCinemaId(cinemaId);
+                new updateCinema(cinema).execute();
+            }
         });
+
+        btn_cancel_infor.setOnClickListener(v -> {
+            edt_cinema_name.clearFocus();
+            edt_cinema_address.clearFocus();
+            edt_cinema_phone.clearFocus();
+            select_city_spinner.clearFocus();
+            if(cinemaId == -1){
+                edt_cinema_name.setText("");
+                edt_cinema_address.setText("");
+                edt_cinema_phone.setText("");
+                select_city_spinner.setSelection(-1);
+                Toast.makeText(this, "Cancel", Toast.LENGTH_SHORT).show();
+                finish();
+            }else{
+                new getCinemaById(cinemaId).execute();
+            }
+        });
+
+
+    }
+
+
+    private void setupSpinnerCity(){
+        new getCityList().execute();
     }
 
     private class getCinemaHallByCinemaId extends AsyncTask<Void, Void, List<CinemaHall>> {
@@ -223,12 +291,185 @@ public class CinemaEditFormActivity extends AppCompatActivity {
                     cinema = c;
                     edt_cinema_name.setText(cinema.getName());
                     edt_cinema_address.setText(cinema.getAddress());
-                    edt_cinema_city.setText(cinema.getCityName());
                     edt_cinema_phone.setText(cinema.getContactInfo());
+                    selectedCity = cinema.getCityId();
+
+                    // Set giá trị ban đầu dựa trên ID
+
+                    int selectedIndex = 0;
+
+                    for (int i = 0; i < cityList.size(); i++) {
+                        if (cityList.get(i).getCityId() == selectedCity) {
+                            selectedIndex = i;
+                            break;
+                        }
+                    }
+
+                    select_city_spinner.setSelection(selectedIndex);
                     Log.d(TAG, "Load cinema success");
                 }else{
                     Log.e(TAG, "Fail load cinema");
                 }
                 }
     }
+
+    private class getCityList extends AsyncTask<Void, Void, List<City>> {
+        @Override
+        protected List<City> doInBackground(Void... voids) {
+            try {
+                CityDAO cityDAO = new CityDAO();
+                return cityDAO.getAllCities();
+            } catch (Exception e) {
+                Log.e(TAG, "Error loading city list", e);
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(List<City> cities) {
+            super.onPostExecute(cities);
+            if (cities != null) {
+                cityList.clear();
+                cityList.addAll(cities);
+
+
+                City defaultCity = new City(-1, "Select City");
+                cityList.add(0, defaultCity);
+                Log.d(TAG, "Load list city success");
+
+                ArrayAdapter<City> adapter = new ArrayAdapter<>(
+                        CinemaEditFormActivity.this,
+                        android.R.layout.simple_spinner_item,
+                        cityList
+                );
+
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                select_city_spinner.setAdapter(adapter);
+                new getCinemaById(cinemaId).execute();
+
+            }else{
+                Log.e(TAG, "Fail load city list");
+            }
+            }
+    }
+
+    private class getCityById extends AsyncTask<Void, Void, City>{
+        private int cityId;
+        public getCityById(int cityId){
+            this.cityId = cityId;
+        }
+
+        @Override
+        protected City doInBackground(Void... voids) {
+            try{
+                CityDAO cityDAO = new CityDAO();
+                return cityDAO.getCityById(cityId);
+            }catch (Exception e){
+                Log.e(TAG, "Error loading city", e);
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(City city) {
+            super.onPostExecute(city);
+            if(city != null){
+                edt_cinema_city.setText(city.getCityName());
+                Log.d(TAG, "Load city success");
+            }else {
+                Log.e(TAG, "Fail load city");
+            }
+        }
+    }
+
+    private class addCinema extends AsyncTask<Void, Void, Boolean>{
+        private Cinema cinema;
+        public addCinema(Cinema cinema){
+            this.cinema = cinema;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            try{
+                CinemaDAO cinemaDAO = new CinemaDAO();
+                return cinemaDAO.addCinema(cinema);
+            }catch (Exception e){
+                Log.e(TAG, "Error add cinema", e);
+                return false;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            super.onPostExecute(result);
+            if(result){
+                edt_cinema_name.setText("");
+                edt_cinema_address.setText("");
+                edt_cinema_phone.setText("");
+                select_city_spinner.setSelection(-1);
+                Log.d(TAG, "Add cinema success");
+                new LoadCinemas().execute();
+                Toast.makeText(CinemaEditFormActivity.this, "Add cinema success", Toast.LENGTH_SHORT).show();
+            }else{
+                Log.e(TAG, "Fail add cinema");
+                Toast.makeText(CinemaEditFormActivity.this, "Fail add cinema ", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+
+    }
+
+    private class updateCinema extends AsyncTask<Void, Void, Boolean>{
+        private Cinema cinema;
+        public updateCinema(Cinema cinema){
+            this.cinema = cinema;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            try{
+                CinemaDAO cinemaDAO = new CinemaDAO();
+                return cinemaDAO.updateCinema(cinema);
+            }catch (Exception e){
+                Log.e(TAG, "Error update cinema", e);
+                return false;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            super.onPostExecute(result);
+            if(result){
+                Log.d(TAG, "Update cinema success");
+                edt_cinema_name.clearFocus();
+                edt_cinema_address.clearFocus();
+                edt_cinema_phone.clearFocus();
+                select_city_spinner.clearFocus();
+                Toast.makeText(CinemaEditFormActivity.this, "Update cinema success", Toast.LENGTH_SHORT).show();
+            }else{
+                Log.e(TAG, "Fail update cinema");
+                Toast.makeText(CinemaEditFormActivity.this, "Fail update cinema ", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private class LoadCinemas extends AsyncTask<Void, Void, List<Cinema>> {
+        @Override
+        protected List<Cinema> doInBackground(Void... voids) {
+            try {
+                return new CinemaDAO().getAllCinemas();
+            } catch (Exception e) {
+                Log.e(TAG, "Error loading cinemas", e);
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(List<Cinema> cinemas) {
+            if (cinemas != null) {
+                adapter.notifyDataSetChanged();
+            }
+        }
+    }
+
 }

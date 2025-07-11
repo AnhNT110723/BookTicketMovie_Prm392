@@ -44,6 +44,13 @@ public class HallCinemaDAO extends BaseDAO{
         return result > 0;
     }
 
+    //update hall cinema
+    public boolean updateCinemaHall(CinemaHall cinemaHall) throws SQLException{
+        String query = "UPDATE CinemaHall SET Name = ?, TotalSeats = ? WHERE HallID = ?";
+        int result = executeUpdate(query, cinemaHall.getName(), cinemaHall.getTotalSeats(), cinemaHall.getHallId());
+        return result > 0;
+    }
+
 
 
     private CinemaHall mapResultSetToCinemaHall(ResultSet rs) throws SQLException {

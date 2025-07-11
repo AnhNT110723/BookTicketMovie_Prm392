@@ -159,7 +159,7 @@ public class CinemaManagementActivity extends AppCompatActivity {
 
 
 
-    private class getCinemaList extends AsyncTask<Void, Void, List<Cinema>> {
+    public class getCinemaList extends AsyncTask<Void, Void, List<Cinema>> {
 
         @Override
         protected List<Cinema> doInBackground(Void... voids) {
