@@ -121,6 +121,21 @@
             android:name=".ContactUsActivity"
             android:exported="false"
             android:theme="@style/Theme.BookingTicketMove_Prm392" />
+
+        <activity
+            android:name=".CinemaDetailActivity"
+            android:exported="false"
+            android:theme="@style/Theme.BookingTicketMove_Prm392" />
+
+        <activity
+            android:name=".TicketViewActivity"
+            android:exported="false"
+            android:theme="@style/Theme.BookingTicketMove_Prm392" />
+
+        <activity
+            android:name=".PaymentActivity"
+            android:exported="false"
+            android:theme="@style/Theme.BookingTicketMove_Prm392" />
     </application>
 
 </manifest>

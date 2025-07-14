@@ -31,139 +31,149 @@
                 android:orientation="vertical"
                 android:padding="16dp">
 
-                <!-- Movie Info Card -->
+                <!-- Modern Ticket Card Layout -->
                 <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:cardCornerRadius="12dp"
-                    app:cardElevation="4dp"
-                    app:cardUseCompatPadding="true">
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginEnd="4dp"
+                    android:layout_marginTop="16dp"
+                    app:cardCornerRadius="20dp"
+                    app:cardElevation="8dp"
+                    app:cardUseCompatPadding="true"
+                    android:backgroundTint="@android:color/transparent">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:padding="12dp">
+                        android:background="@drawable/button_gradient_primary"
+                        android:padding="20dp">
 
                         <ImageView
                             android:id="@+id/iv_movie_poster_detail"
-                            android:layout_width="80dp"
-                            android:layout_height="120dp"
+                            android:layout_width="110dp"
+                            android:layout_height="160dp"
                             android:scaleType="centerCrop"
-                            android:src="@drawable/ic_movie_placeholder" />
+                            android:src="@drawable/ic_movie_placeholder"
+                            android:background="@drawable/bg_image_placeholder"
+                            android:elevation="4dp" />
 
                         <LinearLayout
-                            android:layout_width="match_parent"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="12dp"
-                            android:orientation="vertical">
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:layout_marginStart="16dp">
 
                             <TextView
                                 android:id="@+id/tv_movie_title_detail"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:textSize="18sp"
+                                android:textSize="20sp"
                                 android:textStyle="bold"
-                                android:textColor="@color/primary_text"
-                                tools:text="Pulp Fiction" />
-
-                            <TextView
-                                android:id="@+id/tv_cinema_name_detail"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="4dp"
-                                android:drawablePadding="4dp"
-                                android:gravity="center_vertical"
-                                android:textSize="14sp"
-                                android:textColor="@color/secondary_text"
-                                app:drawableStartCompat="@drawable/ic_location"
-                                tools:text="CGV Vincom Center - Phòng 2" />
-
-                            <TextView
-                                android:id="@+id/tv_show_time_detail"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="4dp"
-                                android:drawablePadding="4dp"
-                                android:gravity="center_vertical"
-                                android:textSize="14sp"
-                                android:textColor="@color/secondary_text"
-                                app:drawableStartCompat="@drawable/ic_calendar"
-                                tools:text="Jun 20, 2025 | 17:27" />
-
-                        </LinearLayout>
-                    </LinearLayout>
-                </androidx.cardview.widget.CardView>
-
-                <!-- Ticket Details Card -->
-                <androidx.cardview.widget.CardView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    app:cardCornerRadius="12dp"
-                    app:cardElevation="4dp"
-                    app:cardUseCompatPadding="true">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="16dp">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Ticket Details"
-                            android:textSize="16sp"
-                            android:textStyle="bold"
-                            android:textColor="@color/primary_text" />
-
-                        <RelativeLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="12dp">
-
-                            <TextView
-                                android:id="@+id/tv_seats_detail"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignParentStart="true"
-                                android:layout_centerVertical="true"
-                                android:drawablePadding="8dp"
-                                android:gravity="center_vertical"
-                                android:textSize="16sp"
-                                android:textColor="@color/primary_text"
-                                app:drawableStartCompat="@drawable/ic_movie_ticket"
-                                tools:text="2 Seats" />
-
-                            <TextView
-                                android:id="@+id/tv_status_detail"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignParentEnd="true"
-                                android:layout_centerVertical="true"
-                                android:background="@drawable/bg_status_badge"
-                                android:paddingStart="12dp"
-                                android:paddingTop="6dp"
-                                android:paddingEnd="12dp"
-                                android:paddingBottom="6dp"
                                 android:textColor="@android:color/white"
-                                android:textSize="12sp"
-                                android:textStyle="bold"
-                                tools:text="CONFIRMED" />
-                        </RelativeLayout>
+                                android:maxLines="2"
+                                android:ellipsize="end"
+                                tools:text="Inception" />
 
-                        <TextView
-                            android:id="@+id/tv_total_price_detail"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:drawablePadding="8dp"
-                            android:gravity="center_vertical"
-                            android:textSize="16sp"
-                            android:textColor="@color/primary_text"
-                            app:drawableStartCompat="@drawable/ic_attach_money"
-                            tools:text="Total: 200,000 đ" />
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:layout_marginTop="8dp">
+                                <ImageView
+                                    android:layout_width="20dp"
+                                    android:layout_height="20dp"
+                                    android:src="@drawable/ic_location"
+                                    android:tint="@android:color/white" />
+                                <TextView
+                                    android:id="@+id/tv_cinema_name_detail"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textColor="@android:color/white"
+                                    android:textSize="15sp"
+                                    android:layout_marginStart="6dp"
+                                    tools:text="CGV Vincom Center" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:layout_marginTop="6dp">
+                                <ImageView
+                                    android:layout_width="20dp"
+                                    android:layout_height="20dp"
+                                    android:src="@drawable/ic_calendar"
+                                    android:tint="@android:color/white" />
+                                <TextView
+                                    android:id="@+id/tv_show_time_detail"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textColor="@android:color/white"
+                                    android:textSize="15sp"
+                                    android:layout_marginStart="6dp"
+                                    tools:text="2025-06-20 16:27" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:layout_marginTop="6dp">
+                                <ImageView
+                                    android:layout_width="20dp"
+                                    android:layout_height="20dp"
+                                    android:src="@drawable/ic_movie_ticket"
+                                    android:tint="@android:color/white" />
+                                <TextView
+                                    android:id="@+id/tv_seats_detail"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textColor="@android:color/white"
+                                    android:textSize="15sp"
+                                    android:layout_marginStart="6dp"
+                                    tools:text="2 Seats" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:layout_marginTop="6dp">
+                                <ImageView
+                                    android:layout_width="20dp"
+                                    android:layout_height="20dp"
+                                    android:src="@drawable/ic_attach_money"
+                                    android:tint="@android:color/white" />
+                                <TextView
+                                    android:id="@+id/tv_total_price_detail"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textColor="@android:color/white"
+                                    android:textSize="15sp"
+                                    android:layout_marginStart="6dp"
+                                    tools:text="Total: 240.000 đ" />
+                            </LinearLayout>
+
+                            <Button
+                                android:id="@+id/btn_view_ticket"
+                                android:layout_width="wrap_content"
+                                android:layout_height="40dp"
+                                android:layout_marginTop="10dp"
+                                android:background="@drawable/button_gradient_primary"
+                                android:text="View Ticket"
+                                android:textAllCaps="false"
+                                android:textSize="15sp"
+                                android:textStyle="bold"
+                                android:textColor="@android:color/white"
+                                android:paddingLeft="32dp"
+                                android:paddingRight="32dp"
+                                android:layout_gravity="start"/>
+                        </LinearLayout>
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
 
@@ -222,9 +232,19 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
+                        android:layout_marginEnd="8dp"
                         android:layout_weight="1"
                         android:text="Export Invoice"
                         android:backgroundTint="?attr/colorPrimary"
+                        android:textColor="@android:color/white" />
+
+                    <Button
+                        android:id="@+id/btn_payment"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Thanh toán"
+                        android:backgroundTint="@color/purple_500"
                         android:textColor="@android:color/white" />
                 </LinearLayout>
             </LinearLayout>

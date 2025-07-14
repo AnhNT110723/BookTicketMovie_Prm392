@@ -31,13 +31,14 @@ public class BookingDetailActivity extends AppCompatActivity {
     public static final String EXTRA_BOOKING_ID = "extra_booking_id";
 
     private ImageView moviePoster, qrCodeImage;
-    private TextView movieTitle, cinemaName, showTime, seatCount, totalPrice, status;
-    private Button printButton, exportButton;
+    private TextView movieTitle, cinemaName, showTime, seatCount, totalPrice;
+    private Button printButton, exportButton, viewTicketButton, paymentButton;
     private ProgressBar progressBar;
     private View contentLayout;
 
     private int bookingId;
     private BookingDAO bookingDAO;
+    private Booking currentBooking;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,14 +66,37 @@ public class BookingDetailActivity extends AppCompatActivity {
         showTime = findViewById(R.id.tv_show_time_detail);
         seatCount = findViewById(R.id.tv_seats_detail);
         totalPrice = findViewById(R.id.tv_total_price_detail);
-        status = findViewById(R.id.tv_status_detail);
+        viewTicketButton = findViewById(R.id.btn_view_ticket);
         printButton = findViewById(R.id.btn_print_ticket);
         exportButton = findViewById(R.id.btn_export_invoice);
+        paymentButton = findViewById(R.id.btn_payment);
         progressBar = findViewById(R.id.progress_bar_detail);
         contentLayout = findViewById(R.id.scroll_view_content);
 
         printButton.setOnClickListener(v -> Toast.makeText(this, "Print Ticket clicked", Toast.LENGTH_SHORT).show());
         exportButton.setOnClickListener(v -> Toast.makeText(this, "Export Invoice clicked", Toast.LENGTH_SHORT).show());
+        viewTicketButton.setOnClickListener(v -> {
+            if (currentBooking == null) return;
+            android.content.Intent intent = new android.content.Intent(this, TicketViewActivity.class);
+            intent.putExtra("movieTitle", currentBooking.getMovieTitle());
+            intent.putExtra("posterUrl", currentBooking.getPosterURL());
+            // Giả lập tách ngày, giờ, row, seats từ dữ liệu booking
+            String[] dateTime = currentBooking.getShowTime().split(" ");
+            String date = dateTime.length > 0 ? dateTime[0] : "";
+            String time = dateTime.length > 1 ? dateTime[1] : "";
+            intent.putExtra("showDate", date);
+            intent.putExtra("showTime", time);
+            intent.putExtra("row", "1"); // fix cứng row, hoặc lấy từ booking nếu có
+            intent.putExtra("seats", String.valueOf(currentBooking.getNumberOfSeats()));
+            startActivity(intent);
+        });
+        paymentButton.setOnClickListener(v -> {
+            if (currentBooking == null) return;
+            android.content.Intent intent = new android.content.Intent(this, PaymentActivity.class);
+            intent.putExtra("amount", String.valueOf(currentBooking.getTotalPrice()));
+            intent.putExtra("content", "BOOKING" + bookingId + " - " + currentBooking.getMovieTitle());
+            startActivity(intent);
+        });
     }
 
     private void setupToolbar() {
@@ -94,7 +118,7 @@ public class BookingDetailActivity extends AppCompatActivity {
             // Handle error case, maybe show an error message on the screen
             return;
         }
-
+        currentBooking = booking;
         movieTitle.setText(booking.getMovieTitle());
         cinemaName.setText(booking.getCinemaName());
         showTime.setText(booking.getShowTime());
@@ -102,9 +126,9 @@ public class BookingDetailActivity extends AppCompatActivity {
         
         NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
         totalPrice.setText(String.format("Total: %s", currencyFormat.format(booking.getTotalPrice())));
-        
-        status.setText(booking.getStatus().toUpperCase());
-        updateStatusBadge(booking.getStatus());
+        // Nếu muốn thay đổi text hoặc màu nút theo trạng thái, xử lý ở đây
+        // viewTicketButton.setText(booking.getStatus().toUpperCase());
+        // hoặc viewTicketButton.setEnabled(booking.getStatus().equalsIgnoreCase("confirmed"));
 
         Glide.with(this)
                 .load(booking.getPosterURL())
@@ -113,26 +137,6 @@ public class BookingDetailActivity extends AppCompatActivity {
 
         generateQrCode(booking.getQrCodeData());
     }
-    
-    private void updateStatusBadge(String status) {
-        TextView statusView = findViewById(R.id.tv_status_detail);
-        statusView.setText(status.toUpperCase());
-
-        int backgroundColor;
-        switch (status.toLowerCase()) {
-            case "confirmed":
-                backgroundColor = ContextCompat.getColor(this, R.color.status_confirmed);
-                break;
-            case "cancelled":
-                backgroundColor = ContextCompat.getColor(this, R.color.status_cancelled);
-                break;
-            default:
-                backgroundColor = ContextCompat.getColor(this, R.color.status_pending);
-                break;
-        }
-        statusView.getBackground().setTint(backgroundColor);
-    }
-
 
     private void generateQrCode(String data) {
         if (data == null || data.isEmpty()) {

@@ -56,6 +56,14 @@
         android:padding="16dp"
         android:paddingBottom="8dp" />
 
+    <!-- City Filter Spinner -->
+    <Spinner
+        android:id="@+id/spinner_city_filter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="8dp" />
+
     <!-- Cinemas RecyclerView -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/cinemas_recycler_view"
