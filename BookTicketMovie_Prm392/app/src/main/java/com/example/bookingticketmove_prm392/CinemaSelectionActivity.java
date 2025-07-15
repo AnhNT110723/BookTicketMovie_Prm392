@@ -170,7 +170,7 @@ public class CinemaSelectionActivity extends AppCompatActivity implements Cinema
             // Đây là click vào một khung giờ chiếu phim cụ thể, chuyển sang màn hình chọn ghế
             Log.d(TAG, "Showtime Clicked: " + cinema.getCinema().getName() + " - " + showtime.getStartTime().toLocalTime().toString());
 
-            Intent intent = new Intent(CinemaSelectionActivity.this, ShowtimeSelectionActivity.class);
+            Intent intent = new Intent(CinemaSelectionActivity.this, SeatSelectionActivity.class);
             intent.putExtra("movie_id", movieId);
             intent.putExtra("movie_title", movieTitle);
             intent.putExtra("movie_price", moviePrice);
@@ -178,8 +178,10 @@ public class CinemaSelectionActivity extends AppCompatActivity implements Cinema
             intent.putExtra("cinema_id", cinema.getCinema().getCinemaId());
             intent.putExtra("cinema_name", cinema.getCinema().getName());
             intent.putExtra("showtime_id", showtime.getShowtimeId());
-            intent.putExtra("showtime_time", showtime.getStartTime().toLocalTime().toString());
+            intent.putExtra("showtime_starttime", showtime.getStartTime().toLocalTime().toString());
+            intent.putExtra("showtime_endtime", showtime.getEndTime().toLocalTime().toString());
             intent.putExtra("showtime_date", selectedDate.toString());
+            intent.putExtra("HALL_ID", showtime.getHallId());
             startActivity(intent);
         }
     }
