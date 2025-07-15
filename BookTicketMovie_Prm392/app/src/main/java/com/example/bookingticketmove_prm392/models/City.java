@@ -2,13 +2,14 @@ package com.example.bookingticketmove_prm392.models;
 
 public class City {
     private int cityId;
-    private String name;
+    private String cityName;
 
-    public City() {}
-
-    public City(int cityId, String name) {
+    public City(int cityId, String cityName) {
         this.cityId = cityId;
-        this.name = name;
+        this.cityName = cityName;
+    }
+
+    public City() {
     }
 
     public int getCityId() {
@@ -19,16 +20,16 @@ public class City {
         this.cityId = cityId;
     }
 
-    public String getName() {
-        return name;
+    public String getCityName() {
+        return cityName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setCityName(String cityName) {
+        this.cityName = cityName;
     }
 
     @Override
     public String toString() {
-        return name;
+        return cityName;
     }
-} 
+}

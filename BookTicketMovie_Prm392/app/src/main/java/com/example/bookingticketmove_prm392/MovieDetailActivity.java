@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -24,16 +25,21 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.ColorRes;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 
 import com.example.bookingticketmove_prm392.database.dao.MovieDAO;
+import com.example.bookingticketmove_prm392.database.dao.MovieFavoriteDAO;
 import com.example.bookingticketmove_prm392.models.Movie;
+import com.example.bookingticketmove_prm392.models.MovieFavorite;
 import com.example.bookingticketmove_prm392.utils.ImageUtils;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
@@ -49,7 +55,8 @@ public class MovieDetailActivity extends AppCompatActivity {
     private TextView durationTextView;
     private TextView releaseDateTextView;
     private TextView ratingTextView;
-    private TextView priceTextView;    private ChipGroup genreChipGroup;
+    private TextView priceTextView;
+    private ChipGroup genreChipGroup;
     private Button bookTicketButton;
     
     // Embedded Trailer Components
@@ -62,7 +69,8 @@ public class MovieDetailActivity extends AppCompatActivity {
     private Movie currentMovie;
     private int movieId;
     private boolean isFullscreen = false;
-    
+    private Button btn_comments;
+
     // Fullscreen video handling
     private View customView;
     private WebChromeClient.CustomViewCallback customViewCallback;
@@ -95,7 +103,8 @@ public class MovieDetailActivity extends AppCompatActivity {
         durationTextView = findViewById(R.id.duration_text_view);
         releaseDateTextView = findViewById(R.id.release_date_text_view);
         ratingTextView = findViewById(R.id.rating_text_view);
-        priceTextView = findViewById(R.id.price_text_view);        genreChipGroup = findViewById(R.id.genre_chip_group);
+        priceTextView = findViewById(R.id.price_text_view);
+        genreChipGroup = findViewById(R.id.genre_chip_group);
         bookTicketButton = findViewById(R.id.book_ticket_button);
         
         // Initialize embedded trailer components
@@ -105,7 +114,8 @@ public class MovieDetailActivity extends AppCompatActivity {
         trailerErrorLayout = findViewById(R.id.trailer_error_layout);
         fullscreenButton = findViewById(R.id.fullscreen_button);
         retryTrailerButton = findViewById(R.id.retry_trailer_button);
-        
+        btn_comments = findViewById(R.id.btn_comments);
+
         // Initialize fullscreen container
         fullscreenContainer = new FrameLayout(this);
         fullscreenContainer.setBackgroundColor(Color.BLACK);
@@ -275,7 +285,8 @@ public class MovieDetailActivity extends AppCompatActivity {
                 // Check if user is logged in
                 SharedPreferences prefs = getSharedPreferences("UserSession", MODE_PRIVATE);
                 boolean isLoggedIn = prefs.getBoolean("isLoggedIn", false);
-                
+                int userId = prefs.getInt("userId", -1);
+
                 if (!isLoggedIn) {
                     Toast.makeText(this, "Please login to book tickets", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(this, LoginActivity.class);
@@ -288,9 +299,11 @@ public class MovieDetailActivity extends AppCompatActivity {
                 intent.putExtra("movie_id", currentMovie.getMovieId());
                 intent.putExtra("movie_title", currentMovie.getTitle());
                 intent.putExtra("movie_price", currentMovie.getPrice());
+                intent.putExtra("movie_image", currentMovie.getPosterUrl());
                 startActivity(intent);
-            }        });
-        
+            }
+        });
+
         // Fullscreen button click listener
         fullscreenButton.setOnClickListener(v -> {
             if (currentMovie != null && currentMovie.getTrailerUrl() != null && !currentMovie.getTrailerUrl().isEmpty()) {
@@ -317,6 +330,14 @@ public class MovieDetailActivity extends AppCompatActivity {
                 loadEmbeddedTrailer(currentMovie.getTrailerUrl());
                 Toast.makeText(this, "Retrying trailer load...", Toast.LENGTH_SHORT).show();
             }
+        });
+
+        // All comments button click listener
+        btn_comments.setOnClickListener(v -> {
+
+            Intent intent = new Intent(this, FeedbackActivity.class);
+            intent.putExtra("movie_id", currentMovie.getMovieId());
+            startActivity(intent);
         });
     }
     
@@ -401,6 +422,14 @@ public class MovieDetailActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.movie_detail_menu, menu);
+
+        // Check if user is logged in
+        SharedPreferences prefs = getSharedPreferences("UserSession", MODE_PRIVATE);
+        boolean isLoggedIn = prefs.getBoolean("isLoggedIn", false);
+        if (isLoggedIn) {
+            int userId = prefs.getInt("userId", -1);
+            new getMovieFavorite(userId, movieId, menu).execute();
+        }
         return true;
     }
     
@@ -415,7 +444,7 @@ public class MovieDetailActivity extends AppCompatActivity {
             shareMovie();
             return true;
         } else if (id == R.id.action_favorite) {
-            toggleFavorite();
+            toggleFavorite(item);
             return true;
         }
         
@@ -426,16 +455,33 @@ public class MovieDetailActivity extends AppCompatActivity {
         if (currentMovie != null) {
             Intent shareIntent = new Intent(Intent.ACTION_SEND);
             shareIntent.setType("text/plain");
-            String shareText = "Check out this movie: " + currentMovie.getTitle() + 
-                             "\nDirected by: " + currentMovie.getDirector() +
-                             "\nRating: " + currentMovie.getRating() + "/10";
+            String shareText = "Check out this movie: " + currentMovie.getTitle() +
+                    "\nDirected by: " + currentMovie.getDirector() +
+                    "\nRating: " + currentMovie.getRating() + "/10";
             shareIntent.putExtra(Intent.EXTRA_TEXT, shareText);
             startActivity(Intent.createChooser(shareIntent, "Share Movie"));
         }
     }
-      private void toggleFavorite() {
+
+    private void toggleFavorite(MenuItem item) {
         // TODO: Implement favorite functionality
-        Toast.makeText(this, "Favorite feature coming soon", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "Favorite feature coming soon", Toast.LENGTH_SHORT).show();
+
+        // Check if user is logged in
+        SharedPreferences prefs = getSharedPreferences("UserSession", MODE_PRIVATE);
+        boolean isLoggedIn = prefs.getBoolean("isLoggedIn", false);
+
+        if (!isLoggedIn) {
+            Toast.makeText(this, "Please login to add your movie favorite", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            return;
+        }
+
+        int userId = prefs.getInt("userId", -1);
+        new toggleMovieFavorite(userId, movieId, item).execute();
+
+
     }
       private String createFullscreenEmbedHtml(String embedUrl) {
         return "<!DOCTYPE html>" +
@@ -473,9 +519,9 @@ public class MovieDetailActivity extends AppCompatActivity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getWindow().getDecorView().setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_FULLSCREEN |
-                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
-                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
-        
+                        View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
+                        View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+
         // Set landscape orientation
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         
@@ -547,4 +593,90 @@ public class MovieDetailActivity extends AppCompatActivity {
             displayMovieDetails(movie);
         }
     }
+
+    private class toggleMovieFavorite extends AsyncTask<Void, Void, Boolean> {
+        private int userId, movieId;
+        private MenuItem menuItem;
+        private MovieFavorite movieFavorite;
+
+        public toggleMovieFavorite(int userId, int movieId, MenuItem menuItem) {
+            this.userId = userId;
+            this.movieId = movieId;
+            this.menuItem = menuItem;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            try {
+                MovieFavoriteDAO movieFavoriteDAO = new MovieFavoriteDAO();
+                 movieFavorite = movieFavoriteDAO.getMovieFavorites(userId, movieId);
+                if(movieFavorite != null){
+                    return movieFavoriteDAO.deleteMovieFavorite(userId, movieId);
+                }
+                return movieFavoriteDAO.addMovieFavorite(new MovieFavorite(userId, movieId));
+            } catch (SQLException e) {
+                Log.e(TAG, "Error adding movie favorite", e);
+                return false;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            if (result) {
+                if(movieFavorite != null){
+                    Toast.makeText(MovieDetailActivity.this, "Đã xóa khỏi danh sách yêu thích", Toast.LENGTH_SHORT).show();
+                    changeIconColor(menuItem, R.color.default_date_background);
+                    return;
+                }else{
+                    Toast.makeText(MovieDetailActivity.this, "Đã thêm vào danh sách yêu thích", Toast.LENGTH_SHORT).show();
+                    changeIconColor(menuItem, R.color.red);
+                }
+
+            } else {
+                Toast.makeText(MovieDetailActivity.this, "Thao tác thất bại", Toast.LENGTH_SHORT).show();
+            }
+
+        }
+    }
+
+    private class getMovieFavorite extends AsyncTask<Void, Void, Boolean> {
+        private int userId, movieId;
+        private Menu menu;
+
+        public getMovieFavorite(int userId, int movieId, Menu menu) {
+            this.userId = userId;
+            this.movieId = movieId;
+            this.menu = menu;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            try {
+                MovieFavoriteDAO movieFavoriteDAO = new MovieFavoriteDAO();
+                MovieFavorite movieFavorite = movieFavoriteDAO.getMovieFavorites(userId, movieId);
+                if (movieFavorite != null) return true;
+            } catch (SQLException e) {
+                Log.e(TAG, "Error loading movie favorite", e);
+                return false;
+            }
+            return false;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            if (result) {
+                MenuItem favoriteItem = menu.findItem(R.id.action_favorite);
+               changeIconColor(favoriteItem, R.color.red);
+            }
+        }
+    }
+
+    private void changeIconColor(MenuItem item, @ColorRes int colorResId) {
+        Drawable icon = item.getIcon();
+        if (icon != null) {
+            icon.mutate(); // để tránh ảnh hưởng icon gốc
+            icon.setTint(ContextCompat.getColor(this, colorResId));
+        }
+    }
+
 }

@@ -282,6 +282,22 @@
                 </LinearLayout>
 
             </androidx.cardview.widget.CardView>
+        <!--        Comment button-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="end">
+            <Button
+                android:id="@+id/btn_comments"
+                android:layout_width="wrap_content"
+                android:layout_height="38dp"
+                android:text="All Comments"
+                android:background="@drawable/btn_comments"
+                android:textColor="@color/white"
+                android:backgroundTint="@null"
+                />
+        </LinearLayout>
 
             <!-- Genre Chips -->
             <androidx.cardview.widget.CardView

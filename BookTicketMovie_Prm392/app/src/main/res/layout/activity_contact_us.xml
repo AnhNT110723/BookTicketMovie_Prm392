@@ -6,12 +6,27 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ContactUsActivity"
-    android:background="@color/white">
+    android:background="@color/white"
+    >
+
+
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
+
+        <!-- Toolbar -->
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/primary"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+            app:layout_scrollFlags="scroll|enterAlways"
+            />
+
 
         <!--Card infor của system-->
         <androidx.cardview.widget.CardView
@@ -28,7 +43,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="#ECABC1"
+                android:background="@drawable/button_gradient_primary"
                 android:orientation="vertical"
                 android:padding="20dp">
 
@@ -38,7 +53,7 @@
                     android:layout_height="wrap_content"
                     android:text="Contact Information"
                     android:textColor="@color/white"
-                    android:textSize="30dp"/>
+                    android:textSize="30dp" />
 
                 <TextView
                     android:id="@+id/contact_content"
@@ -51,8 +66,7 @@
                     android:layout_marginBottom="15dp"/>
 
                 <!--        Phone Number-->
-                <LinearLayout
-                    style="@style/phoneNumber">
+                <LinearLayout style="@style/phoneNumber">
 
                     <ImageView
                         android:id="@+id/imageView2"
@@ -67,7 +81,7 @@
                         android:layout_marginStart="10dp"
                         android:text="+328126701"
                         android:textColor="@color/white"
-                        android:textSize="16dp"/>
+                        android:textSize="16dp" />
                 </LinearLayout>
 
                 <!--        email-->
@@ -199,7 +213,9 @@
                 android:layout_margin="20dp"
                 android:backgroundTint="#ECABC1"
                 app:cornerRadius="10dp"
-                android:textSize="20dp"/>
+                android:textSize="20dp"
+                android:onClick="handleAddContactMessage"
+                android:background="@drawable/button_border"/>
         </LinearLayout>
     </LinearLayout>
 
