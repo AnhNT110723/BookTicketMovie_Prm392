@@ -6,6 +6,31 @@
     android:orientation="vertical"
     android:padding="24dp">
 
+    <!-- Email Display (Read-only) -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/email_input_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:hint="Email"
+        app:boxStrokeColor="@color/input_border_focused"
+        app:hintTextColor="@color/text_secondary"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/email_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/edit_text_selector"
+            android:inputType="textEmailAddress"
+            android:enabled="false"
+            android:focusable="false"
+            android:minHeight="50dp"
+            android:textColor="@color/text_primary"
+            android:textSize="16sp" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
     <!-- Name Input -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/name_input_layout"

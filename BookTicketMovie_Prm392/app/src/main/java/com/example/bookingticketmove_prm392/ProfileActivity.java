@@ -211,15 +211,15 @@ public class ProfileActivity extends AppCompatActivity {
         changePasswordButton.setOnClickListener(v -> showChangePasswordDialog());
         
         bookingHistoryButton.setOnClickListener(v -> {
-            Toast.makeText(this, "Booking History - Coming Soon!", Toast.LENGTH_SHORT).show();
-            // TODO: Navigate to BookingHistoryActivity
-            // Intent intent = new Intent(this, BookingHistoryActivity.class);
-            // startActivity(intent);
+            Intent intent = new Intent(this, MyBookingsActivity.class);
+            startActivity(intent);
         });
         
         favoriteMoviesButton.setOnClickListener(v -> {
-            Intent intent = new Intent(this, MovieFavoriteActivity.class);
-            startActivity(intent);
+            Toast.makeText(this, "Favorite Movies - Coming Soon!", Toast.LENGTH_SHORT).show();
+            // TODO: Navigate to FavoriteMoviesActivity
+            // Intent intent = new Intent(this, FavoriteMoviesActivity.class);
+            // startActivity(intent);
         });
 
         contactUs.setOnClickListener(v -> {
@@ -235,12 +235,16 @@ public class ProfileActivity extends AppCompatActivity {
         
         TextInputEditText nameInput = dialogView.findViewById(R.id.name_input);
         TextInputEditText phoneInput = dialogView.findViewById(R.id.phone_input);
+        TextInputEditText emailInput = dialogView.findViewById(R.id.email_input);
         TextInputLayout nameInputLayout = dialogView.findViewById(R.id.name_input_layout);
         TextInputLayout phoneInputLayout = dialogView.findViewById(R.id.phone_input_layout);
         
         // Pre-fill current data
         nameInput.setText(currentUser.getName());
         phoneInput.setText(currentUser.getPhone());
+        if (emailInput != null) {
+            emailInput.setText(currentUser.getEmail());
+        }
         
         builder.setView(dialogView)
                 .setTitle("Edit Profile")

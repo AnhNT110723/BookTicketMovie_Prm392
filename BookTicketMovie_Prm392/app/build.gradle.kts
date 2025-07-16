@@ -78,4 +78,5 @@ dependencies {
     implementation("com.google.zxing:core:3.5.2")
 
     implementation ("com.jakewharton.threetenabp:threetenabp:1.4.0")
+    implementation("com.google.zxing:core:3.4.0")
 }

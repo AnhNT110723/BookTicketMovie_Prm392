@@ -78,7 +78,7 @@ public class CinemaAdapter extends RecyclerView.Adapter<CinemaAdapter.CinemaView
         TextView contactTextView;
         ImageView expandCollapseArrow;
         RecyclerView showtimesRecyclerView;
-       // boolean isExpanded = false; // Trạng thái mở rộng
+// boolean isExpanded = false; // Trạng thái mở rộng
 
         public CinemaViewHolder(@NonNull View itemView) {
             super(itemView);
