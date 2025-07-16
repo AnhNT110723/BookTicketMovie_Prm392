@@ -15,6 +15,11 @@
           <theme>@style/Theme.BookingTicketMove_Prm392</theme>
         </config>
       </layout>
+      <layout url="file://$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/res/layout/activity_cinema_selection.xml">
+        <config>
+          <theme>@style/Theme.BookingTicketMove_Prm392</theme>
+        </config>
+      </layout>
       <layout url="file://$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/res/layout/activity_contact_us.xml">
         <config>
           <theme>@style/Theme.BookingTicketMove_Prm392</theme>
@@ -32,97 +37,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="86fa230b-a277-4d38-b5c4-4e4776821eaa" name="Changes" comment="Add some function Cinemas and Payment">
-      <change afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/.history/app/src/main/java/com/example/bookingticketmove_prm392/EditCinemaFragment_20250711004434.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/.history/app/src/main/java/com/example/bookingticketmove_prm392/EditCinemaFragment_20250711005420.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/.history/app/src/main/res/layout/activity_edit_cinema_20250710005421.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/.history/app/src/main/res/layout/activity_edit_cinema_20250710005424.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/java/com/example/bookingticketmove_prm392/AddHallFragment.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/java/com/example/bookingticketmove_prm392/App.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/java/com/example/bookingticketmove_prm392/CinemaEditFormActivity.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/java/com/example/bookingticketmove_prm392/CinemaManagementActivity.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/java/com/example/bookingticketmove_prm392/Common/Constants.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/java/com/example/bookingticketmove_prm392/Enums/SeatType.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/java/com/example/bookingticketmove_prm392/FeedbackActivity.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/java/com/example/bookingticketmove_prm392/HallCinemaFragment.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/java/com/example/bookingticketmove_prm392/MovieFavoriteActivity.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/java/com/example/bookingticketmove_prm392/SeatSelectionActivity.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/java/com/example/bookingticketmove_prm392/adapters/CinemaHallAdapter.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/java/com/example/bookingticketmove_prm392/adapters/CinemaManagementAdapter.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/java/com/example/bookingticketmove_prm392/adapters/DateAdapter.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/java/com/example/bookingticketmove_prm392/adapters/FeedbackAdapter.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/java/com/example/bookingticketmove_prm392/adapters/MovieFavoriteAdapter.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/java/com/example/bookingticketmove_prm392/database/dao/ContactDAO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/java/com/example/bookingticketmove_prm392/database/dao/FeedbackDAO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/java/com/example/bookingticketmove_prm392/database/dao/HallCinemaDAO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/java/com/example/bookingticketmove_prm392/database/dao/MovieFavoriteDAO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/java/com/example/bookingticketmove_prm392/database/dao/SeatDAO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/java/com/example/bookingticketmove_prm392/database/dao/ShowtimeDAO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/java/com/example/bookingticketmove_prm392/models/CinemaHall.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/java/com/example/bookingticketmove_prm392/models/CinemaWithShowtimes.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/java/com/example/bookingticketmove_prm392/models/Comment.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/java/com/example/bookingticketmove_prm392/models/ContactMessage.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/java/com/example/bookingticketmove_prm392/models/Feedback.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/java/com/example/bookingticketmove_prm392/models/MovieFavorite.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/java/com/example/bookingticketmove_prm392/models/Seat.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/java/com/example/bookingticketmove_prm392/models/Showtime.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/java/com/example/bookingticketmove_prm392/models/Vote.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/res/drawable/account.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/res/drawable/border_spinner.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/res/drawable/btn_comments.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/res/drawable/button_submit_feedback.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/res/drawable/date_item_background.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/res/drawable/date_text_color_selector.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/res/drawable/ic_arrow_down.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/res/drawable/ic_arrow_up.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/res/drawable/ic_seat_available.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/res/drawable/ic_seat_selected.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/res/drawable/ic_seat_sold.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/res/drawable/outline_add_circle_24.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/res/drawable/outline_edit_24.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/res/drawable/pt_screen.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/res/drawable/seat_selector.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/res/drawable/star_border.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/res/drawable/trash.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/res/layout/activity_cinema_management.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/res/layout/activity_edit_cinema.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/res/layout/activity_feedback.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/res/layout/activity_movie_favorite.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/res/layout/activity_seat_selection.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/res/layout/edit_hall_form.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/res/layout/fragment_add_hall.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/res/layout/fragment_hall_cinema.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/res/layout/item_cinema_admin.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/res/layout/item_comment.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/res/layout/item_date.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/res/layout/item_hall_cinema.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/res/layout/item_showtime.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/res/layout/movie_favorite_item.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/res/values/styles_feedback.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules/app/BookingTicketMove_Prm392.app.androidTest.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/app/BookingTicketMove_Prm392.app.androidTest.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules/app/BookingTicketMove_Prm392.app.main.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/app/BookingTicketMove_Prm392.app.main.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules/app/BookingTicketMove_Prm392.app.unitTest.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/app/BookingTicketMove_Prm392.app.unitTest.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BookTicketMovie_Prm392/.idea/deploymentTargetSelector.xml" beforeDir="false" afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/.idea/deploymentTargetSelector.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BookTicketMovie_Prm392/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/build.gradle.kts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/AndroidManifest.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/java/com/example/bookingticketmove_prm392/AdminActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/java/com/example/bookingticketmove_prm392/AdminActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/java/com/example/bookingticketmove_prm392/BrowseMoviesActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/java/com/example/bookingticketmove_prm392/BrowseMoviesActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/java/com/example/bookingticketmove_prm392/BookingDetailActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/java/com/example/bookingticketmove_prm392/BookingDetailActivity.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/java/com/example/bookingticketmove_prm392/CinemaSelectionActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/java/com/example/bookingticketmove_prm392/CinemaSelectionActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/java/com/example/bookingticketmove_prm392/ContactUsActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/java/com/example/bookingticketmove_prm392/ContactUsActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/java/com/example/bookingticketmove_prm392/MovieDetailActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/java/com/example/bookingticketmove_prm392/MovieDetailActivity.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/java/com/example/bookingticketmove_prm392/adapters/CinemaAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/java/com/example/bookingticketmove_prm392/adapters/CinemaAdapter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/java/com/example/bookingticketmove_prm392/database/dao/CinemaDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/java/com/example/bookingticketmove_prm392/database/dao/CinemaDAO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/java/com/example/bookingticketmove_prm392/database/dao/CityDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/java/com/example/bookingticketmove_prm392/database/dao/CityDAO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/java/com/example/bookingticketmove_prm392/database/dao/MovieDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/java/com/example/bookingticketmove_prm392/database/dao/MovieDAO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/java/com/example/bookingticketmove_prm392/models/Cinema.java" beforeDir="false" afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/java/com/example/bookingticketmove_prm392/models/Cinema.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/java/com/example/bookingticketmove_prm392/models/City.java" beforeDir="false" afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/java/com/example/bookingticketmove_prm392/models/City.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/res/drawable/ic_star.xml" beforeDir="false" afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/res/drawable/ic_star.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/res/layout/activity_admin.xml" beforeDir="false" afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/res/layout/activity_admin.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/res/layout/activity_booking_detail.xml" beforeDir="false" afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/res/layout/activity_booking_detail.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/res/layout/activity_cinema_selection.xml" beforeDir="false" afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/res/layout/activity_cinema_selection.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/res/layout/activity_contact_us.xml" beforeDir="false" afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/res/layout/activity_contact_us.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/res/layout/activity_movie_detail.xml" beforeDir="false" afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/res/layout/activity_movie_detail.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/res/layout/item_cinema.xml" beforeDir="false" afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/res/layout/item_cinema.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/res/layout/item_movie_horizontal.xml" beforeDir="false" afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/res/layout/item_movie_horizontal.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/res/values/colors.xml" beforeDir="false" afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/res/values/colors.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/BookTicketMovie_Prm392/app/src/main/res/values/strings.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -281,7 +206,15 @@
       <option name="project" value="LOCAL" />
       <updated>1752472531917</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Add some function Cinemas and Payment">
+      <option name="closed" value="true" />
+      <created>1752570035084</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1752570035084</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -293,12 +226,12 @@
       <map>
         <entry key="com.example.bookingticketmove_prm392">
           <value>
-            <CheckInfo lastCheckTimestamp="1752471971471" />
+            <CheckInfo lastCheckTimestamp="1752573992979" />
           </value>
         </entry>
         <entry key="com.example.bookingticketmove_prm392.test">
           <value>
-            <CheckInfo lastCheckTimestamp="1752471971473" />
+            <CheckInfo lastCheckTimestamp="1752573993127" />
           </value>
         </entry>
       </map>

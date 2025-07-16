@@ -46,6 +46,7 @@ public class CinemaAdapter extends RecyclerView.Adapter<CinemaAdapter.CinemaView
         this.onShowtimeSelectedListener = listener;
     }
 
+
     @NonNull
     @Override
     public CinemaViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -77,15 +78,17 @@ public class CinemaAdapter extends RecyclerView.Adapter<CinemaAdapter.CinemaView
         TextView contactTextView;
         ImageView expandCollapseArrow;
         RecyclerView showtimesRecyclerView;
-       // boolean isExpanded = false; // Trạng thái mở rộng
+// boolean isExpanded = false; // Trạng thái mở rộng
 
         public CinemaViewHolder(@NonNull View itemView) {
             super(itemView);
             cardView = itemView.findViewById(R.id.cinema_card);
             nameTextView = itemView.findViewById(R.id.cinema_name_text);
             addressTextView = itemView.findViewById(R.id.cinema_address_text);
-            cityTextView = itemView.findViewById(R.id.cinema_city_text);
-            contactTextView = itemView.findViewById(R.id.cinema_contact_text);
+//            cityTextView = itemView.findViewById(R.id.cinema_city_text);
+//            contactTextView = itemView.findViewById(R.id.cinema_contact_text);
+            showtimesRecyclerView = itemView.findViewById(R.id.showtimes_recycler_view);
+            expandCollapseArrow = itemView.findViewById(R.id.expand_collapse_arrow);
         }
 
         public void bind(CinemaWithShowtimes cinemaWithShowtimes) {
@@ -127,7 +130,7 @@ public class CinemaAdapter extends RecyclerView.Adapter<CinemaAdapter.CinemaView
                 cardView.setClickable(true);
                 cardView.setFocusable(true);
             }
-
+            // Bắt sự kiện click vào CardView (toàn bộ item rạp)
             cardView.setOnClickListener(v -> {
                 // Đảo ngược trạng thái TRONG MODEL
                 cinemaWithShowtimes.setExpanded(!cinemaWithShowtimes.isExpanded());
