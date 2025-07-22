@@ -64,4 +64,6 @@
     <color name="purple_vip_seat">#8A2BE2</color>
     <color name="green_enabled_button">#4CAF50</color>
     <color name="gray_disabled_button">#CCC</color>
+
+    <color name="purple_500">#6200EE</color>
 </resources>

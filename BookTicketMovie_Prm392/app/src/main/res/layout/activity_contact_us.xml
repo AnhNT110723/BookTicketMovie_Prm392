@@ -59,11 +59,11 @@
                     android:id="@+id/contact_content"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="15dp"
                     android:text="Fill in the form or drop an email"
                     android:textColor="@color/white"
-                    android:textSize="15dp" />
+                    android:textSize="15dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="15dp"/>
 
                 <!--        Phone Number-->
                 <LinearLayout style="@style/phoneNumber">
@@ -102,7 +102,7 @@
                         android:layout_marginStart="10dp"
                         android:text="bookticketmovie@gmail.com"
                         android:textColor="@color/white"
-                        android:textSize="16dp" />
+                        android:textSize="16dp"/>
                 </LinearLayout>
 
                 <!--        address-->
@@ -123,7 +123,7 @@
                         android:layout_marginStart="10dp"
                         android:text="FPT University, Thach That Ha Noi"
                         android:textColor="@color/white"
-                        android:textSize="16dp" />
+                        android:textSize="16dp"/>
                 </LinearLayout>
 
             </LinearLayout>
@@ -211,6 +211,7 @@
                 android:layout_height="55dp"
                 android:text="Send"
                 android:layout_margin="20dp"
+                android:backgroundTint="#ECABC1"
                 app:cornerRadius="10dp"
                 android:textSize="20dp"
                 android:onClick="handleAddContactMessage"
