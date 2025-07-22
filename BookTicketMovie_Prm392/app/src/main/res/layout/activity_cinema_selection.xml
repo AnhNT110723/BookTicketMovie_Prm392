@@ -59,36 +59,36 @@
         android:layout_marginTop="4dp"
         android:layout_marginBottom="4dp"
         android:background="@drawable/login_background_gradient">
-    <!-- Ngày chiếu -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/date_recycler_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingVertical="8dp"
-        android:layout_marginTop="4dp"
-        android:orientation="horizontal"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        android:overScrollMode="never" />
-
-    <!-- Tỉnh thành -->
-    <!-- Tỉnh thành với cuộn ngang -->
-    <HorizontalScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
-        android:scrollbars="horizontal"
-        android:fillViewport="true">
-
-        <com.google.android.material.chip.ChipGroup
-            android:id="@+id/city_chip_group"
+        <!-- Ngày chiếu -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/date_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="8dp"
+            android:paddingVertical="8dp"
+            android:layout_marginTop="4dp"
+            android:orientation="horizontal"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            android:overScrollMode="never" />
+
+        <!-- Tỉnh thành -->
+        <!-- Tỉnh thành với cuộn ngang -->
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginBottom="4dp"
-            app:singleSelection="true"
-            app:chipSpacing="8dp"
-           />
-    </HorizontalScrollView>
+            android:scrollbars="horizontal"
+            android:fillViewport="true">
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/city_chip_group"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:layout_marginBottom="4dp"
+                app:singleSelection="true"
+                app:chipSpacing="8dp"
+                />
+        </HorizontalScrollView>
     </LinearLayout>
     <!-- Danh sách rạp + giờ -->
     <FrameLayout

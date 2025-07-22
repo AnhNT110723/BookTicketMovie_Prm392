@@ -36,7 +36,11 @@ public class ShowtimeSelectionActivity extends AppCompatActivity {
         cinemaId = getIntent().getIntExtra("cinema_id", -1);
         cinemaName = getIntent().getStringExtra("cinema_name");
         
-
+        if (movieId == -1 || movieTitle == null || cinemaId == -1 || cinemaName == null) {
+            Toast.makeText(this, "Invalid booking data", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
         
         initViews();
         setupToolbar();
@@ -44,7 +48,7 @@ public class ShowtimeSelectionActivity extends AppCompatActivity {
         
         // TODO: This is a placeholder activity for showtime selection
         // Implement showtime list, seat selection here
-        Toast.makeText(this, "Payment - Coming Soon!\nMovie: " + movieTitle + "\nCinema: " + cinemaName, Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "Showtime Selection - Coming Soon!\nMovie: " + movieTitle + "\nCinema: " + cinemaName, Toast.LENGTH_LONG).show();
     }
     
     private void initViews() {

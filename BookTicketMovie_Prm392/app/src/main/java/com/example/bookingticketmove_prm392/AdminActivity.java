@@ -40,6 +40,7 @@ public class AdminActivity extends AppCompatActivity {
     private CardView totalMoviesCard;
     private CardView activeMoviesCard;
     private CardView trendingMoviesCard;
+    private CardView cinemaCard;
     private CardView totalUsersCard;
     private RecyclerView moviesRecyclerView;
     private FloatingActionButton fabAddMovie;
@@ -101,7 +102,7 @@ public class AdminActivity extends AppCompatActivity {
         userNameText = findViewById(R.id.user_name_text);
         totalMoviesCard = findViewById(R.id.total_movies_card);
         activeMoviesCard = findViewById(R.id.active_movies_card);
-        trendingMoviesCard = findViewById(R.id.trending_movies_card);
+        cinemaCard = findViewById(R.id.cinema_card);
         totalUsersCard = findViewById(R.id.total_users_card);
         moviesRecyclerView = findViewById(R.id.movies_recycler_view);
         fabAddMovie = findViewById(R.id.fab_add_movie);
@@ -150,6 +151,11 @@ public class AdminActivity extends AppCompatActivity {
         trendingMoviesCard.setOnClickListener(v -> {
             long trendingCount = allMovies.stream().mapToLong(movie -> movie.isTrending() ? 1 : 0).sum();
             Toast.makeText(this, "Trending Movies: " + trendingCount, Toast.LENGTH_SHORT).show();
+        });
+
+        cinemaCard.setOnClickListener(v -> {
+            Intent intent = new Intent(this, CinemaManagementActivity.class);
+            startActivity(intent);
         });
           totalUsersCard.setOnClickListener(v -> {
             Intent intent = new Intent(this, UserManagementActivity.class);

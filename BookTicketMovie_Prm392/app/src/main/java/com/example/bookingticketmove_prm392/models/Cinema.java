@@ -29,6 +29,20 @@ public class Cinema {
         this.contactInfo = contactInfo;
     }
 
+    //Constructor for manage cinema
+    public Cinema(String name, String address, String cityName, String contactInfo){
+        this.name = name;
+        this.address = address;
+        this.cityName = cityName;
+        this.contactInfo = contactInfo;
+    }
+
+    //Constructor for fragment add hall
+    public Cinema(int cinemaId, String name){
+        this.cinemaId = cinemaId;
+        this.name = name;
+    }
+
     // Getters and Setters
     public int getCinemaId() {
         return cinemaId;

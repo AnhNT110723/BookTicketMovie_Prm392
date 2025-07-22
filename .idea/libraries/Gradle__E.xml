@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="Gradle: E" external-system-id="GRADLE">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/BookTicketMovie_Prm392/app/libs/jtds-1.3.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

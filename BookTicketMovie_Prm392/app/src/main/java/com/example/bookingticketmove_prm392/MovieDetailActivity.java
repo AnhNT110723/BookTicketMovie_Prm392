@@ -46,7 +46,7 @@ import java.util.Locale;
 public class MovieDetailActivity extends AppCompatActivity {
     private static final String TAG = "MovieDetailActivity";
     public static final String EXTRA_MOVIE_ID = "movie_id";
-    // UI Components
+      // UI Components
     private Toolbar toolbar;
     private ImageView posterImageView;
     private TextView titleTextView;
@@ -58,7 +58,7 @@ public class MovieDetailActivity extends AppCompatActivity {
     private TextView priceTextView;
     private ChipGroup genreChipGroup;
     private Button bookTicketButton;
-
+    
     // Embedded Trailer Components
     private CardView trailerCard;
     private WebView embeddedTrailerWebview;
@@ -69,17 +69,18 @@ public class MovieDetailActivity extends AppCompatActivity {
     private Movie currentMovie;
     private int movieId;
     private boolean isFullscreen = false;
+    private Button btn_comments;
 
     // Fullscreen video handling
     private View customView;
     private WebChromeClient.CustomViewCallback customViewCallback;
     private FrameLayout fullscreenContainer;
-
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_detail);
-
+        
         // Get movie ID from intent
         movieId = getIntent().getIntExtra(EXTRA_MOVIE_ID, -1);
         if (movieId == -1) {
@@ -87,14 +88,13 @@ public class MovieDetailActivity extends AppCompatActivity {
             finish();
             return;
         }
-
+        
         initViews();
         setupToolbar();
         loadMovieDetails();
         setupClickListeners();
     }
-
-    private void initViews() {
+      private void initViews() {
         toolbar = findViewById(R.id.toolbar);
         posterImageView = findViewById(R.id.poster_image_view);
         titleTextView = findViewById(R.id.title_text_view);
@@ -106,7 +106,7 @@ public class MovieDetailActivity extends AppCompatActivity {
         priceTextView = findViewById(R.id.price_text_view);
         genreChipGroup = findViewById(R.id.genre_chip_group);
         bookTicketButton = findViewById(R.id.book_ticket_button);
-
+        
         // Initialize embedded trailer components
         trailerCard = findViewById(R.id.trailer_card);
         embeddedTrailerWebview = findViewById(R.id.embedded_trailer_webview);
@@ -114,14 +114,15 @@ public class MovieDetailActivity extends AppCompatActivity {
         trailerErrorLayout = findViewById(R.id.trailer_error_layout);
         fullscreenButton = findViewById(R.id.fullscreen_button);
         retryTrailerButton = findViewById(R.id.retry_trailer_button);
+        btn_comments = findViewById(R.id.btn_comments);
 
         // Initialize fullscreen container
         fullscreenContainer = new FrameLayout(this);
         fullscreenContainer.setBackgroundColor(Color.BLACK);
-
+        
         setupEmbeddedTrailer();
     }
-
+    
     private void setupToolbar() {
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
@@ -130,8 +131,7 @@ public class MovieDetailActivity extends AppCompatActivity {
             getSupportActionBar().setTitle("Movie Details");
         }
     }
-
-    private void setupEmbeddedTrailer() {
+      private void setupEmbeddedTrailer() {
         // Configure WebView settings
         WebSettings webSettings = embeddedTrailerWebview.getSettings();
         webSettings.setJavaScriptEnabled(true);
@@ -144,7 +144,7 @@ public class MovieDetailActivity extends AppCompatActivity {
         webSettings.setAllowFileAccess(false);
         webSettings.setAllowContentAccess(false);
         webSettings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
-
+        
         // Set WebView client to handle page loading
         embeddedTrailerWebview.setWebViewClient(new WebViewClient() {
             @Override
@@ -152,13 +152,13 @@ public class MovieDetailActivity extends AppCompatActivity {
                 super.onPageStarted(view, url, favicon);
                 showTrailerLoadingState();
             }
-
+            
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
                 showTrailerWebView();
             }
-
+            
             @Override
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
                 super.onReceivedError(view, errorCode, description, failingUrl);
@@ -166,7 +166,7 @@ public class MovieDetailActivity extends AppCompatActivity {
                 showTrailerErrorState();
             }
         });
-        // Set WebChromeClient for better media support
+          // Set WebChromeClient for better media support
         embeddedTrailerWebview.setWebChromeClient(new WebChromeClient() {
             @Override
             public void onProgressChanged(WebView view, int newProgress) {
@@ -175,14 +175,14 @@ public class MovieDetailActivity extends AppCompatActivity {
                     showTrailerWebView();
                 }
             }
-
+            
             @Override
             public void onShowCustomView(View view, CustomViewCallback callback) {
                 super.onShowCustomView(view, callback);
                 // Handle fullscreen video playback
                 enterFullscreenVideo(view, callback);
             }
-
+            
             @Override
             public void onHideCustomView() {
                 super.onHideCustomView();
@@ -191,20 +191,20 @@ public class MovieDetailActivity extends AppCompatActivity {
             }
         });
     }
-
+    
     private void loadEmbeddedTrailer(String trailerUrl) {
         if (trailerUrl == null || trailerUrl.isEmpty()) {
             trailerCard.setVisibility(View.GONE);
             return;
         }
-
+        
         try {
             // Show trailer card
             trailerCard.setVisibility(View.VISIBLE);
-
+            
             // Convert YouTube URL to embeddable format
             String embedUrl = convertToEmbedUrl(trailerUrl);
-
+            
             if (embedUrl != null) {
                 // Create HTML content for embedded YouTube player
                 String htmlContent = createEmbedHtml(embedUrl);
@@ -217,12 +217,12 @@ public class MovieDetailActivity extends AppCompatActivity {
             showTrailerErrorState();
         }
     }
-
+    
     private String convertToEmbedUrl(String youtubeUrl) {
         try {
             // Extract video ID from various YouTube URL formats
             String videoId = null;
-
+            
             if (youtubeUrl.contains("youtube.com/watch?v=")) {
                 videoId = youtubeUrl.split("v=")[1].split("&")[0];
             } else if (youtubeUrl.contains("youtu.be/")) {
@@ -230,7 +230,7 @@ public class MovieDetailActivity extends AppCompatActivity {
             } else if (youtubeUrl.contains("youtube.com/embed/")) {
                 return youtubeUrl; // Already in embed format
             }
-
+            
             if (videoId != null && !videoId.isEmpty()) {
                 return "https://www.youtube.com/embed/" + videoId + "?autoplay=0&rel=0&modestbranding=1";
             }
@@ -239,8 +239,7 @@ public class MovieDetailActivity extends AppCompatActivity {
         }
         return null;
     }
-
-    private String createEmbedHtml(String embedUrl) {
+      private String createEmbedHtml(String embedUrl) {
         return "<!DOCTYPE html>" +
                 "<html>" +
                 "<head>" +
@@ -259,35 +258,34 @@ public class MovieDetailActivity extends AppCompatActivity {
                 "</body>" +
                 "</html>";
     }
-
+    
     private void showTrailerLoadingState() {
         trailerLoadingLayout.setVisibility(View.VISIBLE);
         embeddedTrailerWebview.setVisibility(View.GONE);
         trailerErrorLayout.setVisibility(View.GONE);
     }
-
+    
     private void showTrailerWebView() {
         trailerLoadingLayout.setVisibility(View.GONE);
         embeddedTrailerWebview.setVisibility(View.VISIBLE);
         trailerErrorLayout.setVisibility(View.GONE);
     }
-
-    private void showTrailerErrorState() {
+      private void showTrailerErrorState() {
         trailerLoadingLayout.setVisibility(View.GONE);
         embeddedTrailerWebview.setVisibility(View.GONE);
         trailerErrorLayout.setVisibility(View.VISIBLE);
     }
-
+    
     private void loadMovieDetails() {
         new LoadMovieDetailsTask().execute(movieId);
     }
-
-    private void setupClickListeners() {
+      private void setupClickListeners() {
         bookTicketButton.setOnClickListener(v -> {
             if (currentMovie != null) {
                 // Check if user is logged in
                 SharedPreferences prefs = getSharedPreferences("UserSession", MODE_PRIVATE);
                 boolean isLoggedIn = prefs.getBoolean("isLoggedIn", false);
+                int userId = prefs.getInt("userId", -1);
 
                 if (!isLoggedIn) {
                     Toast.makeText(this, "Please login to book tickets", Toast.LENGTH_SHORT).show();
@@ -295,7 +293,7 @@ public class MovieDetailActivity extends AppCompatActivity {
                     startActivity(intent);
                     return;
                 }
-
+                
                 // Navigate to seat selection or cinema selection
                 Intent intent = new Intent(this, CinemaSelectionActivity.class);
                 intent.putExtra("movie_id", currentMovie.getMovieId());
@@ -325,7 +323,7 @@ public class MovieDetailActivity extends AppCompatActivity {
                 Toast.makeText(this, "Trailer not available", Toast.LENGTH_SHORT).show();
             }
         });
-
+        
         // Retry button click listener
         retryTrailerButton.setOnClickListener(v -> {
             if (currentMovie != null && currentMovie.getTrailerUrl() != null && !currentMovie.getTrailerUrl().isEmpty()) {
@@ -333,57 +331,65 @@ public class MovieDetailActivity extends AppCompatActivity {
                 Toast.makeText(this, "Retrying trailer load...", Toast.LENGTH_SHORT).show();
             }
         });
-    }
 
+        // All comments button click listener
+        btn_comments.setOnClickListener(v -> {
+
+            Intent intent = new Intent(this, FeedbackActivity.class);
+            intent.putExtra("movie_id", currentMovie.getMovieId());
+            startActivity(intent);
+        });
+    }
+    
     private void displayMovieDetails(Movie movie) {
         if (movie == null) {
             Toast.makeText(this, "Movie details not found", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
-
+        
         currentMovie = movie;
-
+        
         // Set title
         titleTextView.setText(movie.getTitle());
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle(movie.getTitle());
         }
-
+        
         // Set description
         descriptionTextView.setText(movie.getDescription());
-
+        
         // Set director
         directorTextView.setText("Directed by " + movie.getDirector());
-
+        
         // Set duration
         int hours = movie.getDuration() / 60;
         int minutes = movie.getDuration() % 60;
         String durationText = hours > 0 ? hours + "h " + minutes + "m" : minutes + "m";
         durationTextView.setText(durationText);
-
+        
         // Set release date
         if (movie.getReleaseDate() != null) {
             SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy", Locale.getDefault());
             releaseDateTextView.setText("Released: " + dateFormat.format(movie.getReleaseDate()));
         }
-
+        
         // Set rating
         ratingTextView.setText(String.format(Locale.getDefault(), "★ %.1f", movie.getRating()));
-
+        
         // Set price
         priceTextView.setText(String.format(Locale.getDefault(), "$%.2f", movie.getPrice()));
-        // Set genre chips
+          // Set genre chips
         setupGenreChips(movie.getGenre());
-
+        
         // Load poster image using ImageUtils
         ImageUtils.loadMoviePosterFitCenter(this, posterImageView, movie.getPosterUrl());
-        // Enable/disable book button based on movie status
+          // Enable/disable book button based on movie status
         bookTicketButton.setEnabled(movie.isActive());
         if (!movie.isActive()) {
             bookTicketButton.setText("Not Available");
         }
-
+        
         // Load embedded trailer if available
         if (movie.getTrailerUrl() != null && !movie.getTrailerUrl().isEmpty()) {
             loadEmbeddedTrailer(movie.getTrailerUrl());
@@ -391,10 +397,10 @@ public class MovieDetailActivity extends AppCompatActivity {
             trailerCard.setVisibility(View.GONE);
         }
     }
-
+    
     private void setupGenreChips(String genres) {
         genreChipGroup.removeAllViews();
-
+        
         if (genres != null && !genres.isEmpty()) {
             String[] genreArray = genres.split(",");
             for (String genre : genreArray) {
@@ -405,15 +411,14 @@ public class MovieDetailActivity extends AppCompatActivity {
             }
         }
     }
-
-    @Override
+      @Override
     protected void onDestroy() {
         if (embeddedTrailerWebview != null) {
             embeddedTrailerWebview.destroy();
         }
         super.onDestroy();
     }
-
+    
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.movie_detail_menu, menu);
@@ -427,11 +432,11 @@ public class MovieDetailActivity extends AppCompatActivity {
         }
         return true;
     }
-
+    
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-
+        
         if (id == android.R.id.home) {
             onBackPressed();
             return true;
@@ -442,10 +447,10 @@ public class MovieDetailActivity extends AppCompatActivity {
             toggleFavorite(item);
             return true;
         }
-
+        
         return super.onOptionsItemSelected(item);
     }
-
+    
     private void shareMovie() {
         if (currentMovie != null) {
             Intent shareIntent = new Intent(Intent.ACTION_SEND);
@@ -478,8 +483,7 @@ public class MovieDetailActivity extends AppCompatActivity {
 
 
     }
-
-    private String createFullscreenEmbedHtml(String embedUrl) {
+      private String createFullscreenEmbedHtml(String embedUrl) {
         return "<!DOCTYPE html>" +
                 "<html>" +
                 "<head>" +
@@ -500,16 +504,16 @@ public class MovieDetailActivity extends AppCompatActivity {
                 "</body>" +
                 "</html>";
     }
-
+    
     private void enterFullscreenVideo(View view, WebChromeClient.CustomViewCallback callback) {
         if (customView != null) {
             callback.onCustomViewHidden();
             return;
         }
-
+        
         customView = view;
         customViewCallback = callback;
-
+        
         // Hide system UI
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -520,50 +524,50 @@ public class MovieDetailActivity extends AppCompatActivity {
 
         // Set landscape orientation
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-
+        
         // Add custom view to fullscreen container
         fullscreenContainer.addView(customView, new FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT));
-
+        
         // Add fullscreen container to root view
         ViewGroup rootView = (ViewGroup) getWindow().getDecorView();
         rootView.addView(fullscreenContainer, new ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT));
-
+        
         isFullscreen = true;
     }
-
+    
     private void exitFullscreenVideo() {
         if (customView == null) {
             return;
         }
-
+        
         // Remove fullscreen container from root view
         ViewGroup rootView = (ViewGroup) getWindow().getDecorView();
         rootView.removeView(fullscreenContainer);
-
+        
         // Remove custom view from fullscreen container
         fullscreenContainer.removeView(customView);
-
+        
         // Restore system UI
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
-
+        
         // Restore portrait orientation
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-
+        
         // Clean up
         customView = null;
         if (customViewCallback != null) {
             customViewCallback.onCustomViewHidden();
             customViewCallback = null;
         }
-
+        
         isFullscreen = false;
     }
-
+    
     @Override
     public void onBackPressed() {
         if (isFullscreen) {
@@ -572,8 +576,7 @@ public class MovieDetailActivity extends AppCompatActivity {
             super.onBackPressed();
         }
     }
-
-    private class LoadMovieDetailsTask extends AsyncTask<Integer, Void, Movie> {
+      private class LoadMovieDetailsTask extends AsyncTask<Integer, Void, Movie> {
         @Override
         protected Movie doInBackground(Integer... params) {
             try {
@@ -584,7 +587,7 @@ public class MovieDetailActivity extends AppCompatActivity {
                 return null;
             }
         }
-
+        
         @Override
         protected void onPostExecute(Movie movie) {
             displayMovieDetails(movie);
