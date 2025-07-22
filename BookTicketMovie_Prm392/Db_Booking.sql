@@ -576,4 +576,39 @@ INSERT INTO MovieFavorite (UserID, MovieID) VALUES
 PRINT 'Sample data insertion completed successfully!'
 PRINT 'Database setup complete with sample data for testing.'
 
+-- Contact Message
+CREATE TABLE [dbo].[ContactMessage] (
+    [Id] INT IDENTITY(1,1) PRIMARY KEY,
+    [Email] NVARCHAR(255) NOT NULL,
+    [Subject] NVARCHAR(255),
+    [Message] NVARCHAR(MAX),
+    [CreatedAt] DATETIME DEFAULT GETDATE()
+);
+
+CREATE TABLE [dbo].[MovieFavorite] (
+    [MovieFavoriteID] INT IDENTITY(1,1) PRIMARY KEY,
+    [UserID] INT NOT NULL,
+    [MovieID] INT NOT NULL,
+    [FavoriteTime] DATETIME DEFAULT GETDATE(),
+
+    FOREIGN KEY ([UserID]) REFERENCES [User](UserID),
+    FOREIGN KEY ([MovieID]) REFERENCES [Movie](MovieID)
+);
+
+CREATE TABLE [dbo].[Comment] (
+    [CommentID] INT IDENTITY(1,1) PRIMARY KEY,
+    [UserID] INT NOT NULL,
+    [MovieID] INT NOT NULL,
+    [CommentText] NVARCHAR(MAX) NOT NULL,
+    [CommentTime] DATETIME DEFAULT GETDATE(),
+    [ParentCommentID] INT NULL,
+    [IsApproved] BIT DEFAULT 0,
+
+    FOREIGN KEY ([UserID]) REFERENCES [User](UserID),
+    FOREIGN KEY ([MovieID]) REFERENCES [Movie](MovieID),
+    FOREIGN KEY ([ParentCommentID]) REFERENCES [Comment](CommentID)
+);
+
+
+
 GO
