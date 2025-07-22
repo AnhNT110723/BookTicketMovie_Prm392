@@ -3,10 +3,10 @@ package com.example.bookingticketmove_prm392.database;
 public class DatabaseConfig {
     // Database configuration constants
     public static final String DB_DRIVER = "net.sourceforge.jtds.jdbc.Driver";    // Primary: Actual IP address, Fallback: 10.0.2.2 for emulator
-    public static final String DB_URL = "jdbc:jtds:sqlserver://sqlmoviebookingticket.database.windows.net:1433/MovieTicketBookingSystem;ssl=require;encrypt=true;trustServerCertificate=false;loginTimeout=30";
-    public static final String DB_URL_FALLBACK = "jdbc:jtds:sqlserver://sqlmoviebookingticket.database.windows.net:1433/MovieTicketBookingSystem;ssl=require;encrypt=true;trustServerCertificate=false;loginTimeout=30";
-    public static final String DB_USERNAME = "sqladmin";
-    public static final String DB_PASSWORD = "iS68xZ@L@7EZgsm";
+    public static final String DB_URL = "jdbc:jtds:sqlserver://10.33.68.159:1433/MovieTicketBookingSystem";
+    public static final String DB_URL_FALLBACK = "jdbc:jtds:sqlserver://10.0.2.2:1433/MovieTicketBookingSystem";
+    public static final String DB_USERNAME = "sa";
+    public static final String DB_PASSWORD = "Tuan2003";
     
     // Connection timeout settings
     public static final int CONNECTION_TIMEOUT = 1; // seconds

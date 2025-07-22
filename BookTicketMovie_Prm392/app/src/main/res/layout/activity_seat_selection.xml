@@ -275,7 +275,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:onClick="confirmEvent"
-            android:text="Hoàn tất thanh toán (1/3)"
+            android:text="Hoàn tất thanh toán"
             android:backgroundTint="#4CAF50"
             android:textColor="@color/white"
             app:cornerRadius="8dp" />

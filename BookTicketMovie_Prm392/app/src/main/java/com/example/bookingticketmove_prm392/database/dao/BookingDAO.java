@@ -2,8 +2,11 @@ package com.example.bookingticketmove_prm392.database.dao;
 
 import com.example.bookingticketmove_prm392.database.DatabaseConfig;
 import com.example.bookingticketmove_prm392.models.Booking;
+import com.example.bookingticketmove_prm392.models.BookingSeat;
+import com.example.bookingticketmove_prm392.models.Payment;
 
 import java.math.BigDecimal;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -105,4 +108,140 @@ public class BookingDAO extends BaseDAO {
         
         return booking;
     }
+
+
+    //ADD BOOKING BY ANHNT
+// Insert a new booking and return the generated BookingID
+    public void createBooking(Booking booking, DatabaseTaskListener<Integer> listener) {
+        new DatabaseTask<Integer>(listener) {
+            @Override
+            protected Integer doInBackground(Void... voids) {
+                String query = "INSERT INTO Booking (UserID, ShowID, BookingTime, NumberOfSeats, TotalPrice, Status, QRCodeData) VALUES (?, ?, ?, ?, ?, ?, ?); SELECT SCOPE_IDENTITY() AS BookingID";
+                PreparedStatement statement = null;
+                ResultSet rs = null;
+                try {
+                    Connection conn = databaseConnection.getConnection();
+                    statement = conn.prepareStatement(query);
+                    statement.setInt(1, booking.getUserID());
+                    statement.setInt(2, booking.getShowID());
+                    statement.setTimestamp(3, new java.sql.Timestamp(booking.getBookingTime().getTime()));
+                    statement.setInt(4, booking.getNumberOfSeats());
+                    statement.setBigDecimal(5, booking.getTotalPrice());
+                    statement.setString(6, booking.getStatus());
+                    statement.setString(7, booking.getQrCodeData());
+                    rs = statement.executeQuery();
+                    if (rs.next()) {
+                        return rs.getInt("BookingID");
+                    }
+                    return -1;
+                } catch (SQLException e) {
+                    exception = e;
+                    return -1;
+                } finally {
+                    closeResources(rs, statement);
+                }
+            }
+        }.execute();
+    }
+    // Insert booked seats
+    // Insert booked seats
+    public void createBookedSeats(List<BookingSeat> bookedSeats, DatabaseTaskListener<Boolean> listener) {
+        new DatabaseTask<Boolean>(listener) {
+            @Override
+            protected Boolean doInBackground(Void... voids) {
+                String query = "INSERT INTO BookedSeat (BookingID, SeatID, ShowID, IsReserved, ReservedByUserID, ReservationTimestamp) VALUES (?, ?, ?, ?, ?, ?)";
+                PreparedStatement statement = null;
+                try {
+                    Connection conn = databaseConnection.getConnection();
+                    statement = conn.prepareStatement(query);
+                    for (BookingSeat bookedSeat : bookedSeats) {
+                        statement.setInt(1, bookedSeat.getBookingId());
+                        statement.setInt(2, bookedSeat.getSeatId());
+                        statement.setInt(3, bookedSeat.getShowId());
+                        statement.setBoolean(4, bookedSeat.isReserved());
+                        statement.setInt(5, bookedSeat.getReservedByUserId());
+                        statement.setTimestamp(6, new java.sql.Timestamp(bookedSeat.getReservationTimestamp().getTime()));
+                        statement.addBatch();
+                    }
+                    statement.executeBatch();
+                    return true;
+                } catch (SQLException e) {
+                    exception = e;
+                    return false;
+                } finally {
+                    closeResources(null, statement);
+                }
+            }
+        }.execute();
+    }
+
+    // Insert a payment
+    public void createPayment(Payment payment, DatabaseTaskListener<Boolean> listener) {
+        new DatabaseTask<Boolean>(listener) {
+            @Override
+            protected Boolean doInBackground(Void... voids) {
+                String query = "INSERT INTO Payment (BookingID, Amount, PaymentTime, PaymentStatus, PaymentMethod, TransactionID) VALUES (?, ?, ?, ?, ?, ?)";
+                try {
+                    executeUpdate(query,
+                            payment.getBookingId(),
+                            payment.getAmount(),
+                            new java.sql.Timestamp(payment.getPaymentTime().getTime()),
+                            payment.getPaymentStatus(),
+                            payment.getPaymentMethod(),
+                            payment.getTransactionId());
+                    return true;
+                } catch (SQLException e) {
+                    exception = e;
+                    return false;
+                }
+            }
+        }.execute();
+    }
+
+    // Get ShowID by showDate, startTime, and cinemaName
+    public void getShowId(String showDate, String startTime, String cinemaName, DatabaseTaskListener<Integer> listener) {
+        new DatabaseTask<Integer>(listener) {
+            @Override
+            protected Integer doInBackground(Void... voids) {
+                String query = "SELECT ShowID FROM Show WHERE ShowDate = ? AND StartTime = ? AND CinemaID = (SELECT CinemaID FROM Cinema WHERE CinemaName = ?)";
+                ResultSet rs = null;
+                try {
+                    rs = executeQuery(query, showDate, startTime, cinemaName);
+                    if (rs.next()) {
+                        return rs.getInt("ShowID");
+                    }
+                    return -1;
+                } catch (SQLException e) {
+                    exception = e;
+                    return -1;
+                } finally {
+                    closeResources(rs, null);
+                }
+            }
+        }.execute();
+    }
+
+    // Get SeatID by seatName and cinemaName
+    public void getSeatId(String seatName, String cinemaName, DatabaseTaskListener<Integer> listener) {
+        new DatabaseTask<Integer>(listener) {
+            @Override
+            protected Integer doInBackground(Void... voids) {
+                String query = "SELECT SeatID FROM Seat WHERE SeatName = ? AND CinemaID = (SELECT CinemaID FROM Cinema WHERE CinemaName = ?)";
+                ResultSet rs = null;
+                try {
+                    rs = executeQuery(query, seatName, cinemaName);
+                    if (rs.next()) {
+                        return rs.getInt("SeatID");
+                    }
+                    return -1;
+                } catch (SQLException e) {
+                    exception = e;
+                    return -1;
+                } finally {
+                    closeResources(rs, null);
+                }
+            }
+        }.execute();
+    }
+
 } 
