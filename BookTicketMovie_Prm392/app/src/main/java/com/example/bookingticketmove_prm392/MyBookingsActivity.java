@@ -68,8 +68,17 @@ public class MyBookingsActivity extends AppCompatActivity {
     private void loadBookings() {
         progressBar.setVisibility(View.VISIBLE);
         
-        // TODO: Get actual user ID from shared preferences or session
-        int userId = 2; // For testing purposes
+        // Lấy userId thực tế từ SharedPreferences
+        int userId = getSharedPreferences("UserSession", MODE_PRIVATE).getInt("userId", -1);
+        if (userId == -1) {
+            runOnUiThread(() -> {
+                progressBar.setVisibility(View.GONE);
+                tvNoBookings.setText("Không tìm thấy thông tin tài khoản. Vui lòng đăng nhập lại.");
+                tvNoBookings.setVisibility(View.VISIBLE);
+                recyclerView.setVisibility(View.GONE);
+            });
+            return;
+        }
 
         new Thread(() -> {
             List<Booking> bookings = null;
