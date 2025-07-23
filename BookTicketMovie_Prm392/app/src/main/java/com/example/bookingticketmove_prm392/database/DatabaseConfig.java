@@ -6,7 +6,7 @@ public class DatabaseConfig {
     public static final String DB_URL = "jdbc:jtds:sqlserver://10.33.68.159:1433/MovieTicketBookingSystem";
     public static final String DB_URL_FALLBACK = "jdbc:jtds:sqlserver://10.0.2.2:1433/MovieTicketBookingSystem";
     public static final String DB_USERNAME = "sa";
-    public static final String DB_PASSWORD = "123";
+    public static final String DB_PASSWORD = "Kimquy0988";
     
     // Connection timeout settings
     public static final int CONNECTION_TIMEOUT = 1; // seconds
