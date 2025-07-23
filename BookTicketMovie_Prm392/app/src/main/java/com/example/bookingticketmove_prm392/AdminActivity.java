@@ -39,6 +39,7 @@ public class AdminActivity extends AppCompatActivity {
     private TextView userNameText;
     private CardView totalMoviesCard;
     private CardView activeMoviesCard;
+    private CardView trendingMoviesCard;
     private CardView cinemaCard;
     private CardView totalUsersCard;
     private RecyclerView moviesRecyclerView;
@@ -94,13 +95,13 @@ public class AdminActivity extends AppCompatActivity {
         Log.d(TAG, "User role from preferences: " + userRole);
         return userRole == 1; // Admin role
     }
-    
-    private void initViews() {
+      private void initViews() {
         toolbar = findViewById(R.id.toolbar);
         welcomeAdminText = findViewById(R.id.welcome_admin_text);
         userNameText = findViewById(R.id.user_name_text);
         totalMoviesCard = findViewById(R.id.total_movies_card);
         activeMoviesCard = findViewById(R.id.active_movies_card);
+        trendingMoviesCard = findViewById(R.id.trending_movies_card);
         cinemaCard = findViewById(R.id.cinema_card);
         totalUsersCard = findViewById(R.id.total_users_card);
         moviesRecyclerView = findViewById(R.id.movies_recycler_view);
@@ -132,29 +133,60 @@ public class AdminActivity extends AppCompatActivity {
     private void loadMoviesAndStatistics() {
         new LoadAllMoviesTask().execute();
     }
-    
-    private void setupClickListeners() {        fabAddMovie.setOnClickListener(v -> {
-            Intent intent = new Intent(this, AddEditMovieActivity.class);
-            startActivityForResult(intent, AddEditMovieActivity.RESULT_MOVIE_SAVED);
-        });
+      private void setupClickListeners() {
+        // Add null checks for all CardViews to prevent crashes
+        if (fabAddMovie != null) {
+            fabAddMovie.setOnClickListener(v -> {
+                Intent intent = new Intent(this, AddEditMovieActivity.class);
+                startActivityForResult(intent, AddEditMovieActivity.RESULT_MOVIE_SAVED);
+            });
+        } else {
+            Log.e(TAG, "fabAddMovie is null - check layout R.id.fab_add_movie");
+        }
         
-        totalMoviesCard.setOnClickListener(v -> {
-            Toast.makeText(this, "Total Movies: " + allMovies.size(), Toast.LENGTH_SHORT).show();
-        });
+        if (totalMoviesCard != null) {
+            totalMoviesCard.setOnClickListener(v -> {
+                Toast.makeText(this, "Total Movies: " + allMovies.size(), Toast.LENGTH_SHORT).show();
+            });
+        } else {
+            Log.e(TAG, "totalMoviesCard is null - check layout R.id.total_movies_card");
+        }
         
-        activeMoviesCard.setOnClickListener(v -> {
-            long activeCount = allMovies.stream().mapToLong(movie -> movie.isActive() ? 1 : 0).sum();
-            Toast.makeText(this, "Active Movies: " + activeCount, Toast.LENGTH_SHORT).show();
-        });
+        if (activeMoviesCard != null) {
+            activeMoviesCard.setOnClickListener(v -> {
+                long activeCount = allMovies.stream().mapToLong(movie -> movie.isActive() ? 1 : 0).sum();
+                Toast.makeText(this, "Active Movies: " + activeCount, Toast.LENGTH_SHORT).show();
+            });
+        } else {
+            Log.e(TAG, "activeMoviesCard is null - check layout R.id.active_movies_card");
+        }
         
-        cinemaCard.setOnClickListener(v -> {
-            Intent intent = new Intent(this, CinemaManagementActivity.class);
-            startActivity(intent);
-        });
-          totalUsersCard.setOnClickListener(v -> {
-            Intent intent = new Intent(this, UserManagementActivity.class);
-            startActivity(intent);
-        });
+        if (trendingMoviesCard != null) {
+            trendingMoviesCard.setOnClickListener(v -> {
+                long trendingCount = allMovies.stream().mapToLong(movie -> movie.isTrending() ? 1 : 0).sum();
+                Toast.makeText(this, "Trending Movies: " + trendingCount, Toast.LENGTH_SHORT).show();
+            });
+        } else {
+            Log.e(TAG, "trendingMoviesCard is null - check layout R.id.trending_movies_card");
+        }
+
+        if (cinemaCard != null) {
+            cinemaCard.setOnClickListener(v -> {
+                Intent intent = new Intent(this, CinemaManagementActivity.class);
+                startActivity(intent);
+            });
+        } else {
+            Log.e(TAG, "cinemaCard is null - check layout R.id.cinema_card");
+        }
+        
+        if (totalUsersCard != null) {
+            totalUsersCard.setOnClickListener(v -> {
+                Intent intent = new Intent(this, UserManagementActivity.class);
+                startActivity(intent);
+            });
+        } else {
+            Log.e(TAG, "totalUsersCard is null - check layout R.id.total_users_card");
+        }
     }
     
     private void onMovieAction(Movie movie, String action) {

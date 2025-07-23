@@ -16,8 +16,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.bookingticketmove_prm392.adapters.CinemaAdapter;
+import com.example.bookingticketmove_prm392.adapters.CinemaSimpleAdapter;
 import com.example.bookingticketmove_prm392.adapters.DateAdapter;
 import com.example.bookingticketmove_prm392.database.dao.CinemaDAO;
+import com.example.bookingticketmove_prm392.database.dao.CityDAO;
 import com.example.bookingticketmove_prm392.models.Cinema;
 import com.example.bookingticketmove_prm392.models.CinemaWithShowtimes;
 import com.example.bookingticketmove_prm392.models.Showtime;
@@ -51,12 +53,14 @@ public class CinemaSelectionActivity extends AppCompatActivity implements Cinema
     private double moviePrice;
     private String moviePoster;
 
-    private List<Cinema> cinemaList;
+    private List<Cinema> cinemaList; // Thêm biến này nếu chưa có
     private List<CinemaWithShowtimes> cinemaWithShowtimesList;
+    private CinemaSimpleAdapter cinemaSimpleAdapter; // Adapter mới cho danh sách rạp đơn giản
 
     private List<LocalDate> dates;
     private List<String> cities;
     private LocalDate selectedDate;
+    private boolean hasMovie; // Thêm biến instance này ở đầu class
       @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,18 +71,22 @@ public class CinemaSelectionActivity extends AppCompatActivity implements Cinema
         movieTitle = getIntent().getStringExtra("movie_title");
         moviePrice = getIntent().getDoubleExtra("movie_price", 0.0);
         moviePoster = getIntent().getStringExtra("movie_image");
-        if (movieId == -1 || movieTitle == null) {
-            Toast.makeText(this, "Invalid movie data", Toast.LENGTH_SHORT).show();
-            finish();
-            return;
-        }
+        // Nếu không có thông tin phim, chỉ hiển thị rạp, không show lỗi
+        hasMovie = movieId != -1 && movieTitle != null;
 
         initViews();
         setupToolbar();
         loadData();
         setupRecyclerView();
-        displayMovieInfo();
-        //loadCinemas();
+        if (hasMovie) {
+            displayMovieInfo();
+        } else {
+            // Ẩn các view liên quan đến phim nếu cần
+            if (movieTitleText != null) movieTitleText.setVisibility(View.GONE);
+            if (moviePriceText != null) moviePriceText.setVisibility(View.GONE);
+            if (posterImageView != null) posterImageView.setVisibility(View.GONE);
+            if (dateRecyclerView != null) dateRecyclerView.setVisibility(View.GONE);
+        }
     }
 
     private void initViews() {
@@ -103,28 +111,75 @@ public class CinemaSelectionActivity extends AppCompatActivity implements Cinema
     }
 
     private void setupRecyclerView() {
-        dates = new ArrayList<>();
-        // Tạo danh sách 7 ngày tiếp theo (tạm thời, sẽ thay bằng dữ liệu từ DB)
-        LocalDate today = LocalDate.now();
-        for (int i = 0; i < 7; i++) {
-            dates.add(today.plusDays(i));
+        if (!hasMovie) {
+            // Chỉ hiển thị danh sách rạp, không showtimes, không date
+            cinemaList = new ArrayList<>();
+            cinemaSimpleAdapter = new CinemaSimpleAdapter(this, cinemaList, cinema -> {
+                Intent intent = new Intent(CinemaSelectionActivity.this, CinemaDetailActivity.class);
+                intent.putExtra("cinema_id", cinema.getCinemaId());
+                startActivity(intent);
+            });
+            cinemasRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+            cinemasRecyclerView.setAdapter(cinemaSimpleAdapter);
+            // Ẩn các view không cần thiết
+            if (movieTitleText != null) movieTitleText.setVisibility(View.GONE);
+            if (moviePriceText != null) moviePriceText.setVisibility(View.GONE);
+            if (posterImageView != null) posterImageView.setVisibility(View.GONE);
+            if (dateRecyclerView != null) dateRecyclerView.setVisibility(View.GONE);
+            // Load danh sách rạp
+            new AsyncTask<Void, Void, List<Cinema>>() {
+                @Override
+                protected List<Cinema> doInBackground(Void... voids) {
+                    try {
+                        CinemaDAO cinemaDAO = new CinemaDAO();
+                        return cinemaDAO.getAllCinemas();
+                    } catch (Exception e) {
+                        return new ArrayList<>();
+                    }
+                }
+                @Override
+                protected void onPostExecute(List<Cinema> cinemas) {
+                    cinemaList.clear();
+                    cinemaList.addAll(cinemas);
+                    cinemaSimpleAdapter.notifyDataSetChanged();
+                }
+            }.execute();
+        } else {
+            // Logic cũ: hiển thị rạp + showtimes theo phim
+            dates = new ArrayList<>();
+            LocalDate today = LocalDate.now();
+            for (int i = 0; i < 7; i++) {
+                dates.add(today.plusDays(i));
+            }
+            selectedDate = dates.get(0);
+            dateAdapter = new DateAdapter(this, dates, date -> {
+                selectedDate = date;
+                loadCinemasByCity(getSelectedCity());
+            });
+            dateRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+            dateRecyclerView.setAdapter(dateAdapter);
+            cinemaWithShowtimesList = new ArrayList<>();
+            cinemaAdapter = new CinemaAdapter(this, cinemaWithShowtimesList, movieId, selectedDate);
+            cinemaAdapter.setOnShowtimeSelectedListener((cinema, showtime, selectedDate, isHeaderClick) -> {
+                if (!isHeaderClick) {
+                    Intent intent = new Intent(CinemaSelectionActivity.this, SeatSelectionActivity.class);
+                    intent.putExtra("movie_id", movieId);
+                    intent.putExtra("movie_title", movieTitle);
+                    intent.putExtra("movie_price", moviePrice);
+                    intent.putExtra("movie_image", moviePoster);
+                    intent.putExtra("cinema_id", cinema.getCinema().getCinemaId());
+                    intent.putExtra("cinema_name", cinema.getCinema().getName());
+                    intent.putExtra("showtime_id", showtime.getShowtimeId());
+                    intent.putExtra("showtime_starttime", showtime.getStartTime().toLocalTime().toString());
+                    intent.putExtra("showtime_endtime", showtime.getEndTime().toLocalTime().toString());
+                    intent.putExtra("showtime_date", selectedDate.toString());
+                    intent.putExtra("HALL_ID", showtime.getHallId());
+                    startActivity(intent);
+                }
+            });
+            cinemasRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+            cinemasRecyclerView.setAdapter(cinemaAdapter);
         }
-
-        selectedDate = dates.get(0); // Mặc định chọn ngày đầu tiên
-        dateAdapter = new DateAdapter(this, dates, date -> {
-            selectedDate = date;
-            loadCinemasByCity(getSelectedCity()); // Tải lại khi đổi ngày
-        });
-        dateRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        dateRecyclerView.setAdapter(dateAdapter);
-        cinemaWithShowtimesList = new ArrayList<>(); // Thay cinemaList bằng cinemaWithShowtimesList
-        cinemaAdapter = new CinemaAdapter(this, cinemaWithShowtimesList, movieId, selectedDate);
-        cinemaAdapter.setOnShowtimeSelectedListener(this);
-        cinemasRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        cinemasRecyclerView.setAdapter(cinemaAdapter);
-
-
-
     }
 
     private void loadData() {
@@ -132,7 +187,30 @@ public class CinemaSelectionActivity extends AppCompatActivity implements Cinema
     }
 
     private void loadCinemasByCity(String cityName) {
-        new LoadCinemasTask(cityName, selectedDate).execute();
+        if (!hasMovie) {
+            // Nếu không có movieId, chỉ load danh sách rạp, không gọi hàm lấy showtimes
+            new AsyncTask<Void, Void, List<Cinema>>() {
+                @Override
+                protected List<Cinema> doInBackground(Void... voids) {
+                    try {
+                        CinemaDAO cinemaDAO = new CinemaDAO();
+                        int cityId = cinemaDAO.getCityIdByName(cityName);
+                        return cinemaDAO.getCinemasByCity(cityId);
+                    } catch (Exception e) {
+                        return new ArrayList<>();
+                    }
+                }
+                @Override
+                protected void onPostExecute(List<Cinema> cinemas) {
+                    cinemaList.clear();
+                    cinemaList.addAll(cinemas);
+                    cinemaSimpleAdapter.notifyDataSetChanged();
+                }
+            }.execute();
+        } else {
+            // Logic cũ: load rạp kèm showtimes theo movieId
+            new LoadCinemasTask(cityName, selectedDate).execute();
+        }
     }
     private void displayMovieInfo() {
         movieTitleText.setText(movieTitle);
@@ -170,7 +248,7 @@ public class CinemaSelectionActivity extends AppCompatActivity implements Cinema
             // Đây là click vào một khung giờ chiếu phim cụ thể, chuyển sang màn hình chọn ghế
             Log.d(TAG, "Showtime Clicked: " + cinema.getCinema().getName() + " - " + showtime.getStartTime().toLocalTime().toString());
 
-            Intent intent = new Intent(CinemaSelectionActivity.this, ShowtimeSelectionActivity.class);
+            Intent intent = new Intent(CinemaSelectionActivity.this, SeatSelectionActivity.class);
             intent.putExtra("movie_id", movieId);
             intent.putExtra("movie_title", movieTitle);
             intent.putExtra("movie_price", moviePrice);
@@ -178,8 +256,10 @@ public class CinemaSelectionActivity extends AppCompatActivity implements Cinema
             intent.putExtra("cinema_id", cinema.getCinema().getCinemaId());
             intent.putExtra("cinema_name", cinema.getCinema().getName());
             intent.putExtra("showtime_id", showtime.getShowtimeId());
-            intent.putExtra("showtime_time", showtime.getStartTime().toLocalTime().toString());
+            intent.putExtra("showtime_starttime", showtime.getStartTime().toLocalTime().toString());
+            intent.putExtra("showtime_endtime", showtime.getEndTime().toLocalTime().toString());
             intent.putExtra("showtime_date", selectedDate.toString());
+            intent.putExtra("HALL_ID", showtime.getHallId());
             startActivity(intent);
         }
     }

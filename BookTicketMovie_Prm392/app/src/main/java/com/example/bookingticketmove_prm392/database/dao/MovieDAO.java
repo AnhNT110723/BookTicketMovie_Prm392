@@ -13,7 +13,7 @@ import java.util.List;
 public class MovieDAO extends BaseDAO {    // Get all active movies
     public List<Movie> getAllMovies() throws SQLException {
         List<Movie> movies = new ArrayList<>();
-        String query = "SELECT * FROM Movie WHERE IsActive = 1 ORDER BY ReleaseDate DESC";
+        String query = "SELECT * FROM Movie ORDER BY ReleaseDate DESC";
 
         ResultSet rs = null;
         PreparedStatement statement = null;
@@ -239,6 +239,25 @@ public class MovieDAO extends BaseDAO {    // Get all active movies
 
         int result = executeUpdate(query, movieId);
         return result > 0;
+    }// Get movies by cinemaId
+    public List<Movie> getMoviesByCinemaId(int cinemaId) throws SQLException {
+        List<Movie> movies = new ArrayList<>();
+        String query = "SELECT DISTINCT m.* FROM Movie m " +
+                "JOIN Show s ON m.MovieID = s.MovieID " +
+                "JOIN CinemaHall ch ON s.HallID = ch.HallID " +
+                "WHERE ch.CinemaID = ? ORDER BY m.Title";
+        ResultSet rs = null;
+        PreparedStatement statement = null;
+        try {
+            rs = executeQuery(query, cinemaId);
+            while (rs.next()) {
+                Movie movie = mapResultSetToMovie(rs);
+                movies.add(movie);
+            }
+        } finally {
+            closeResources(rs, statement);
+        }
+        return movies;
     }// Helper method to map ResultSet to Movie object
     private Movie mapResultSetToMovie(ResultSet rs) throws SQLException {
         Movie movie = new Movie();

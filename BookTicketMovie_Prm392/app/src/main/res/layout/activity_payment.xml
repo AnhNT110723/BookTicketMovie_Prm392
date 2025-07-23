@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    >
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/primary"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
+    <LinearLayout
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@color/black"
+        android:padding="10dp">
+
+       <TextView
+           android:textColor="@color/white"
+           android:id="@+id/tv_payment_amount"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:text="Total price: 0 VND" />
+
+       <TextView
+           android:id="@+id/tv_payment_content"
+           android:textColor="@color/white"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:text="Payment content" />
+
+        <TextView
+            android:id="@+id/tv_message"
+            android:paddingRight="16dp"
+            android:paddingLeft="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/red"
+            android:text="" />
+   </LinearLayout>
+
+
+
+    <WebView
+        android:id="@+id/webview_payment"
+        android:padding="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/btn_vnpay_payment"
+        android:padding="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Payment with VNPay" />
+
+    <Button
+        android:id="@+id/btn_home"
+        android:padding="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Back to home" />
+
+<!--    <Button-->
+<!--        android:id="@+id/btn_back"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="Quay lại" />-->
+</LinearLayout>

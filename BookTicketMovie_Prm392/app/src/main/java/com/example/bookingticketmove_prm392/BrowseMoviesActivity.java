@@ -14,6 +14,9 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -62,6 +65,14 @@ public class BrowseMoviesActivity extends AppCompatActivity implements MovieAdap
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_browse_movies);
+
+
+        // Set up window insets
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
         
         // Get category from intent
         currentCategory = getIntent().getStringExtra(EXTRA_CATEGORY);
@@ -108,11 +119,21 @@ public class BrowseMoviesActivity extends AppCompatActivity implements MovieAdap
             getSupportActionBar().setTitle(title);
         }
     }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
     
     private void setupRecyclerView() {
         allMovies = new ArrayList<>();
         filteredMovies = new ArrayList<>();
-        movieAdapter = new MovieAdapter(this, filteredMovies, true); // false for grid layout
+        movieAdapter = new MovieAdapter(this, filteredMovies, false); // false for grid layout
         movieAdapter.setOnMovieClickListener(this);
         
         GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
@@ -257,57 +278,57 @@ public class BrowseMoviesActivity extends AppCompatActivity implements MovieAdap
         startActivity(intent);
     }
     
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.browse_movies_menu, menu);
-        return true;
-    }
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        getMenuInflater().inflate(R.menu.browse_movies_menu, menu);
+//        return true;
+//    }
     
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        
-        if (id == android.R.id.home) {
-            onBackPressed();
-            return true;
-        } else if (id == R.id.action_search) {
-            // Focus on search view
-            if (searchView != null) {
-                searchView.setIconified(false);
-                searchView.requestFocus();
-            }
-            return true;
-        } else if (id == R.id.action_filter) {
-            // Scroll to filter section
-            if (genreChipGroup != null) {
-                genreChipGroup.getParent().requestChildFocus(genreChipGroup, genreChipGroup);
-            }
-            return true;
-        } else if (id == R.id.sort_by_title) {
-            currentSortBy = "title";
-            applyFilters();
-            Toast.makeText(this, "Sorted by Title", Toast.LENGTH_SHORT).show();
-            return true;
-        } else if (id == R.id.sort_by_rating) {
-            currentSortBy = "rating";
-            applyFilters();
-            Toast.makeText(this, "Sorted by Rating", Toast.LENGTH_SHORT).show();
-            return true;
-        } else if (id == R.id.sort_by_release_date) {
-            currentSortBy = "release_date";
-            applyFilters();
-            Toast.makeText(this, "Sorted by Release Date", Toast.LENGTH_SHORT).show();
-            return true;
-        } else if (id == R.id.sort_by_price) {
-            currentSortBy = "price";
-            applyFilters();
-            Toast.makeText(this, "Sorted by Price", Toast.LENGTH_SHORT).show();
-            return true;
-        }
-        
-        return super.onOptionsItemSelected(item);
-    }
-    
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        int id = item.getItemId();
+//
+//        if (id == android.R.id.home) {
+//            onBackPressed();
+//            return true;
+//        } else if (id == R.id.action_search) {
+//            // Focus on search view
+//            if (searchView != null) {
+//                searchView.setIconified(false);
+//                searchView.requestFocus();
+//            }
+//            return true;
+//        } else if (id == R.id.action_filter) {
+//            // Scroll to filter section
+//            if (genreChipGroup != null) {
+//                genreChipGroup.getParent().requestChildFocus(genreChipGroup, genreChipGroup);
+//            }
+//            return true;
+//        } else if (id == R.id.sort_by_title) {
+//            currentSortBy = "title";
+//            applyFilters();
+//            Toast.makeText(this, "Sorted by Title", Toast.LENGTH_SHORT).show();
+//            return true;
+//        } else if (id == R.id.sort_by_rating) {
+//            currentSortBy = "rating";
+//            applyFilters();
+//            Toast.makeText(this, "Sorted by Rating", Toast.LENGTH_SHORT).show();
+//            return true;
+//        } else if (id == R.id.sort_by_release_date) {
+//            currentSortBy = "release_date";
+//            applyFilters();
+//            Toast.makeText(this, "Sorted by Release Date", Toast.LENGTH_SHORT).show();
+//            return true;
+//        } else if (id == R.id.sort_by_price) {
+//            currentSortBy = "price";
+//            applyFilters();
+//            Toast.makeText(this, "Sorted by Price", Toast.LENGTH_SHORT).show();
+//            return true;
+//        }
+//
+//        return super.onOptionsItemSelected(item);
+//    }
+//
     // AsyncTask to load movies based on category
     private class LoadMoviesTask extends AsyncTask<Void, Void, List<Movie>> {        @Override
         protected List<Movie> doInBackground(Void... voids) {
