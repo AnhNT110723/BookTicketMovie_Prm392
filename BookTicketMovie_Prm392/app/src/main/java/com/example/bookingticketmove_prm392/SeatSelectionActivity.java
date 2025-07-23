@@ -55,6 +55,8 @@ public class SeatSelectionActivity extends AppCompatActivity {
     private String endTime;
     private String DateTime;
     private double movie_price;
+    private int hallId;
+    private int showId;
 
 
 
@@ -65,8 +67,8 @@ public class SeatSelectionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_seat_selection);
 
-        int hallId = getIntent().getIntExtra("HALL_ID", -1); // -1 là giá trị mặc định nếu không tìm thấy
-        int showId = getIntent().getIntExtra("showtime_id", -1); // -1 là giá trị mặc định nếu không tìm thấy
+        hallId = getIntent().getIntExtra("HALL_ID", -1); // -1 là giá trị mặc định nếu không tìm thấy
+        showId = getIntent().getIntExtra("showtime_id", -1); // -1 là giá trị mặc định nếu không tìm thấy
         movie_title = getIntent().getStringExtra("movie_title");
         cinema_name = getIntent().getStringExtra("cinema_name");
         startTime = getIntent().getStringExtra("showtime_starttime");
@@ -358,7 +360,7 @@ public class SeatSelectionActivity extends AppCompatActivity {
     }
 
     private void proceedToPayment() {
-        Intent intent = new Intent(SeatSelectionActivity.this, ShowtimeSelectionActivity.class); // Thay PaymentActivity.class bằng tên Activity thanh toán của bạn
+        Intent intent = new Intent(SeatSelectionActivity.this, PaymentActivity.class);
 
         // Truyền thông tin phim và suất chiếu
         intent.putExtra("movie_title", movie_title);
@@ -367,15 +369,19 @@ public class SeatSelectionActivity extends AppCompatActivity {
         intent.putExtra("showtime_starttime", startTime);
         intent.putExtra("showtime_endtime", endTime);
         intent.putExtra("movie_price", movie_price); // Giá vé gốc
+        intent.putExtra("show_id", showId);
+        intent.putExtra("hall_id", hallId);
 
         // Truyền thông tin các ghế đã chọn
         ArrayList<String> selectedSeatNames = new ArrayList<>();
         ArrayList<String> selectedSeatTypes = new ArrayList<>(); // Để tính giá ở màn hình Payment
+        ArrayList<Integer> selectedSeatIds = new ArrayList<>();
         double totalCalculatedPrice = 0; // Tính toán lại tổng tiền để đảm bảo
 
         for (Seat seat : selectedSeats) {
             selectedSeatNames.add(seat.getRowNumber() + seat.getColumnNumber());
             selectedSeatTypes.add(seat.getSeatType().name()); // Lưu tên enum
+            selectedSeatIds.add(seat.getSeatID());
 
             // Tính lại tổng tiền để truyền qua, hoặc bạn có thể truyền totalCalculatedPrice trực tiếp
             // nếu tin tưởng hàm calculateTotalPrice() luôn đúng
@@ -395,7 +401,7 @@ public class SeatSelectionActivity extends AppCompatActivity {
         intent.putStringArrayListExtra("selected_seat_names", selectedSeatNames);
         intent.putStringArrayListExtra("selected_seat_types", selectedSeatTypes);
         intent.putExtra("total_price", totalCalculatedPrice); // Truyền tổng tiền cuối cùng
-
+        intent.putIntegerArrayListExtra("selected_seat_ids", selectedSeatIds);
         startActivity(intent);
     }
 

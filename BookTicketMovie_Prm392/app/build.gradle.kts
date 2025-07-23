@@ -15,6 +15,9 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
+    buildFeatures {
+        buildConfig = true // Bật tính năng buildConfig
+    }
 
     buildTypes {
         release {
@@ -23,6 +26,12 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            buildConfigField("String", "VNPAY_TMN_CODE", "\"your_vnpay_tmn_code\"")
+            buildConfigField("String", "VNPAY_HASH_SECRET", "\"your_vnpay_hash_secret\"")
+        }
+        debug {
+            buildConfigField("String", "VNPAY_TMN_CODE", "\"your_sandbox_tmn_code\"")
+            buildConfigField("String", "VNPAY_HASH_SECRET", "\"your_sandbox_hash_secret\"")
         }
     }
     compileOptions {
@@ -46,14 +55,14 @@ dependencies {
       // CardView for home screen
     implementation("androidx.cardview:cardview:1.0.0")
     implementation("androidx.coordinatorlayout:coordinatorlayout:1.2.0")
-    
+
     // SwipeRefreshLayout for User Management
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
-    
+
     // Image loading library
     implementation("com.github.bumptech.glide:glide:4.16.0")
     annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
-    
+
     // JTDS SQL Server driver
     implementation(files("libs/jtds-1.3.1.jar"))
 
@@ -79,4 +88,9 @@ dependencies {
 
     implementation ("com.jakewharton.threetenabp:threetenabp:1.4.0")
     implementation("com.google.zxing:core:3.4.0")
+
+    //momo
+//    implementation("com.github.momo-wallet:mobile-sdk:1.0.7") {
+//        exclude(group = "com.android.support")
+//    }
 }
