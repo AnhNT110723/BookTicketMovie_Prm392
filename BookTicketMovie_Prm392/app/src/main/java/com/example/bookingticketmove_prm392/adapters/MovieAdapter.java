@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -23,26 +24,55 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
     private Context context;
     private List<Movie> movieList;
     private OnMovieClickListener onMovieClickListener;
+    private OnMovieDetailClickListener onMovieDetailClickListener;
+    private OnMovieShowtimesClickListener onMovieShowtimesClickListener;
     private boolean isHorizontal;
+    private boolean isCinemaDetail = false;
 
     public interface OnMovieClickListener {
         void onMovieClick(Movie movie);
     }
 
-    public MovieAdapter(Context context, List<Movie> movieList, boolean isHorizontal) {
+    public interface OnMovieDetailClickListener {
+        void onMovieDetailClick(Movie movie);
+    }
+
+    public interface OnMovieShowtimesClickListener {
+        void onMovieShowtimesClick(Movie movie);
+    }
+
+    public MovieAdapter(Context context, List<Movie> movieList, boolean isHorizontal, boolean isCinemaDetail) {
         this.context = context;
         this.movieList = movieList;
         this.isHorizontal = isHorizontal;
+        this.isCinemaDetail = isCinemaDetail;
+    }
+
+    public MovieAdapter(Context context, List<Movie> movieList, boolean isHorizontal) {
+        this(context, movieList, isHorizontal, false);
     }
 
     public void setOnMovieClickListener(OnMovieClickListener listener) {
         this.onMovieClickListener = listener;
     }
 
+    public void setOnMovieDetailClickListener(OnMovieDetailClickListener listener) {
+        this.onMovieDetailClickListener = listener;
+    }
+
+    public void setOnMovieShowtimesClickListener(OnMovieShowtimesClickListener listener) {
+        this.onMovieShowtimesClickListener = listener;
+    }
+
     @NonNull
     @Override
     public MovieViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        int layoutId = isHorizontal ? R.layout.item_movie_horizontal : R.layout.item_movie_grid;
+        int layoutId;
+        if (isCinemaDetail) {
+            layoutId = R.layout.item_movie_cinema;
+        } else {
+            layoutId = isHorizontal ? R.layout.item_movie_horizontal : R.layout.item_movie_grid;
+        }
         View view = LayoutInflater.from(context).inflate(layoutId, parent, false);
         return new MovieViewHolder(view);
     }
@@ -75,6 +105,8 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
         TextView priceTextView;
         TextView releaseDateTextView;
         View trendingBadge;
+        Button btnViewDetail;
+        Button btnViewShowtimes;
 
         public MovieViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -87,6 +119,8 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
             priceTextView = itemView.findViewById(R.id.price_text);
             releaseDateTextView = itemView.findViewById(R.id.release_date_text);
             trendingBadge = itemView.findViewById(R.id.trending_badge);
+            btnViewDetail = itemView.findViewById(R.id.btn_view_detail);
+            btnViewShowtimes = itemView.findViewById(R.id.btn_view_showtimes);
         }
 
         public void bind(Movie movie) {
@@ -114,6 +148,24 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
                     onMovieClickListener.onMovieClick(movie);
                 }
             });
+
+            // Set click cho nút xem chi tiết
+            if (btnViewDetail != null) {
+                btnViewDetail.setOnClickListener(v -> {
+                    if (onMovieDetailClickListener != null) {
+                        onMovieDetailClickListener.onMovieDetailClick(movie);
+                    }
+                });
+            }
+
+            // Set click cho nút xem lịch chiếu
+            if (btnViewShowtimes != null) {
+                btnViewShowtimes.setOnClickListener(v -> {
+                    if (onMovieShowtimesClickListener != null) {
+                        onMovieShowtimesClickListener.onMovieShowtimesClick(movie);
+                    }
+                });
+            }
         }
     }
 }

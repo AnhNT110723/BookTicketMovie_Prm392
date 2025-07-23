@@ -133,7 +133,7 @@ public class BrowseMoviesActivity extends AppCompatActivity implements MovieAdap
     private void setupRecyclerView() {
         allMovies = new ArrayList<>();
         filteredMovies = new ArrayList<>();
-        movieAdapter = new MovieAdapter(this, filteredMovies, true); // false for grid layout
+        movieAdapter = new MovieAdapter(this, filteredMovies, false); // false for grid layout
         movieAdapter.setOnMovieClickListener(this);
         
         GridLayoutManager layoutManager = new GridLayoutManager(this, 2);

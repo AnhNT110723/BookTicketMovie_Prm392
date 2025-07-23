@@ -230,10 +230,8 @@ public class HomeActivity extends AppCompatActivity {
         });
 
         cinemasCard.setOnClickListener(v -> {
-            Toast.makeText(this, "Cinemas - Coming Soon!", Toast.LENGTH_SHORT).show();
-            // TODO: Navigate to CinemasActivity
-            // Intent intent = new Intent(this, CinemasActivity.class);
-            // startActivity(intent);
+            Intent intent = new Intent(this, CinemaSelectionActivity.class);
+            startActivity(intent);
         });        profileCard.setOnClickListener(v -> {
             Intent intent = new Intent(this, ProfileActivity.class);
             startActivity(intent);

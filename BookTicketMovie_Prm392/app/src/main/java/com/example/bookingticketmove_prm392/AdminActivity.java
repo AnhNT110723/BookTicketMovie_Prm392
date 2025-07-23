@@ -39,6 +39,7 @@ public class AdminActivity extends AppCompatActivity {
     private TextView userNameText;
     private CardView totalMoviesCard;
     private CardView activeMoviesCard;
+    private CardView trendingMoviesCard;
     private CardView cinemaCard;
     private CardView totalUsersCard;
     private RecyclerView moviesRecyclerView;
@@ -147,6 +148,11 @@ public class AdminActivity extends AppCompatActivity {
             Toast.makeText(this, "Active Movies: " + activeCount, Toast.LENGTH_SHORT).show();
         });
         
+        trendingMoviesCard.setOnClickListener(v -> {
+            long trendingCount = allMovies.stream().mapToLong(movie -> movie.isTrending() ? 1 : 0).sum();
+            Toast.makeText(this, "Trending Movies: " + trendingCount, Toast.LENGTH_SHORT).show();
+        });
+
         cinemaCard.setOnClickListener(v -> {
             Intent intent = new Intent(this, CinemaManagementActivity.class);
             startActivity(intent);
