@@ -101,7 +101,7 @@ public class AdminActivity extends AppCompatActivity {
         userNameText = findViewById(R.id.user_name_text);
         totalMoviesCard = findViewById(R.id.total_movies_card);
         activeMoviesCard = findViewById(R.id.active_movies_card);
-        trendingMoviesCard = findViewById(R.id.trending_movies_card);
+        //trendingMoviesCard = findViewById(R.id.trending_movies_card);
         cinemaCard = findViewById(R.id.cinema_card);
         totalUsersCard = findViewById(R.id.total_users_card);
         moviesRecyclerView = findViewById(R.id.movies_recycler_view);
@@ -170,16 +170,13 @@ public class AdminActivity extends AppCompatActivity {
             Log.e(TAG, "trendingMoviesCard is null - check layout R.id.trending_movies_card");
         }
 
-        if (cinemaCard != null) {
-            cinemaCard.setOnClickListener(v -> {
-                Intent intent = new Intent(this, CinemaManagementActivity.class);
-                startActivity(intent);
-            });
-        } else {
-            Log.e(TAG, "cinemaCard is null - check layout R.id.cinema_card");
-        }
-        
-        if (totalUsersCard != null) {
+          cinemaCard.setOnClickListener(v -> {
+              Intent intent = new Intent(this, CinemaManagementActivity.class);
+              startActivity(intent);
+          });
+
+
+          if (totalUsersCard != null) {
             totalUsersCard.setOnClickListener(v -> {
                 Intent intent = new Intent(this, UserManagementActivity.class);
                 startActivity(intent);
