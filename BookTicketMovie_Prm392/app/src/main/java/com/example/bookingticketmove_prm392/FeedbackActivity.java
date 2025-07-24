@@ -260,6 +260,8 @@ public class FeedbackActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Boolean result){
             if (result) {
+
+
                 new getFeedbackList(movieId).execute();
                 adapter.notifyDataSetChanged(); // Thông báo cập nhật giao diện
                 Log.d(TAG, "Create comment successful success");
