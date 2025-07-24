@@ -30,6 +30,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.bookingticketmove_prm392.adapters.CinemaManagementAdapter;
 import com.example.bookingticketmove_prm392.adapters.MovieFavoriteAdapter;
 import com.example.bookingticketmove_prm392.database.dao.CinemaDAO;
+import com.example.bookingticketmove_prm392.database.dao.HallCinemaDAO;
 import com.example.bookingticketmove_prm392.models.Cinema;
 
 import java.util.ArrayList;
@@ -221,7 +222,11 @@ public class CinemaManagementActivity extends AppCompatActivity {
         protected Boolean doInBackground(Void... voids) {
             try{
                 CinemaDAO cinemaDAO = new CinemaDAO();
-                return cinemaDAO.deleteCinema(cinemaId);
+                HallCinemaDAO hallCinemaDAO = new HallCinemaDAO();
+                boolean r1 = hallCinemaDAO.deleteCinemaHallByCinemaId(cinemaId);
+                boolean r2 = cinemaDAO.deleteCinema(cinemaId);
+
+                return r1 && r2;
                 } catch (Exception e) {
                 Log.e(TAG, "Error loading list cinema", e);
                 return null;
@@ -230,7 +235,7 @@ public class CinemaManagementActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Boolean result){
             super.onPostExecute(result);
-            if(result){
+            if(result.booleanValue()){
                 for (int i = 0; i < cinemaList.size(); i++) {
                     if (cinemaList.get(i).getCinemaId() == cinemaId) {
                         cinemaList.remove(i);
