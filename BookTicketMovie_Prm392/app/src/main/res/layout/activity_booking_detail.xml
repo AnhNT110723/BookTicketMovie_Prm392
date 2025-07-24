@@ -242,14 +242,7 @@
                         android:textColor="@android:color/white" />
                     -->
 
-                    <Button
-                        android:id="@+id/btn_payment"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Thanh toán"
-                        android:backgroundTint="@color/purple_500"
-                        android:textColor="@android:color/white" />
+                    <!-- Đã xóa nút Thanh toán ở đây -->
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>

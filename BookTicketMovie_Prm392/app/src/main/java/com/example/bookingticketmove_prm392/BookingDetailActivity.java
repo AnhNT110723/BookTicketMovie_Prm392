@@ -32,7 +32,7 @@ public class BookingDetailActivity extends AppCompatActivity {
 
     private ImageView moviePoster, qrCodeImage;
     private TextView movieTitle, cinemaName, showTime, seatCount, totalPrice;
-    private Button printButton, exportButton, viewTicketButton, paymentButton;
+    private Button printButton, exportButton, viewTicketButton; // Xóa paymentButton
     private ProgressBar progressBar;
     private View contentLayout;
 
@@ -69,7 +69,7 @@ public class BookingDetailActivity extends AppCompatActivity {
         viewTicketButton = findViewById(R.id.btn_view_ticket);
         // printButton = findViewById(R.id.btn_print_ticket); // Đã ẩn
         // exportButton = findViewById(R.id.btn_export_invoice); // Đã ẩn
-        paymentButton = findViewById(R.id.btn_payment);
+        // paymentButton = findViewById(R.id.btn_payment); // Đã xóa
         progressBar = findViewById(R.id.progress_bar_detail);
         contentLayout = findViewById(R.id.scroll_view_content);
 
@@ -90,13 +90,7 @@ public class BookingDetailActivity extends AppCompatActivity {
             intent.putExtra("seats", String.valueOf(currentBooking.getNumberOfSeats()));
             startActivity(intent);
         });
-        paymentButton.setOnClickListener(v -> {
-            if (currentBooking == null) return;
-            android.content.Intent intent = new android.content.Intent(this, PaymentActivity.class);
-            intent.putExtra("amount", String.valueOf(currentBooking.getTotalPrice()));
-            intent.putExtra("content", "BOOKING" + bookingId + " - " + currentBooking.getMovieTitle());
-            startActivity(intent);
-        });
+        // Xóa setOnClickListener cho paymentButton
     }
 
     private void setupToolbar() {
