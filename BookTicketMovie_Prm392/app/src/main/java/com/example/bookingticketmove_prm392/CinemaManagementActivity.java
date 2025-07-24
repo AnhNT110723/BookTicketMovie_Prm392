@@ -77,7 +77,7 @@ public class CinemaManagementActivity extends AppCompatActivity {
         setupRecyclerView();
         setupClickButton();
         setupSearchView();
-
+ //check bug
 
     }
 
