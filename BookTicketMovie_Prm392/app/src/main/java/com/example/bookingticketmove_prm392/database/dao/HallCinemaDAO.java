@@ -44,6 +44,13 @@ public class HallCinemaDAO extends BaseDAO{
         return result > 0;
     }
 
+    //delete hall cinema by cinema id
+    public boolean deleteCinemaHallByCinemaId(int cinemaId) throws SQLException{
+        String query = "DELETE FROM CinemaHall WHERE CinemaId = ?";
+        int result = executeUpdate(query, cinemaId);
+        return result > 0;
+    }
+
     //update hall cinema
     public boolean updateCinemaHall(CinemaHall cinemaHall) throws SQLException{
         String query = "UPDATE CinemaHall SET Name = ?, TotalSeats = ? WHERE HallID = ?";
